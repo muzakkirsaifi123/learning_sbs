@@ -1,0 +1,31 @@
+#site_name: My Docs
+site_name: Saifi Learning Notes
+
+theme:
+  name: material
+  palette:
+
+    - scheme: default
+      toggle:
+        icon: material/weather-night
+        name: Dark mode
+
+    - scheme: slate
+      toggle:
+        icon: material/weather-sunny
+        name: Light mode
+markdown_extensions:
+  - pymdownx.highlight
+  - pymdownx.superfences
+
+nav:
+  - Home: index.md
+  - Kubernetes:
+      - Operators:
+          - Kubernetes Operator: kubernetes_operators/kubernetes_operator.md
+
+  - Documentation:
+      - MkDocs Guide: mkdocs/mkdocs_readme.md
+plugins:
+  - search
+  - awesome-pages
