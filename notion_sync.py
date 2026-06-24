@@ -70,6 +70,16 @@ def get_all_blocks(client: Client, block_id: str) -> list:
     return blocks
 
 
+# Maps Notion callout emojis → MkDocs admonition types
+_CALLOUT_MAP = {
+    "💡": "tip",    "🔥": "warning",  "⚠️": "warning",  "🚨": "danger",
+    "❌": "failure", "✅": "success",  "ℹ️": "info",     "📝": "note",
+    "🧠": "abstract","📌": "tip",     "🎯": "example",   "💬": "quote",
+    "🤔": "question","👉": "tip",     "📢": "info",      "🔑": "tip",
+    "⛔": "danger",  "🛑": "danger",  "📣": "info",      "🏆": "success",
+}
+
+
 def block_to_md(block: dict, client: Client, depth: int = 0) -> str:
     btype = block.get("type", "")
     data = block.get(btype, {})
@@ -79,46 +89,110 @@ def block_to_md(block: dict, client: Client, depth: int = 0) -> str:
     if btype == "paragraph":
         text = rich_text_to_md(data.get("rich_text", []))
         lines.append(f"{indent}{text}\n")
+
     elif btype in ("heading_1", "heading_2", "heading_3"):
         level = {"heading_1": "#", "heading_2": "##", "heading_3": "###"}[btype]
         text = rich_text_to_md(data.get("rich_text", []))
-        lines.append(f"{level} {text}\n")
+        lines.append(f"\n{level} {text}\n")
+
     elif btype == "bulleted_list_item":
         text = rich_text_to_md(data.get("rich_text", []))
         lines.append(f"{indent}- {text}\n")
+        if block.get("has_children"):
+            for child in get_all_blocks(client, block["id"]):
+                lines.append(block_to_md(child, client, depth + 1))
+
     elif btype == "numbered_list_item":
         text = rich_text_to_md(data.get("rich_text", []))
         lines.append(f"{indent}1. {text}\n")
+        if block.get("has_children"):
+            for child in get_all_blocks(client, block["id"]):
+                lines.append(block_to_md(child, client, depth + 1))
+
     elif btype == "code":
-        lang = data.get("language", "")
+        lang = data.get("language", "plain text")
+        if lang == "plain text":
+            lang = "text"
         text = rich_text_to_md(data.get("rich_text", []))
-        lines.append(f"```{lang}\n{text}\n```\n")
+        caption = rich_text_to_md(data.get("caption", []))
+        caption_line = f"\n_{caption}_\n" if caption else ""
+        lines.append(f"```{lang}\n{text}\n```{caption_line}\n")
+
     elif btype == "quote":
         text = rich_text_to_md(data.get("rich_text", []))
         lines.append(f"> {text}\n")
+
     elif btype == "callout":
         text = rich_text_to_md(data.get("rich_text", []))
         icon = data.get("icon", {}).get("emoji", "")
-        lines.append(f"> {icon} **Note:** {text}\n")
-    elif btype == "divider":
-        lines.append("---\n")
+        admonition = _CALLOUT_MAP.get(icon, "note")
+        title = icon if icon else ""
+        header = f'!!! {admonition} "{title}"' if title else f"!!! {admonition}"
+        lines.append(f"{header}\n    {text}\n")
+        if block.get("has_children"):
+            for child in get_all_blocks(client, block["id"]):
+                child_md = block_to_md(child, client, 0)
+                for ln in child_md.splitlines():
+                    lines.append(f"    {ln}\n")
+
     elif btype == "toggle":
         text = rich_text_to_md(data.get("rich_text", []))
-        lines.append(f"**{text}**\n")
+        lines.append(f'??? note "{text}"\n')
+        if block.get("has_children"):
+            for child in get_all_blocks(client, block["id"]):
+                child_md = block_to_md(child, client, 0)
+                for ln in child_md.splitlines():
+                    lines.append(f"    {ln}\n")
+        lines.append("\n")
+
+    elif btype == "divider":
+        lines.append("\n---\n")
+
     elif btype == "image":
         url = (data.get("external") or data.get("file") or {}).get("url", "")
         caption = rich_text_to_md(data.get("caption", []))
         lines.append(f"![{caption or 'image'}]({url})\n")
+        if caption:
+            lines.append(f"*{caption}*\n")
+
     elif btype == "to_do":
         text = rich_text_to_md(data.get("rich_text", []))
         checked = "x" if data.get("checked") else " "
         lines.append(f"{indent}- [{checked}] {text}\n")
-    elif btype == "table_row":
-        cells = data.get("cells", [])
-        row = " | ".join(rich_text_to_md(cell) for cell in cells)
-        lines.append(f"| {row} |\n")
 
-    if block.get("has_children") and btype not in ("table", "child_page", "child_database"):
+    elif btype == "table":
+        # Fetch rows and render as markdown table
+        rows = get_all_blocks(client, block["id"])
+        for i, row in enumerate(rows):
+            cells = row.get("table_row", {}).get("cells", [])
+            row_md = " | ".join(rich_text_to_md(cell) for cell in cells)
+            lines.append(f"| {row_md} |\n")
+            if i == 0:
+                separator = " | ".join("---" for _ in cells)
+                lines.append(f"| {separator} |\n")
+        lines.append("\n")
+
+    elif btype == "table_row":
+        pass  # handled inside "table" above
+
+    elif btype == "equation":
+        expr = data.get("expression", "")
+        lines.append(f"$${expr}$$\n")
+
+    elif btype == "bookmark":
+        url = data.get("url", "")
+        caption = rich_text_to_md(data.get("caption", [])) or url
+        lines.append(f"🔗 [{caption}]({url})\n")
+
+    elif btype == "link_preview":
+        url = data.get("url", "")
+        lines.append(f"🔗 [{url}]({url})\n")
+
+    # Generic children fallback (not for types already handling children above)
+    if block.get("has_children") and btype not in (
+        "table", "child_page", "child_database",
+        "bulleted_list_item", "numbered_list_item", "callout", "toggle",
+    ):
         for child in get_all_blocks(client, block["id"]):
             lines.append(block_to_md(child, client, depth + 1))
 

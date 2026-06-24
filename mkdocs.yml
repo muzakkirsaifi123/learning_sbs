@@ -1,4 +1,4 @@
-site_name: MuzOps Learning Zone
+site_name: MuZakkir's Learning Zone
 site_description: Personal learning notes on Kubernetes, DevOps, and Cloud Engineering
 site_url: https://saifi.github.io/learning_sbs/
 site_author: Saifi
@@ -130,10 +130,21 @@ nav:
           - kustumize: notion/kk8s/kustumize.md
 
 plugins:
-  - tags
+  - tags:
+      tags_file: tags.md
   - social
   - search:
       lang: en
   - awesome-pages
   - privacy
   - offline
+  - glightbox
+  - minify:
+      minify_html: true
+      minify_js: true
+      minify_css: true
+      htmlmin_opts:
+        remove_comments: true
+  - git-revision-date-localized:
+      enable_creation_date: true
+      type: timeago
