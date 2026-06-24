@@ -1,1 +1,1 @@
-{"mappings": [{"item": {"url": "kubernetes_operators/kubernetes_operator.html", "title": "Kubernetes Operator"}, "tags": ["DevOps", "Kubernetes", "Operators"]}]}
+{"mappings": [{"item": {"url": "kubernetes_operators/kubernetes_operator.html", "title": "Kubernetes Operator"}, "tags": ["DevOps", "Kubernetes", "Operators"]}, {"item": {"url": "notion/kafka.html", "title": "Kafka"}, "tags": ["Kafka", "cp-schema"]}]}

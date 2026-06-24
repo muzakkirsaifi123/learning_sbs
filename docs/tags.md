@@ -1,7 +1,9 @@
 ---
 tags: []
+hide:
+  - tags
 ---
 
 # Tags
 
-Browse all notes by tag.
+[TAGS]
