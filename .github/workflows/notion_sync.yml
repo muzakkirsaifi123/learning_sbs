@@ -2,31 +2,24 @@ name: Sync Notion to MkDocs
 
 on:
   schedule:
-    - cron: "0 */3 * * *"   # every 3 hours
-  workflow_dispatch:         # or trigger manually from Actions tab
+    - cron: "0 */3 * * *"
+  workflow_dispatch:
 
 jobs:
-  sync-and-deploy:
+  sync:
     runs-on: ubuntu-latest
     permissions:
       contents: write
 
     steps:
       - uses: actions/checkout@v4
-        with:
-          fetch-depth: 0  # full history needed for git-committers and git-revision-date
 
       - uses: actions/setup-python@v5
         with:
           python-version: "3.11"
 
       - name: Install dependencies
-        run: |
-          pip install notion-client
-          pip install "mkdocs-material[imaging]" mkdocs-awesome-pages-plugin \
-            mkdocs-glightbox mkdocs-minify-plugin \
-            mkdocs-git-revision-date-localized-plugin \
-            mkdocs-git-committers-plugin-2
+        run: pip install notion-client
 
       - name: Sync Notion → Markdown
         env:
@@ -42,4 +35,3 @@ jobs:
           git diff --cached --quiet \
             || git commit -m "chore: sync Notion pages"
           git push
-
