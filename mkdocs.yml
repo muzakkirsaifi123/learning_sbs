@@ -122,12 +122,12 @@ nav:
       - Operators:
           - Kubernetes Operator: kubernetes_operators/kubernetes_operator.md
   - Notion:
-      - Kafka: notion/kafka.md
-      - test: notion/test.md
-      - kk8s:
-          - kk8s: notion/kk8s.md
-          - k89: notion/kk8s/k89.md
-          - kustumize: notion/kk8s/kustumize.md
+      - Kubernetes:
+          - Kubernetes: notion/kubernetes.md
+          - K8sgpt: notion/kubernetes/k8sgpt.md
+      - Kafka:
+          - Kafka: notion/kafka.md
+          - Kafka: notion/kafka/kafka.md
 
 plugins:
   - tags:
