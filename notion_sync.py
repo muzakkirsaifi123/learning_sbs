@@ -150,9 +150,28 @@ def sync_page(client: Client, page_id: str, output_dir: Path, synced: list, inde
     blocks = get_all_blocks(client, page_id)
 
     if not is_root:
-        lines = [f"# {title}\n\n"]
+        # Convert blocks to markdown lines first so we can scan for tag: / tags:
+        body_lines = []
         for block in blocks:
-            lines.append(block_to_md(block, client))
+            body_lines.append(block_to_md(block, client))
+
+        # Scan rendered lines for a "tags: X, Y" or "tag: X" pattern and strip it
+        import re as _re
+        tags = []
+        filtered = []
+        for ln in body_lines:
+            m = _re.match(r'^tags?:\s*(.+)', ln.strip(), _re.IGNORECASE)
+            if m:
+                tags = [t.strip() for t in m.group(1).split(",") if t.strip()]
+            else:
+                filtered.append(ln)
+
+        front_matter = ""
+        if tags:
+            tag_lines = "\n".join(f"  - {t}" for t in tags)
+            front_matter = f"---\ntags:\n{tag_lines}\n---\n\n"
+
+        lines = [front_matter, f"# {title}\n\n"] + filtered
 
         filename = slugify(title) + ".md"
         filepath = output_dir / filename

@@ -8,9 +8,25 @@
 
 <div class="grid cards" markdown>
 
--   ☸️ **[Kubernetes Operator](kubernetes_operators/kubernetes_operator.md)**
+-   🟠 **[Kafka](notion/kafka.md)**
 
-    How Kubernetes operators work — controllers, CRDs, reconcile loops.
+    Quick access to Kafka notes.
+
+-   🧪 **[test](notion/test.md)**
+
+    Quick access to test notes.
+
+-   ☸️ **[kk8s](notion/kk8s.md)**
+
+    Quick access to kk8s notes.
+
+-   📄 **[k89](notion/kk8s/k89.md)**
+
+    Quick access to k89 notes.
+
+-   📄 **[kustumize](notion/kk8s/kustumize.md)**
+
+    Quick access to kustumize notes.
 
 </div>
 
@@ -19,5 +35,5 @@
 ## Recently Read
 
 <div id="recent-pages">
-  <em>Visit a few pages and come back — your reading history will appear here.</em>
+  <em>Loading recently visited pages...</em>
 </div>

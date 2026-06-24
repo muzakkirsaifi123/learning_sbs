@@ -5,7 +5,10 @@
       "Bash(mkdocs serve *)",
       "Bash(python3 -)",
       "WebFetch(domain:squidfunk.github.io)",
-      "Bash(mkdocs build *)"
+      "Bash(mkdocs build *)",
+      "Bash(git -C /home/saifi/sbs/self_learning/doc/learning_sbs log --oneline -5)",
+      "Bash(git -C /home/saifi/sbs/self_learning/doc/learning_sbs show HEAD:docs/notion/notes/kafka.md)",
+      "Bash(git -C /home/saifi/sbs/self_learning/doc/learning_sbs ls-tree -r HEAD --name-only)"
     ]
   }
 }
