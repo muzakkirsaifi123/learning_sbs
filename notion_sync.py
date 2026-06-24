@@ -139,7 +139,7 @@ def get_page_title(page: dict) -> str:
     return "untitled"
 
 
-def sync_page(client: Client, page_id: str, output_dir: Path, synced: list, indent: str = ""):
+def sync_page(client: Client, page_id: str, output_dir: Path, synced: list, indent: str = "", is_root: bool = False):
     output_dir.mkdir(parents=True, exist_ok=True)
 
     page = client.pages.retrieve(page_id=page_id)
@@ -149,20 +149,23 @@ def sync_page(client: Client, page_id: str, output_dir: Path, synced: list, inde
     title = get_page_title(page)
     blocks = get_all_blocks(client, page_id)
 
-    lines = [f"# {title}\n\n"]
-    for block in blocks:
-        lines.append(block_to_md(block, client))
+    if not is_root:
+        lines = [f"# {title}\n\n"]
+        for block in blocks:
+            lines.append(block_to_md(block, client))
 
-    filename = slugify(title) + ".md"
-    filepath = output_dir / filename
-    filepath.write_text("".join(lines), encoding="utf-8")
-    rel = filepath.relative_to(Path(__file__).parent / "docs").as_posix()
-    print(f"{indent}+ {title}  →  docs/{rel}")
-    synced.append((title, rel))
+        filename = slugify(title) + ".md"
+        filepath = output_dir / filename
+        filepath.write_text("".join(lines), encoding="utf-8")
+        rel = filepath.relative_to(Path(__file__).parent / "docs").as_posix()
+        print(f"{indent}+ {title}  →  docs/{rel}")
+        synced.append((title, rel))
+    else:
+        print(f"[root] {title}  →  skipped (container page)")
 
     child_pages = [b for b in blocks if b.get("type") == "child_page"]
     if child_pages:
-        child_dir = output_dir / slugify(title)
+        child_dir = output_dir / slugify(title) if not is_root else output_dir
         for child in child_pages:
             sync_page(client, child["id"], child_dir, synced, indent + "  ")
 
@@ -197,12 +200,8 @@ def build_nav_tree(synced: list) -> list:
                 items.append({title: rel_path})
         return items
 
-    # Skip the root page itself (it's just a container), only show its children
-    result = []
-    for title, rel_path in by_parent.get("notion", []):
-        page_dir = str(PurePosixPath(rel_path).with_suffix(""))
-        result.extend(make_items(page_dir))
-    return result
+    # Root container is never in synced; top-level pages land directly at notion/
+    return make_items("notion")
 
 
 def nav_to_yaml_lines(items: list, indent: int) -> list:
@@ -322,7 +321,7 @@ def main():
 
     client = Client(auth=NOTION_TOKEN)
     synced = []
-    sync_page(client, NOTION_PAGE_ID, DOCS_DIR, synced)
+    sync_page(client, NOTION_PAGE_ID, DOCS_DIR, synced, is_root=True)
     update_mkdocs_nav(synced, MKDOCS_YML)
     generate_home_page(synced, DOCS_DIR)
     print(f"\nDone. {len(synced)} page(s) synced.")
