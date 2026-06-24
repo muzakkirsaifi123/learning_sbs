@@ -1,20 +1,43 @@
-# Welcome to MkDocs
+# MuzOps Learning Zone
 
-For full documentation visit [mkdocs.org](https://www.mkdocs.org).
+> Personal learning notes on Kubernetes, DevOps, Kafka, and Cloud Engineering.
 
-## Commands
-
-* `mkdocs new [dir-name]` - Create a new project.
-* `mkdocs serve` - Start the live-reloading docs server.
-* `mkdocs build` - Build the documentation site.
-* `mkdocs -h` - Print help message and exit.
-
-## Project layout
-
-    mkdocs.yml    # The configuration file.
-    docs/
-        index.md  # The documentation homepage.
-        ...       # Other markdown pages, images and other files.
+---
 
 ## Quick Links
-- [Operators](kubernetes_operators/kubernetes_operator.md)
+
+<div class="grid cards" markdown>
+
+-   📒 **[Notes](notion/notes.md)**
+
+    Quick access to Notes notes.
+
+-   🟠 **[Kafka](notion/notes/kafka.md)**
+
+    Quick access to Kafka notes.
+
+-   🧪 **[test](notion/notes/test.md)**
+
+    Quick access to test notes.
+
+-   ☸️ **[kk8s](notion/notes/kk8s.md)**
+
+    Quick access to kk8s notes.
+
+-   📄 **[k89](notion/notes/kk8s/k89.md)**
+
+    Quick access to k89 notes.
+
+-   📄 **[kustumize](notion/notes/kk8s/kustumize.md)**
+
+    Quick access to kustumize notes.
+
+</div>
+
+---
+
+## Recently Read
+
+<div id="recent-pages">
+  <em>Loading recently visited pages...</em>
+</div>

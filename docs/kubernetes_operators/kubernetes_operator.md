@@ -1,3 +1,10 @@
+---
+tags:
+  - Kubernetes
+  - Operators
+  - DevOps
+---
+
 # Kubernetes Operator Learning Notes
 
 ## Table of Contents

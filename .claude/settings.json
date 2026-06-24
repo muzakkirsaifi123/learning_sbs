@@ -1,0 +1,11 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(pip install *)",
+      "Bash(mkdocs serve *)",
+      "Bash(python3 -)",
+      "WebFetch(domain:squidfunk.github.io)",
+      "Bash(mkdocs build *)"
+    ]
+  }
+}

@@ -1,31 +1,139 @@
-#site_name: My Docs
-site_name: Saifi Learning Notes
+site_name: MuzOps Learning Zone
+site_description: Personal learning notes on Kubernetes, DevOps, and Cloud Engineering
+site_url: https://saifi.github.io/learning_sbs/
+site_author: Saifi
+copyright: Copyright &copy; 2026 Saifi
 
 theme:
   name: material
+  favicon: assets/logo.svg
+  logo: assets/logo.svg
+  language: en
+
+  # 3-palette system: auto (OS preference) → light → dark
   palette:
-
-    - scheme: default
+    - media: "(prefers-color-scheme)"
       toggle:
-        icon: material/weather-night
-        name: Dark mode
+        icon: material/lightbulb-auto
+        name: Switch to light mode
 
-    - scheme: slate
+    - media: "(prefers-color-scheme: light)"
+      scheme: default
+      primary: black
+      accent: teal
       toggle:
-        icon: material/weather-sunny
-        name: Light mode
+        icon: material/lightbulb
+        name: Switch to dark mode
+
+    - media: "(prefers-color-scheme: dark)"
+      scheme: slate
+      primary: black
+      accent: teal
+      toggle:
+        icon: material/lightbulb-outline
+        name: Switch to system preference
+
+  font:
+    text: Inter
+    code: JetBrains Mono
+
+  features:
+    - navigation.tabs
+    - navigation.tabs.sticky
+    - navigation.indexes
+    - navigation.path
+    - navigation.top
+    - navigation.footer
+    - navigation.tracking
+    - search.suggest
+    - search.highlight
+    - search.share
+    - content.code.copy
+    - content.code.annotate
+    - content.tabs.link
+    - content.tooltips
+    - content.footnote.tooltips
+    - toc.follow
+    - announce.dismiss
+
+  icon:
+    repo: octicons/mark-github-24
+
+repo_name: MuzOps / learning
+repo_url: https://github.com/saifi/learning_sbs
+edit_uri: ""
+
 markdown_extensions:
-  - pymdownx.highlight
-  - pymdownx.superfences
+  - admonition
+  - abbr
+  - attr_list
+  - footnotes
+  - md_in_html
+  - tables
+  - def_list
+  - toc:
+      permalink: true
+      title: On this page
+  - pymdownx.highlight:
+      anchor_linenums: true
+      line_spans: __span
+      pygments_lang_class: true
+  - pymdownx.inlinehilite
+  - pymdownx.superfences:
+      custom_fences:
+        - name: mermaid
+          class: mermaid
+          format: !!python/name:pymdownx.superfences.fence_code_format
+  - pymdownx.tabbed:
+      alternate_style: true
+  - pymdownx.details
+  - pymdownx.emoji:
+      emoji_index: !!python/name:material.extensions.emoji.twemoji
+      emoji_generator: !!python/name:material.extensions.emoji.to_svg
+  - pymdownx.tasklist:
+      custom_checkbox: true
+  - pymdownx.keys
+  - pymdownx.betterem:
+      smart_enable: all
+  - pymdownx.caret
+  - pymdownx.mark
+  - pymdownx.tilde
+
+extra:
+  generator: false
+  social:
+    - icon: octicons/mark-github-24
+      link: https://github.com/saifi
+      name: GitHub
+    - icon: fontawesome/brands/linkedin
+      link: https://linkedin.com/in/saifi
+      name: LinkedIn
+
+extra_css:
+  - assets/extra.css
+
+extra_javascript:
+  - assets/recent.js
 
 nav:
   - Home: index.md
+  - Tags: tags.md
   - Kubernetes:
       - Operators:
           - Kubernetes Operator: kubernetes_operators/kubernetes_operator.md
+  - Notion:
+      - Kafka: notion/notes/kafka.md
+      - test: notion/notes/test.md
+      - kk8s:
+          - kk8s: notion/notes/kk8s.md
+          - k89: notion/notes/kk8s/k89.md
+          - kustumize: notion/notes/kk8s/kustumize.md
 
-  - Documentation:
-      - MkDocs Guide: mkdocs/mkdocs_readme.md
 plugins:
-  - search
+  - tags
+  - social
+  - search:
+      lang: en
   - awesome-pages
+  - privacy
+  - offline

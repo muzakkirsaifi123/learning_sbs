@@ -1,0 +1,81 @@
+/* ── Smooth scrolling ─────────────────────────────── */
+html { scroll-behavior: smooth; }
+
+/* ── Dark mode — GitHub dark style ───────────────── */
+[data-md-color-scheme="slate"] {
+  --md-default-bg-color:        #0d1117;
+  --md-default-bg-color--light: #161b22;
+  --md-default-fg-color:        #e6edf3;
+  --md-default-fg-color--light: #8b949e;
+  --md-code-bg-color:           #161b22;
+  --md-code-fg-color:           #e6edf3;
+}
+
+/* ── Light mode — warm off-white ─────────────────── */
+[data-md-color-scheme="default"] {
+  --md-default-bg-color:        #f6f8fa;
+  --md-default-fg-color:        #1f2328;
+  --md-default-fg-color--light: #636c76;
+  --md-code-bg-color:           #f0f0f0;
+}
+
+/* ── Header ───────────────────────────────────────── */
+.md-header { background-color: #010409; box-shadow: 0 1px 0 rgba(255,255,255,0.07); }
+
+/* ── Nav tabs ─────────────────────────────────────── */
+.md-tabs { background-color: #010409; border-bottom: 1px solid rgba(255,255,255,0.07); }
+.md-tabs__link--active, .md-tabs__link:hover { font-weight: 700; opacity: 1; color: var(--md-accent-fg-color) !important; }
+
+/* ── Code blocks ──────────────────────────────────── */
+.highlight pre, .md-typeset pre { border-radius: 8px; border: 1px solid rgba(255,255,255,0.08); }
+.md-typeset code { border-radius: 4px; padding: 0.1em 0.35em; font-size: 0.85em; border: 1px solid rgba(255,255,255,0.08); }
+
+/* ── Tables ───────────────────────────────────────── */
+.md-typeset table:not([class]) th { background-color: var(--md-primary-fg-color); color: #fff; font-weight: 700; }
+.md-typeset table:not([class]) tr:nth-child(even) { background-color: var(--md-default-bg-color--light); }
+
+/* ── Admonitions ──────────────────────────────────── */
+.md-typeset .admonition, .md-typeset details { border-radius: 8px; border-width: 1px; }
+
+/* ── Headings ─────────────────────────────────────── */
+.md-typeset h1 { font-weight: 800; font-size: 2rem; letter-spacing: -0.5px; }
+.md-typeset h2 { font-weight: 700; border-bottom: 1px solid rgba(255,255,255,0.08); padding-bottom: 0.3em; }
+
+/* ── Blockquote — accent left border ─────────────── */
+.md-typeset blockquote {
+  border-left: 3px solid var(--md-accent-fg-color);
+  background: var(--md-default-bg-color--light);
+  border-radius: 0 8px 8px 0;
+  padding: 0.8rem 1.2rem;
+  margin: 0.5rem 0 1.5rem;
+  font-style: normal;
+  font-size: 0.95rem;
+  color: var(--md-default-fg-color--light);
+}
+
+/* ── Footer ───────────────────────────────────────── */
+.md-footer { background-color: #010409; border-top: 1px solid rgba(255,255,255,0.07); }
+
+/* ── Content width ────────────────────────────────── */
+.md-grid { max-width: 1280px; }
+
+/* ── Copy button ──────────────────────────────────── */
+.md-clipboard { opacity: 0.5; transition: opacity 0.2s; }
+.md-clipboard:hover { opacity: 1; }
+
+/* ── Recently Read cards ──────────────────────────── */
+.recent-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 0.75rem; margin-top: 0.5rem; }
+
+.recent-card {
+  border: 1px solid rgba(255,255,255,0.08);
+  border-radius: 8px;
+  padding: 0.75rem 1rem;
+  background: var(--md-default-bg-color--light);
+  transition: border-color 0.2s, transform 0.15s;
+}
+
+.recent-card:hover { border-color: var(--md-accent-fg-color); transform: translateY(-2px); }
+
+.recent-card a { display: flex; align-items: center; gap: 0.5rem; text-decoration: none; color: var(--md-default-fg-color); font-size: 0.85rem; font-weight: 500; }
+.recent-card a:hover { color: var(--md-accent-fg-color); }
+.recent-icon { font-size: 1.1rem; flex-shrink: 0; }
