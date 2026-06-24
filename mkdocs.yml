@@ -1,6 +1,6 @@
 site_name: MuZakkir's Learning Zone
 site_description: Personal learning notes on Kubernetes, DevOps, and Cloud Engineering
-site_url: https://saifi.github.io/learning_sbs/
+site_url: https://muzakkirsaifi123.github.io/learning_sbs/
 site_author: Saifi
 copyright: Copyright &copy; 2026 Saifi
 
@@ -60,7 +60,7 @@ theme:
     repo: octicons/mark-github-24
 
 repo_name: MuzOps / learning
-repo_url: https://github.com/saifi/learning_sbs
+repo_url: https://github.com/muzakkirsaifi123/learning_sbs
 edit_uri: ""
 
 markdown_extensions:
@@ -149,6 +149,6 @@ plugins:
       enable_creation_date: true
       type: timeago
   - git-committers:
-      repository: saifi/learning_sbs
+      repository: muzakkirsaifi123/learning_sbs
       branch: main
       token: !ENV GITHUB_TOKEN
