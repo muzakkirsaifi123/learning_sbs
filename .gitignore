@@ -1,0 +1,27 @@
+# MkDocs build output
+site/
+
+# Plugin cache (social cards, privacy fonts, git-committers)
+.cache/
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+*.egg-info/
+
+# Virtual environments
+venv/
+.venv/
+env/
+
+# Environment variables
+.env
+
+# Claude AI tool config
+.claude/
+
+# OS files
+.DS_Store
+Thumbs.db
