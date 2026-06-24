@@ -1,3 +1,9 @@
+---
+tags:
+  - Kafka
+  - cp-schema
+---
+
 # Kafka
 
 # What is cp-schema ?
@@ -129,3 +135,4 @@ Invalid change → blocked immediately
 👉 It does NOT change Kafka behavior
 👉 It adds **data contract enforcement**
 ---
+
