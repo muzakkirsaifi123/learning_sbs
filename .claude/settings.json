@@ -30,7 +30,8 @@
       "Bash(pip --version)",
       "Bash(python3 -c \"import mkdocs_glightbox; print\\('glightbox:', mkdocs_glightbox.__file__\\)\")",
       "WebSearch",
-      "Bash(python3 -c \"import notion_sync; print\\('syntax ok'\\)\")"
+      "Bash(python3 -c \"import notion_sync; print\\('syntax ok'\\)\")",
+      "Bash(GITHUB_TOKEN=dummy mkdocs build)"
     ]
   }
 }

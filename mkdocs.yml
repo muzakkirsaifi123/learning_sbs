@@ -148,3 +148,7 @@ plugins:
   - git-revision-date-localized:
       enable_creation_date: true
       type: timeago
+  - git-committers:
+      repository: saifi/learning_sbs
+      branch: main
+      token: !ENV GITHUB_TOKEN

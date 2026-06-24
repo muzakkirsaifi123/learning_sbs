@@ -415,6 +415,20 @@ def main():
     client = Client(auth=NOTION_TOKEN)
     synced = []
     sync_page(client, NOTION_PAGE_ID, DOCS_DIR, synced, is_root=True)
+
+    # Remove .md files that no longer exist in Notion
+    synced_paths = {Path(__file__).parent / "docs" / rel for _, rel in synced}
+    for existing in DOCS_DIR.rglob("*.md"):
+        if existing not in synced_paths:
+            existing.unlink()
+            print(f"  - removed: docs/{existing.relative_to(Path(__file__).parent / 'docs').as_posix()}")
+            # remove empty parent dirs
+            for parent in existing.parents:
+                if parent == DOCS_DIR:
+                    break
+                if parent.is_dir() and not any(parent.iterdir()):
+                    parent.rmdir()
+
     update_mkdocs_nav(synced, MKDOCS_YML)
     generate_home_page(synced, DOCS_DIR)
     print(f"\nDone. {len(synced)} page(s) synced.")

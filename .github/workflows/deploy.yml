@@ -14,13 +14,17 @@ jobs:
 
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0  # full history needed for git-committers and git-revision-date
 
       - uses: actions/setup-python@v5
         with:
           python-version: 3.x
 
       - name: Install dependencies
-        run: pip install "mkdocs-material[imaging]" mkdocs-awesome-pages-plugin mkdocs-glightbox mkdocs-minify-plugin mkdocs-git-revision-date-localized-plugin
+        run: pip install "mkdocs-material[imaging]" mkdocs-awesome-pages-plugin mkdocs-glightbox mkdocs-minify-plugin mkdocs-git-revision-date-localized-plugin mkdocs-git-committers-plugin-2
 
       - name: Build & deploy
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: mkdocs gh-deploy --force

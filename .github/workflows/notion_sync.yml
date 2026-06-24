@@ -6,20 +6,27 @@ on:
   workflow_dispatch:         # or trigger manually from Actions tab
 
 jobs:
-  sync:
+  sync-and-deploy:
     runs-on: ubuntu-latest
     permissions:
       contents: write
 
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0  # full history needed for git-committers and git-revision-date
 
       - uses: actions/setup-python@v5
         with:
           python-version: "3.11"
 
       - name: Install dependencies
-        run: pip install notion-client
+        run: |
+          pip install notion-client
+          pip install "mkdocs-material[imaging]" mkdocs-awesome-pages-plugin \
+            mkdocs-glightbox mkdocs-minify-plugin \
+            mkdocs-git-revision-date-localized-plugin \
+            mkdocs-git-committers-plugin-2
 
       - name: Sync Notion → Markdown
         env:
@@ -31,7 +38,12 @@ jobs:
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
-          git add docs/notion/ docs/index.md mkdocs.yml
+          git add -A docs/notion/ docs/index.md mkdocs.yml
           git diff --cached --quiet \
-            || git commit -m "chore: sync Notion pages [skip ci]"
+            || git commit -m "chore: sync Notion pages"
           git push
+
+      - name: Deploy to GitHub Pages
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: mkdocs gh-deploy --force
