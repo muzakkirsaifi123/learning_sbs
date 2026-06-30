@@ -127,7 +127,8 @@ nav:
           - K8sgpt: notion/kubernetes/k8sgpt.md
           - Network - Security:
               - Network - Security: notion/kubernetes/network-security.md
-              - Istio and Mesh: notion/kubernetes/network-security/istio-and-mesh.md
+              - Istio and Mesh (Basic Q&A and confusion before start): notion/kubernetes/network-security/istio-and-mesh-basic-qa-and-confusion-before-start.md
+              - Istio { Practice Lab - theory }: notion/kubernetes/network-security/istio-practice-lab-theory-.md
       - Kafka:
           - Kafka: notion/kafka.md
           - Kafka: notion/kafka/kafka.md

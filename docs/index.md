@@ -20,9 +20,13 @@
 
     Quick access to Network - Security notes.
 
--   📄 **[Istio and Mesh](notion/kubernetes/network-security/istio-and-mesh.md)**
+-   📄 **[Istio and Mesh (Basic Q&A and confusion before start)](notion/kubernetes/network-security/istio-and-mesh-basic-qa-and-confusion-before-start.md)**
 
-    Quick access to Istio and Mesh notes.
+    Quick access to Istio and Mesh (Basic Q&A and confusion before start) notes.
+
+-   📄 **[Istio { Practice Lab - theory }](notion/kubernetes/network-security/istio-practice-lab-theory-.md)**
+
+    Quick access to Istio { Practice Lab - theory } notes.
 
 -   🟠 **[Kafka](notion/kafka.md)**
 
