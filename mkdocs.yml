@@ -125,9 +125,17 @@ nav:
       - Kubernetes:
           - Kubernetes: notion/kubernetes.md
           - K8sgpt: notion/kubernetes/k8sgpt.md
+          - Network - Security:
+              - Network - Security: notion/kubernetes/network-security.md
+              - Istio and Mesh: notion/kubernetes/network-security/istio-and-mesh.md
       - Kafka:
           - Kafka: notion/kafka.md
           - Kafka: notion/kafka/kafka.md
+      - Mongo-atlas-operator: notion/mongo-atlas-operator.md
+      - Radar:
+          - Radar: notion/radar.md
+          - Radar-mongoatlas-flow: notion/radar/radar-mongoatlas-flow.md
+      - Net: notion/net.md
 
 plugins:
   - tags:

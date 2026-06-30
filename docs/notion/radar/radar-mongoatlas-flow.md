@@ -1,0 +1,1503 @@
+# Radar-mongoatlas-flow
+
+Explain the complete radar testing flow for the mongo operator — how internal tests work, what namespace they deploy to, how Istio interacts, and why clouddev (obaas-1) fails while escln157 (radar) works.
+Here's the complete explanation of the radar testing flow for the mongo operator, including the Istio interaction and why the two environments behave differently:
+
+Complete Radar Testing Flow for Mongo Operator
+1. The Pipeline Architecture
+The radar test pipeline has three main stages for mongo-related testing:
+┌─────────────────────────────────────────────────────────────────┐
+│  RADAR PIPELINE                                                  │
+├──────────────┬───────────────────┬──────────────────────────────┤
+│  INFRA TESTS │  SETUP + INTERNAL │  EXTERNAL TESTS              │
+│  (outside    │  (inside cluster) │  (outside cluster)           │
+│   cluster)   │                   │                              │
+├──────────────┼───────────────────┼──────────────────────────────┤
+│ • Cluster    │ • Deploy sbcp-    │ • API checks                 │
+│   version    │   radar helm      │                              │
+│ • Instance   │   chart into      │                              │
+│   type       │   TENANT_NAMESPACE│                              │
+│ • Backup     │ • Apply CRs       │                              │
+│   config     │ • Run internal    │                              │
+│ • Termination│   tests from pod  │                              │
+│ • Maintenance│ • Upload report   │                              │
+│   window     │   to S3           │                              │
+└──────────────┴───────────────────┴──────────────────────────────┘
+2. How Internal Tests Work
+Internal tests run inside the cluster as a Kubernetes Job. Here's the sequence:
+Step 1 — Setup stage (
+test_mongo_operator.py
+):
+Marked @internal — so it runs from inside the cluster
+Uses K8sApplyTask to apply the CRs defined in
+mongo_operator.yaml
+The transformer substitutes {TENANT_NAMESPACE} from env vars
+Step 2 — CRs applied (
+mongo_operator.yaml
+):
+
+# Creates a database: {TENANT_NAMESPACE}_test-from-radar
+MongoAtlas (name: test-from-radar, namespace: {TENANT_NAMESPACE})
+
+# Creates a user with readWrite to that database
+MongoAtlasUser (name: test-from-radar, secretName: test-from-radar-mongodb)
+
+# Creates a read-only user
+MongoAtlasReadOnlyUser (name: test-from-radar)
+Step 3 — The operator reconciles these CRs:
+The mongo-operator (running in kube-management namespace, watching ALL namespaces via WATCH_NAMESPACE: "") picks up the new CRs
+Creates the Atlas database
+Creates Atlas users
+Creates Kubernetes secrets with credentials in TENANT_NAMESPACE
+Step 4 — Internal tests execute (
+test_mongo.py
+):
+test_mongo_connection — connects to Atlas using env vars injected into the radar pod
+test_ro_mongo_connection — reads secret mongo-ro-cred-dev from TENANT_NAMESPACE, connects, verifies readAnyDatabase role
+test_rw_mongo_connection — reads secret mongo-rw-cred-dev, verifies readWriteAnyDatabase role
+3. Where Things Deploy
+Cluster
+├── kube-management (admin namespace)
+│   └── mongoatlas-operator (Deployment)
+│       ├── Watches ALL namespaces (WATCH_NAMESPACE="")
+│       ├── Has Atlas credentials (secret: mongoatlas-operator)
+│       └── Has config (configmap: mongo-operator-config-v1)
+│
+├── {TENANT_NAMESPACE} (e.g., obaas-1 or radar)
+│   ├── sbcp-radar (Job) ← internal tests run HERE
+│   ├── MongoAtlas CR → triggers DB creation
+│   ├── MongoAtlasUser CR → triggers user creation
+│   ├── MongoAtlasReadOnlyUser CR → triggers RO user
+│   ├── test-from-radar-mongodb (Secret) ← created by operator
+│   └── mongo-ro-cred-dev (Secret) ← created by operator
+│
+└── istio-system / per-tenant egress
+└── Istio service mesh controls egress traffic
+4. How Istio Interacts
+This is the critical piece. Istio's service mesh enforces strict mTLS and egress policies:
+The mongo-operator needs to reach:
+MongoDB Atlas API ([cloud.mongodb.com](http://cloud.mongodb.com/)) — REST API calls for user/role management
+MongoDB Atlas cluster (*.mongodb.net) — direct driver connection to create databases
+The radar internal test pod needs to reach:
+MongoDB Atlas cluster — to verify connections with the secrets the operator created
+Istio controls this via:
+Egress Gateways — all external traffic from the mesh must go through the tenant's egress gateway
+ServiceEntry — defines which external hosts are reachable
+DestinationRule — TLS origination settings
+Sidecar resources — controls what each namespace can see
+If the ServiceEntry for *.mongodb.net or [cloud.mongodb.com](http://cloud.mongodb.com/) doesn't exist for a given namespace/tenant, the Istio sidecar will block the outbound connection.
+1. Why clouddev (obaas-1) Fails While escln157 (radar) Works
+Here's the likely root cause based on the architecture:
+Aspect	escln157 (namespace: radar)	clouddev (namespace: obaas-1)
+Namespace	Dedicated radar namespace	Shared tenant namespace obaas-1
+Istio egress config	Has ServiceEntry + egress rules for MongoDB endpoints configured for testing	May be missing or misconfigured MongoDB egress rules
+Sidecar injection	Either no sidecar on the radar job pod, or correct egress policies exist	Sidecar injected, but MongoDB endpoints not in the allowed egress list for that tenant
+Network policies	Permissive for testing namespace	Stricter policies on a "real" tenant namespace
+The most probable scenarios:
+Scenario A — Istio egress not configured for obaas-1:
+In escln157, the radar namespace has explicit Istio ServiceEntry resources allowing traffic to *.mongodb.net and [cloud.mongodb.com](http://cloud.mongodb.com/)
+In clouddev, the obaas-1 namespace is a standard tenant namespace that does NOT have those ServiceEntries
+When the radar pod (in obaas-1) tries to connect to Atlas, the Istio sidecar intercepts and drops the connection because there's no matching egress rule
+Scenario B — Sidecar injection behavior differs:
+The radar namespace in escln157 might have the label istio-injection: disabled or the radar Job has [sidecar.istio.io/inject:](http://sidecar.istio.io/inject:) "false" annotation
+The obaas-1 namespace in clouddev has mesh injection enabled, so the radar Job gets a sidecar that blocks unmeshed outbound traffic
+Scenario C — The operator itself works, but the radar test pod can't verify:
+The mongo-operator runs in kube-management which likely has its own egress rules
+The operator successfully creates databases and secrets (it can reach Atlas)
+But when the radar pod in obaas-1 tries to verify by connecting to Atlas directly, Istio blocks it
+In escln157, the radar namespace has the right egress rules so the verification succeeds
+6. How to Diagnose / Fix
+To confirm which scenario it is:
+Check if the radar pod gets a sidecar in obaas-1:
+kubectl get pod -n obaas-1 -l app=radar -o jsonpath='{.items[0].spec.containers[*].name}'
+If you see istio-proxy alongside the test container, the sidecar is injected.
+Check ServiceEntry in the namespace:
+kubectl get serviceentry -n obaas-1
+kubectl get serviceentry -n radar  # on escln157 for comparison
+Check if the test fails at connection or at assertion:
+If it times out → Istio is blocking outbound
+If it gets an auth error → Network works, credentials issue
+Fix options:
+Add a ServiceEntry for MongoDB Atlas endpoints in the obaas-1 namespace
+Or add [sidecar.istio.io/inject:](http://sidecar.istio.io/inject:) "false" to the radar helm chart's Job pod template
+Or configure TENANT_NAMESPACE to a namespace that has the correct egress rules (like what escln157 does by using a dedicated radar namespace)
+The key takeaway: the radar testing framework is designed to run in a namespace with proper Istio egress configuration for MongoDB. The escln157 environment uses a dedicated radar namespace with those rules, while clouddev uses obaas-1 which is a standard tenant namespace that likely lacks the MongoDB egress ServiceEntry configuration.
+The Complete Radar Testing Flow for Mongo Operator — Deep Dive
+PART 1: Why a "Setup" Stage Exists
+The radar pipeline has 4 stages in order:
+.pre (initialize) → setup → execution → internal-reports → report
+The setup stage exists because internal tests run inside the cluster as a Kubernetes Job, NOT on the CI runner. Think about it this way:
+The CI runner (GitLab) can talk to the Kubernetes API, it can apply YAML manifests
+But internal tests need to verify things like "can I connect to MongoDB Atlas from inside the cluster?" — that means the test code must execute FROM INSIDE a pod
+So before the internal tests can verify that the mongo operator works, somebody needs to create the test resources (CRs) first. That's the setup stage's job.
+The setup stage runs on the CI runner (which has kubectl access) and applies Kubernetes manifests to prepare the cluster for the tests that will run inside it later.
+PART 2: How the Setup Stage Works (Step by Step)
+Let's trace through exactly what happens when the setup stage processes the mongo operator:
+Step 2.1 — The pipeline job setup executes:
+
+# From radar-pipeline/main.yml
+setup:
+script:
+- setup_final_target="$(get_radar_target "$SETUP_TARGET")"
+# SETUP_TARGET = "internal or external and not infra"
+- pytest -m "$setup_final_target" setups --suppress-no-test-exit-code
+This runs pytest with the marker expression "internal or external and not infra" against the setups/ folder only. It collects all test files in setups/ that match these markers.
+Step 2.2 — Pytest discovers
+test_mongo_operator.py
+:
+@internal                        # ← matches the marker "internal"
+@skipInProduction                # ← won't run on prod environments
+@skipIfMongoDbAtlasDisabled      # ← only runs if Atlas is enabled
+@task(K8sApplyTask, name='mongo_operator', transformer=transformer)
+def test_mongo_operator():
+"""Dummy test to create mongo operator resources which is required in later stages"""
+pass
+This is NOT a real test. It's a setup function disguised as a test (using the @task decorator pattern). The function body is pass — the actual work happens in the @task decorator.
+Step 2.3 — The @task decorator executes K8sApplyTask:
+
+# From radar/lib/tasks/**init**.py
+def task(cls, *gargs, **gkwargs):
+def decorated_task(fn):
+def wrapper(*args, **kwargs):
+ins = cls(*gargs, **gkwargs)    # Creates K8sApplyTask(name='mongo_operator')
+is_success = ins.run_task()       # Runs the apply
+if is_success:
+result = fn(*args, **kwargs)  # Calls the actual test (which is just `pass`)
+return result
+else:
+pytest.fail(reason='Setup task failed')  # Fail the whole thing if apply fails
+return wrapper
+return decorated_task
+Step 2.4 — K8sApplyTask.run_task() resolves the file path:
+
+# From radar/lib/tasks/k8s_task.py
+def run_task(self) -> bool:
+k8s_config = RunContext.k8s_apply_config([self.name](http://self.name/))  # looks up 'mongo_operator'
+file_path = utils.fix_path(k8s_config.get('filePath'))
+It looks up mongo_operator in the
+input.yml
+:
+
+# From configuration/input.yml
+kubernetesApply:
+- name: mongo_operator
+filePath: "resources/mongo_operator.yaml"
+Step 2.5 — The transformer substitutes environment variables:
+def transformer(yaml_content):
+yaml_content = yaml_content.format(**dict(os.environ))  # replaces {TENANT_NAMESPACE} etc.
+documents = list(yaml.load_all(yaml_content, Loader=yaml.FullLoader))
+return yaml.dump_all(documents)
+The file
+mongo_operator.yaml
+contains {TENANT_NAMESPACE} placeholders:
+apiVersion: [db.sbcp.io/v1](http://db.sbcp.io/v1)
+kind: MongoAtlas
+metadata:
+name: test-from-radar
+namespace: {TENANT_NAMESPACE}    # ← becomes "obaas-1" or "radar" depending on env config
+spec:
+database: {TENANT_NAMESPACE}_test-from-radar
+The TENANT_NAMESPACE variable comes from the environment's CI/CD variables (configured via env-config).
+Step 2.6 — kubectl apply is executed:
+sh.kubectl.apply("-f", f'{file_path}-gen')
+sh.kubectl.label("-f", f'{file_path}-gen', f"[app.sbs.io/part-of=radar-{branch_name}](http://app.sbs.io/part-of=radar-%7Bbranch_name%7D)", "--overwrite=true")
+This applies three Custom Resources into TENANT_NAMESPACE:
+MongoAtlasReadOnlyUser (name: test-from-radar)
+MongoAtlas (name: test-from-radar, database: {TENANT_NAMESPACE}_test-from-radar)
+MongoAtlasUser (name: test-from-radar, secretName: test-from-radar-mongodb)
+The label [app.sbs.io/part-of=radar-{branch_name}](http://app.sbs.io/part-of=radar-%7Bbranch_name%7D) is added so the cleanup job can delete these resources later.
+PART 3: What Happens After the CRs Are Applied (Operator Reconciliation)
+Now we enter the domain of the mongo-operator itself. This is NOT triggered by the radar pipeline — it's an autonomous Kubernetes process that reacts to CR creation.
+Where the operator lives:
+Deployment name: mongoatlas-operator
+Namespace: kube-management
+Watches: ALL namespaces (because WATCH_NAMESPACE: "" in its deployment)
+The operator is ALREADY running before radar even starts. It was deployed during environment setup (by sbcp-env-setup using the mongoatlas-operator Helm chart).
+The reconciliation loop:
+The operator's controller-runtime framework has a Watch set up:
+// From mongoatlas_controller.go
+err = c.Watch(source.Kind(mgr.GetCache(), &dbv1.MongoAtlas{}, &handler.TypedEnqueueRequestForObject[*dbv1.MongoAtlas]{}))
+This means: "whenever a MongoAtlas CR is created/updated/deleted anywhere in the cluster, add a reconcile request to my queue."
+What reconciliation does for MongoAtlas CR specifically:
+func (r *ReconcileMongoAtlas) Reconcile(ctx context.Context, request reconcile.Request) (reconcile.Result, error) {
+// 1. Fetch the CR from Kubernetes
+instance := &dbv1.MongoAtlas{}
+err := r.client.Get(ctx, request.NamespacedName, instance)
+```text
+// 2. If CR is new (status is empty), create the database
+isMongoDBAtlasDatabaseToBeCreated := reflect.DeepEqual(instance.Status, dbv1.MongoAtlasStatus{})
+if isMongoDBAtlasDatabaseToBeCreated {
+    err = createMongoDBAtlasDatabase(reqLogger, instance, r.atlasClient)
+    // 3. Update the CR status to "created"
+    err = r.client.Status().Update(ctx, instance)
+}
+// 4. Requeue after reconciliation time (120 seconds)
+return reconcile.Result{RequeueAfter: r.reconciliationConfig.Time}, nil
+```
+}
+createMongoDBAtlasDatabase does:
+Connects to MongoDB Atlas using the connection string from the operator's secret (ATLAS_CONNECTION_STRING)
+Lists all databases that match the namespace prefix pattern (^{namespace}_.*)
+If the database already exists → skips creation, but if CREDENTIAL_SCOPE=namespace, updates the tenant user's access list
+If the database doesn't exist → creates it by inserting a dummy document into a Operator_Init collection
+If CREDENTIAL_SCOPE=namespace → calls the Atlas REST API to update the tenant user with the new database in their access list
+Updates the CR status to created
+Meanwhile, other CRs trigger their own controllers:
+MongoAtlasUser CR → the mongoatlasuser controller creates an Atlas database user, generates credentials, creates a Kubernetes Secret (test-from-radar-mongodb) in the same namespace
+MongoAtlasReadOnlyUser CR → the mongoatlasreadonlyuser controller creates a read-only Atlas user, stores credentials in a secret
+Timeline:
+T+0s:   kubectl apply creates CRs in TENANT_NAMESPACE
+T+0-2s: Kubernetes API notifies controller-runtime (via Watch)
+T+2-5s: Reconcile functions execute (create DB, create users)
+T+5-30s: Atlas API calls complete, Secrets are created in TENANT_NAMESPACE
+The operator is event-driven, not polled. The creation of CRs triggers an immediate reconcile. After that, it re-reconciles every 120 seconds to maintain desired state.
+PART 4: How Internal Tests Execute
+After the setup stage creates CRs and the operator reconciles them (creating databases, users, secrets), the execution stage deploys the actual test runner.
+Step 4.1 — deploy-internal-test-job runs:
+
+# From radar-pipeline/main.yml
+deploy-internal-test-job:
+script:
+- helm uninstall $branched_release_name -n $TENANT_NAMESPACE --wait --ignore-not-found
+- helm install $branched_release_name infra/sbcp-radar
+--version $SBCP_RADAR_CHART_VERSION
+--namespace=$TENANT_NAMESPACE
+--set testTarget="$internal_final_target"
+-f values_cicd.yaml
+-f $WORK_DIR/generated_values.yaml
+This installs the sbcp-radar Helm chart into TENANT_NAMESPACE. This chart creates a Kubernetes Job that:
+Runs the radar Docker image (containing all test code)
+Has environment variables injected (MONGODB credentials, TENANT_NAMESPACE, etc.)
+Executes pytest with the internal marker inside the pod
+The pod runs IN THE SAME NAMESPACE as the CRs (TENANT_NAMESPACE)
+Step 4.2 — The radar Job pod runs tests:
+Inside the pod, pytest executes tests marked @internal, including:
+@internal
+@name("Mongo Connection")
+def test_mongo_connection(self):
+connection_string = f'{environ.get("MONGODB_PROTOCOL")}://{environ.get("MONGODB_CREDENTIALS")}{environ.get("MONGODB_HOST")}/{environ.get("MONGODB_OPTIONS")}'
+conn = pymongo.MongoClient(connection_string)
+assert conn.server_info()['ok'] == 1.0
+And the read-only user test:
+@internal
+@skipIfMongoReadOnlyUserDisabled
+def test_ro_mongo_connection(self, tenant_namespace):
+k8s_client = K8sClient()
+secret = k8s_client.get_secret("mongo-ro-cred-dev", tenant_namespace)  # ← reads the Secret that the OPERATOR created
+username = k8s_client.get_secret_data(secret, "username")
+password = k8s_client.get_secret_data(secret, "password")
+# ... connects to Atlas and verifies the roles
+Key point: The test pod reads the Kubernetes Secrets that the mongo-operator created. If the operator didn't reconcile properly, the secrets won't exist, and the test fails.
+Step 4.3 — Report retrieval:
+The internal-report stage then reads the pod's logs/output from S3 (the test writes JUnit XML results to an S3 bucket), and the pipeline publishes the report.
+PART 5: The Dependency Chain (Why Order Matters)
+Setup stage applies CRs
+│
+▼  (triggers Watch event)
+Operator reconciles:
+- Creates Atlas DB
+- Creates Atlas users
+- Creates K8s Secrets in TENANT_NAMESPACE
+│
+▼ (Secrets now exist)
+Internal test Job deployed into TENANT_NAMESPACE
+- Reads those Secrets
+- Connects to Atlas using those credentials
+- Verifies roles, permissions, connectivity
+If you skip setup → no CRs exist → operator has nothing to reconcile → no secrets → internal tests fail.
+If the operator is broken → CRs exist but are never reconciled → no secrets → internal tests fail.
+If the network is blocked (Istio) → CRs exist, operator reconciles (operator is in kube-management which has Atlas egress), secrets exist, BUT the test pod in TENANT_NAMESPACE can't reach Atlas → connection tests fail.
+PART 6: Why clouddev (obaas-1) Fails While escln157 (radar) Works
+Now the critical difference. Both environments run the same pipeline code, same setup, same operator. The difference is the TENANT_NAMESPACE value:
+Environment	TENANT_NAMESPACE	What this means
+escln157	radar	A namespace dedicated for testing
+clouddev	obaas-1	A real tenant namespace used for applications
+The Istio egress problem:
+The mongo-operator itself lives in kube-management and can always reach Atlas because that namespace has the necessary ServiceEntry/EgressGateway rules.
+But the radar test pod lives in TENANT_NAMESPACE. When it tries to connect to Atlas (*.mongodb.net):
+The pod's outbound TCP connection is intercepted by the Istio sidecar (injected automatically because the namespace has istio-injection: enabled)
+The sidecar checks: "is *.mongodb.net an allowed external destination for this namespace?"
+It looks for a ServiceEntry that matches
+In escln157 (radar namespace):
+The radar namespace was specifically created for testing
+It either has the correct ServiceEntry for MongoDB Atlas, OR it might not have Istio injection at all (testing namespaces often opt out)
+The test pod can reach Atlas → tests pass
+In clouddev (obaas-1 namespace):
+obaas-1 is a standard tenant namespace with full Istio mesh participation
+The Istio egress rules for this namespace are configured for the applications that run there (APIs, services)
+MongoDB Atlas (*.mongodb.net, [cloud.mongodb.com](http://cloud.mongodb.com/)) may NOT be in the allowed egress destinations for obaas-1
+The radar test pod's connection to Atlas gets blocked by the sidecar → connection timeout → test fails
+But wait — the operator works fine in both environments. That confirms it's not an Atlas API issue. The operator (in kube-management) can create databases and secrets in both environments. The failure is specifically when the test pod (in obaas-1) tries to verify by connecting to Atlas directly.
+Additional factors that could differ:
+Istio Sidecar resource scope — In the
+test_istio_validation.py
+, radar applies an Istio Sidecar resource. In escln157, the Sidecar config for the radar namespace may include MongoDB Atlas hosts. In clouddev, the Sidecar for obaas-1 may not.
+NetworkPolicy — obaas-1 may have stricter K8s NetworkPolicies that block egress to external IPs.
+The radar-testing env-config — Looking at
+[radar-testing.md](http://radar-testing.md/)
+, the TENANT_NAMESPACE variable determines everything. Whoever configured clouddev chose obaas-1, while escln157 used a dedicated radar namespace with appropriate network rules.
+Summary Diagram
+ESCLN157                              CLOUDDEV
+========                              ========
+TENANT_NAMESPACE:   "radar"                              "obaas-1"
+Setup Stage:        kubectl apply CRs                    kubectl apply CRs
+into ns "radar"                      into ns "obaas-1"
+↓                                    ↓
+Operator:           Reconciles (in kube-mgmt)            Reconciles (in kube-mgmt)
+Creates DB ✓                         Creates DB ✓
+Creates secrets in "radar" ✓         Creates secrets in "obaas-1" ✓
+↓                                    ↓
+Internal Job:       Pod in "radar" ns                    Pod in "obaas-1" ns
+Istio: allows Atlas egress ✓         Istio: BLOCKS Atlas egress ✗
+Connects to Atlas ✓                  Connection timeout ✗
+Reads secrets ✓                      (never reaches Atlas)
+Tests PASS ✓                         Tests FAIL ✗
+The fix is either:
+Add a ServiceEntry for *.mongodb.net in the obaas-1 namespace
+Disable sidecar injection for the radar Job (annotation [sidecar.istio.io/inject:](http://sidecar.istio.io/inject:) "false")
+Change TENANT_NAMESPACE for clouddev to a dedicated namespace with proper egress rules
+
+
+# Q&A
+Q1: Is the radar image built from the radar project and deployed as a pod to run test cases?
+Yes, your assumption is correct. Here's exactly how it works:
+Building the image:
+The
+.gitlab-ci.yml
+uses the devops-toolkit docker-images pipeline to build a Docker image:
+
+# radar/.gitlab-ci.yml
+variables:
+CONTAINER_IMAGE_NAME: infra/radar
+The Dockerfile is simple:
+FROM $SBCP_CONTAINER_REGISTRY/sbcp/cicd-tools:base-$SBCP_CICD_TOOLS_VERSION
+COPY ./ /root/             # Copies ALL radar code (tests, libs, config, expectations)
+WORKDIR /root
+RUN pip3 install -r requirements.txt
+CMD ["python3", "-m", "pytest"]   # Default command is pytest
+So the built image ([461232396433.dkr.ecr.eu-west-1.amazonaws.com/infra/radar:](http://461232396433.dkr.ecr.eu-west-1.amazonaws.com/infra/radar:)<tag>) contains the entire radar codebase including all tests, libraries, expectation files, and configuration.
+Deploying as a pod:
+When the radar-pipeline's deploy-internal-test-job stage runs, it does:
+helm install sbcp-radar infra/sbcp-radar --namespace=$TENANT_NAMESPACE --set testTarget="internal" ...
+This Helm chart creates a Kubernetes Job that runs a pod using that radar image. Inside the pod, the command is:
+pytest -m "internal" tests --junitxml="internal-test.xml"
+How the specific test cases are triggered:
+The --set testTarget="internal" becomes the pytest marker expression. So only tests decorated with @internal run inside the pod. If you want specific sub-tests, you can pass additional markers via RADAR_TARGET variable (e.g., "internal and mongo" would only run internal mongo tests).
+Environment variables are injected into the pod via:
+configMapRef: environment-config (contains MONGODB_HOST, MONGODB_PROTOCOL, etc.)
+configMapRef: mongo-config (optional mongo-specific config)
+secretRef: mongo-cred (optional mongo credentials)
+configMapRef: cicd-vars-<release> (CI/CD variables from the pipeline)
+env: TENANT_NAMESPACE (set to the Helm release namespace)
+Q2: There are three types of tests (internal, external, infra). Why does only internal come with the setup?
+Correction first: There are three test types: internal, external, and infra (infrastructure). The setup serves both internal AND external, not just internal.
+Look at the setup stage marker expression:
+
+# From radar-pipeline/main.yml
+SETUP_TARGET: "internal or external and not infra"
+pytest -m "$setup_final_target" setups
+This means: "run setup functions that are marked @internal OR @external, but NOT @infra."
+Why infra doesn't need setup:
+Infra tests validate existing AWS/EKS resources (cluster version, instance types, backup policies, security configs). These resources already exist because the environment was already provisioned. Infra tests only READ and verify — they don't need anything created beforehand.
+Internal tests need setup because they test the operator's BEHAVIOR. To test "does the mongo operator create a database correctly?", you first need to give the operator a CR to work with. Without the CR, there's nothing for the operator to do, and nothing for the test to verify.
+External tests sometimes also need setup — for example, creating an Ingress resource (httpbin) so external tests can later hit that endpoint and verify routing works.
+In summary:
+Test Type	Needs Setup?	Why?
+Infra	No	Tests existing infrastructure (AWS, EKS). Already provisioned.
+Internal	Yes	Tests operator behavior. Must create CRs first so operator reacts.
+External	Sometimes	Tests external endpoints. May need services/ingresses deployed first.
+Q3: What do you mean by "internal test as Kubernetes Job"? Is it a CronJob or a normal Deployment?
+It is a Kubernetes Job — not a CronJob, not a Deployment.
+From the sbcp-radar Helm chart template:
+apiVersion: batch/v1
+kind: Job
+metadata:
+name: radar-{{ $.Values.contextName }}-{{ $key }}
+namespace: {{ key }}
+spec:
+  template:
+    spec:
+      containers:
+        - name: main
+          image: "{{.Values.sbcpImageRepository }}/{{ .Values.imageName }}:{{.Values.imageTag }}"
+command: [ "/bin/bash" ]
+args:
+- -c
+- >-
+pytest -m "internal" tests --junitxml="internal-test.xml" ...
+restartPolicy: Never
+backoffLimit: 0
+The three Kubernetes workload types explained:
+Type	Behavior	Use Case
+Deployment	Keeps pods running forever. If a pod dies, it creates a new one.	Web servers, operators, always-on services
+CronJob	Creates a Job on a schedule (like Linux cron).	Scheduled backups, nightly reports
+Job	Creates a pod, runs it ONCE to completion, then stops.	One-time tasks, batch processing, TEST EXECUTION
+Why a Job is perfect for radar:
+It runs pytest once, produces a report, and exits
+backoffLimit: 0 means "if the pod fails, don't retry" (we want to see the actual failure)
+restartPolicy: Never means "if the container exits, don't restart it"
+After the tests complete, the pod stays in Completed state so the pipeline can read its logs/output
+The lifecycle is:
+helm install → Job created → Pod starts → pytest runs → tests complete → Pod status: Completed → Pipeline reads results → helm uninstall → Job deleted
+Q4: Every test function is under internal, external, or infra. What do we call this definition?
+These are called pytest markers (also known as test annotations or decorators).
+from radar.lib.annotations import internal, infra, external
+class TestMongo:
+@infra
+@name("Mongo Cluster Version")
+def test_mongo_cluster_version(self, cluster_info):
+# This test runs outside the cluster, checks Atlas API
+pass
+```text
+@internal
+@name("Mongo Connection")
+def test_mongo_connection(self):
+    # This test runs inside the cluster pod
+    pass
+```
+What they are technically:
+They are @pytest.mark decorators. In radar, they're defined in
+[annotations.py](http://annotations.py/)
+and are shortcuts for:
+@internal = @pytest.mark.internal — means "this test must run from inside the cluster"
+@external = @pytest.mark.external — means "this test runs from outside the cluster"
+@infra = @pytest.mark.infra — means "this test validates infrastructure (AWS/EKS)"
+What they actually control:
+They determine WHERE and WHEN a test executes:
+When the pipeline runs pytest -m "infra" → only @infra tests are collected
+When the pipeline runs pytest -m "internal" → only @internal tests are collected
+When the pipeline runs pytest -m "external" → only @external tests are collected
+In the radar pipeline, each stage uses different markers:
+setup stage:        pytest -m "internal or external and not infra" setups/
+infrastructure:     pytest -m "infra" tests/
+external:           pytest -m "external" tests/
+internal (in pod):  pytest -m "internal" tests/
+So the markers are the routing mechanism that decides which test runs in which pipeline stage and which execution context (CI runner vs. in-cluster pod).
+Q5: What is the concept of namespace in radar testing? Can I pass any namespace? What's the difference between obaas-1, obaas-2, and radar?
+The namespace concept:
+TENANT_NAMESPACE is the Kubernetes namespace where:
+The radar Job pod is deployed
+The setup CRs (MongoAtlas, MongoAtlasUser, etc.) are created
+The operator creates Secrets (with credentials)
+The test pod reads those Secrets and attempts connections
+Can you pass any namespace?
+Technically yes, but NOT any arbitrary namespace will work. The namespace must:
+Already exist in the cluster
+Have the required RBAC (ServiceAccount with permissions to read secrets, configmaps)
+Have the necessary network access (Istio egress rules if mesh is enabled)
+Have the environment-config ConfigMap (contains MongoDB host, protocol, etc.)
+Radar does NOT create the namespace. It expects it to already exist. The namespace is created during environment provisioning by the sbcp-env-pipeline.
+Difference between namespace types:
+Namespace	What it is	Who creates it	Istio?	MongoDB Egress?
+obaas-1	Real tenant namespace for applications	sbcp-env-pipeline during tenant creation	Yes, full mesh	Depends on tenant config
+obaas-2	Another tenant namespace	sbcp-env-pipeline	Yes, full mesh	Depends on tenant config
+radar	Dedicated testing namespace	Created specifically for radar testing	May have relaxed rules	Usually configured for Atlas access
+kube-management	Admin namespace for operators	sbcp-env-pipeline	Has its own egress rules	Yes (operator needs it)
+What "obaas" means: obaas = "OBaaS" = a specific tenant application. obaas-1 and obaas-2 are tenant namespaces for different tenants of the same environment. They are production-like namespaces where actual business applications run.
+Why this creates issues:
+A real tenant namespace (obaas-1) has:
+Strict Istio policies (only allows egress to services that tenant needs)
+NetworkPolicies that restrict pod-to-pod and egress communication
+Service mesh sidecar injection enabled
+A testing namespace (radar) might have:
+Relaxed or specifically configured egress for MongoDB Atlas
+ServiceEntry resources allowing *.mongodb.net
+Or even [sidecar.istio.io/inject:](http://sidecar.istio.io/inject:) "false" on pods
+So when you use TENANT_NAMESPACE=obaas-1, the radar pod gets the same restrictions as real application pods in that namespace, which may block Atlas connectivity. When you use TENANT_NAMESPACE=radar, the pod runs in a namespace specifically configured for testing with proper egress rules.
+Q6: CRs are normally deployed by users to create databases/users. Why does radar apply CRs without a user?
+Your understanding is correct: In normal production usage, a developer creates a MongoAtlas CR in their namespace, and the operator creates the database for them. The CR is the "request" and the operator is the "fulfillment."
+Why radar applies CRs automatically:
+Radar is an automated testing framework. Its purpose is to validate that the operator works correctly WITHOUT human intervention. It simulates what a user would do:
+User would apply a MongoAtlas CR → Radar's setup stage applies it automatically
+User would wait for the database to be created → Radar waits for the operator to reconcile
+User would check the Secret was created → Radar's internal test verifies the Secret exists and contains valid credentials
+User would connect to the database → Radar's internal test connects and verifies the connection works
+The setup stage IS the "user" in automated testing. It plays the role of a developer applying CRs, so the tests can then verify that everything the operator is supposed to do actually happened correctly.
+Think of it as a simulation:
+Manual flow:     Developer → applies CR → operator reacts → developer verifies
+Automated flow:  Setup stage → applies CR → operator reacts → internal tests verify
+The test resources have specific names (test-from-radar) so they don't conflict with real application resources. And they're labeled with [app.sbs.io/part-of=radar-{branch}](http://app.sbs.io/part-of=radar-%7Bbranch%7D) so the cleanup job can remove them after testing.
+Q7: Why is namespace relevant in operator reconciliation? Reconcile watches CRs, so why does namespace matter?
+The operator watches ALL namespaces (because WATCH_NAMESPACE: ""). So yes, it will pick up a MongoAtlas CR regardless of which namespace it's in. The namespace DOES matter for several reasons:
+1. Database naming:
+// The CR spec says:
+spec:
+database: "{TENANT_NAMESPACE}_test-from-radar"
+The database name includes the namespace. So a CR in obaas-1 creates database obaas-1_test-from-radar, while a CR in radar creates radar_test-from-radar.
+1. Credential scope and user naming:
+prefix := cr.Namespace  // ← this is the namespace of the CR
+prefixpattern := fmt.Sprintf("^%s%s", prefix, delimiterPattern)
+// Lists databases matching "^obaas-1_.*"
+When CREDENTIAL_SCOPE=namespace, the operator creates a tenant user named {ENV_NAME}-{namespace}. So the namespace directly determines which databases the user can access.
+1. Secret creation: The operator creates Kubernetes Secrets in the same namespace as the CR:
+// If CR is in namespace "obaas-1", the Secret "test-from-radar-mongodb" is created in "obaas-1"
+// If CR is in namespace "radar", the Secret is created in "radar"
+The internal test pod (also in that namespace) needs to read these Secrets. If the CR was in a different namespace than the test pod, the pod couldn't read the Secret.
+1. Namespace mutex:
+releaseNamespaceMutex := utils.AcquireNamespaceMutex(reqLogger, cr.Namespace)
+defer releaseNamespaceMutex()
+The operator uses a per-namespace mutex to prevent race conditions. Two CRs in the same namespace are reconciled sequentially (not concurrently).
+Summary: The operator watches all namespaces to DISCOVER CRs, but the namespace of each CR determines:
+What database name to use
+What user name to create in Atlas
+Where to put the Secret
+Which mutex to lock
+Q8: From where are the environment variables injected into the internal test pod?
+Looking at the Job template from sbcp-radar:
+containers:
+- name: main
+envFrom:
+  - configMapRef:
+name: environment-config # ← source 1
+optional: true
+  - configMapRef:
+name: mongo-config # ← source 2
+optional: true
+  - secretRef:
+name: mongo-cred # ← source 3
+optional: true
+  - configMapRef:
+name: cicd-vars-sbcp-radar # ← source 4
+env:
+  - name: TENANT_NAMESPACE # ← source 5
+value: {{ $.Release.Namespace }}
+  - name: RUN_TYPE
+value: "internal"
+Source 1: environment-config ConfigMap (already exists in the namespace, created by sbcp-env-setup): Contains: MONGODB_HOST, MONGODB_PROTOCOL, MONGODB_OPTIONS, ENVIRONMENT, SBCP_DOMAIN, etc.
+Source 2: mongo-config ConfigMap (already exists, optional): Contains: MongoDB-specific configuration for the namespace
+Source 3: mongo-cred Secret (created by the mongo-operator when mongoatlastenantuser CR exists): Contains: username, password, credentials (the shared namespace-level MongoDB credentials)
+Source 4: cicd-vars-<release> ConfigMap (created by the radar pipeline): Contains: CI/CD variables retrieved from GitLab (like MONGODB_ATLAS_PUBLIC_KEY, MONGODB_ATLAS_PRIVATE_KEY, MONGO_PROJECT_NAME)
+Source 5: Hardcoded env vars: TENANT_NAMESPACE is set to the Helm release namespace.
+Now for each test:
+test_mongo_connection:
+connection_string = f'{environ.get("MONGODB_PROTOCOL")}://{environ.get("MONGODB_CREDENTIALS")}{environ.get("MONGODB_HOST")}/{environ.get("MONGODB_OPTIONS")}'
+Uses: MONGODB_PROTOCOL (from environment-config), MONGODB_CREDENTIALS (from cicd-vars), MONGODB_HOST (from environment-config), MONGODB_OPTIONS (from environment-config)
+test_ro_mongo_connection:
+secret = k8s_client.get_secret("mongo-ro-cred-dev", tenant_namespace)
+username = k8s_client.get_secret_data(secret, "username")
+password = k8s_client.get_secret_data(secret, "password")
+This doesn't use env vars for credentials — it reads a Kubernetes Secret (mongo-ro-cred-dev) that was created by the mongo-operator when the MongoAtlasReadOnlyUser CR was reconciled. It uses the K8s API from inside the pod.
+test_rw_mongo_connection:
+secret = k8s_client.get_secret("mongo-rw-cred-dev", tenant_namespace)
+Same pattern — reads a different Secret created by the operator for read-write access.
+Q9: In the cluster, mongo-operator deploys in kube-management. Can radar deploy in any namespace like radar, obaas-1, obaas-2, or any new one?
+Mongo-operator: Always deploys in kube-management. This is fixed by the Helm chart:
+
+# mongoatlas-operator/templates/mongoatlas-operator.yaml
+metadata:
+name: mongoatlas-operator
+namespace: {{ .Release.Namespace }}  # ← always kube-management
+Radar: Deploys in whatever TENANT_NAMESPACE is set to:
+helm install sbcp-radar infra/sbcp-radar --namespace=$TENANT_NAMESPACE
+So yes, you can deploy radar in obaas-1, obaas-2, radar, or any existing namespace. BUT:
+Requirements for the namespace to work:
+Must already exist
+Must have environment-config ConfigMap
+Must have a ServiceAccount with permission to read secrets and configmaps
+Must have network connectivity to MongoDB Atlas (this is where Istio becomes relevant)
+Must have the radar image pullable (ECR access)
+You cannot create a brand new namespace and deploy radar there without first provisioning it with the required ConfigMaps, ServiceAccounts, and network policies. The namespaces obaas-1, radar, etc. are pre-provisioned by the environment setup pipeline.
+Q10: What is the connection between kube-management, obaas-1/2, and Istio for mongo operator testing?
+Here's how they all relate:
+┌─────────────────────────────────────────────────────────────┐
+│                        EKS CLUSTER                           │
+│                                                              │
+│  ┌─────────────────────┐     ┌─────────────────────────┐   │
+│  │   kube-management    │     │  istio-system            │   │
+│  │                      │     │                          │   │
+│  │  mongoatlas-operator │     │  Istio control plane     │   │
+│  │  (Deployment)        │     │  (istiod, egress gw)     │   │
+│  │                      │     │                          │   │
+│  │  Can reach Atlas ✓   │     └─────────────────────────┘   │
+│  │  (has its own egress │                                    │
+│  │   rules or no mesh)  │                                    │
+│  └──────────┬───────────┘                                    │
+│             │ watches CRs in ALL namespaces                  │
+│             ▼                                                │
+│  ┌──────────────────────┐     ┌─────────────────────────┐   │
+│  │  obaas-1 (tenant)    │     │  obaas-2 (tenant)        │   │
+│  │                      │     │                          │   │
+│  │  Istio sidecar: YES  │     │  Istio sidecar: YES      │   │
+│  │  Egress: restricted  │     │  Egress: restricted      │   │
+│  │                      │     │                          │   │
+│  │  CRs → operator acts │     │  CRs → operator acts     │   │
+│  │  Secrets created here│     │  Secrets created here     │   │
+│  │  Radar pod HERE ←!!  │     │                          │   │
+│  │  Pod can't reach     │     │                          │   │
+│  │  Atlas (Istio blocks)│     │                          │   │
+│  └──────────────────────┘     └─────────────────────────┘   │
+│                                                              │
+│  ┌──────────────────────┐                                    │
+│  │  radar (dedicated)   │                                    │
+│  │                      │                                    │
+│  │  Istio: relaxed/none │                                    │
+│  │  Egress: Atlas OK ✓  │                                    │
+│  │                      │                                    │
+│  │  Radar pod HERE      │                                    │
+│  │  Pod CAN reach Atlas │                                    │
+│  └──────────────────────┘                                    │
+└─────────────────────────────────────────────────────────────┘
+The connection:
+kube-management hosts the operator. The operator needs to call Atlas API and MongoDB driver. It works because kube-management either doesn't have Istio sidecar injection, or has proper egress rules for Atlas.
+obaas-1/2 are tenant namespaces with full Istio service mesh. The operator can create CRs and Secrets here (it uses K8s API, not external network). But when the radar pod runs HERE and tries to connect to Atlas directly, Istio's sidecar intercepts the traffic and may block it.
+Istio acts as a network gatekeeper. Every pod with an Istio sidecar has its outbound traffic controlled. Only destinations defined in ServiceEntry resources are reachable.
+Q11: How does Istio help or hinder the MongoDB Atlas radar test in detail?
+What Istio does:
+Istio injects a sidecar proxy (Envoy) into every pod in a mesh-enabled namespace. This sidecar intercepts ALL network traffic (inbound and outbound) from the pod.
+For outbound (egress) traffic:
+When the radar pod (running in obaas-1) tries to connect to [dxp-cloud-db-mongodb.uy2uv.mongodb.net:27017](http://dxp-cloud-db-mongodb.uy2uv.mongodb.net:27017/):
+Radar pod → tries TCP connection to [mongodb.net:27017](http://mongodb.net:27017/)
+→ Istio sidecar intercepts
+→ Checks: "Is *.mongodb.net allowed for this namespace?"
+→ Looks for ServiceEntry resource that defines this host
+→ If found: forwards traffic through EgressGateway → reaches Atlas ✓
+→ If NOT found: returns "connection refused" or times out ✗
+ServiceEntry is the key resource:
+apiVersion: [networking.istio.io/v1](http://networking.istio.io/v1)
+kind: ServiceEntry
+metadata:
+name: mongodb-atlas
+namespace: obaas-1    # ← must be in the same namespace (or cluster-wide)
+spec:
+hosts:
+- "*.mongodb.net"
+ports:
+- number: 27017
+protocol: TCP
+resolution: DNS
+location: MESH_EXTERNAL
+If this ServiceEntry exists in obaas-1 → radar pod can reach Atlas. If it doesn't exist → Istio blocks the connection.
+Why the radar namespace might work:
+Option A: The radar namespace has this ServiceEntry configured. Option B: The radar namespace has istio-injection: disabled label, so pods don't get sidecars. Option C: The radar pod in radar namespace uses [sidecar.istio.io/inject:](http://sidecar.istio.io/inject:) "false" annotation (the job-without-istio.yaml template does exactly this).
+The sbcp-radar chart actually has both templates:
+job.yaml — normal Job (gets Istio sidecar)
+job-without-istio.yaml — Job with [sidecar.istio.io/inject:](http://sidecar.istio.io/inject:) "false" annotation
+The job.yaml also has [eks.amazonaws.com/skip-containers:](http://eks.amazonaws.com/skip-containers:) istio-proxy which tells AWS IAM role not to apply to the sidecar, and at the end it sends curl localhost:15000/quitquitquit to gracefully stop the sidecar after tests complete.
+Q12: Why clouddev (obaas-1) Fails While escln157 (radar) Works
+Environment configurations:
+clouddev	escln157
+TENANT_NAMESPACE	obaas-1	radar
+Namespace type	Real tenant (applications run here)	Dedicated test namespace
+Istio sidecar	Injected into all pods	May be disabled or have Atlas egress
+ServiceEntry for Atlas	Likely missing (not needed for apps)	Likely present (configured for testing)
+What happens in clouddev (obaas-1):
+Setup applies CRs in obaas-1 ✓
+Operator (in kube-management) reconciles, creates DB and Secrets in obaas-1 ✓
+Radar pod deployed in obaas-1, gets Istio sidecar injected
+Test runs pymongo.MongoClient(connection_string) to connect to Atlas
+Istio sidecar intercepts → no ServiceEntry for *.mongodb.net in obaas-1 → BLOCKED
+Connection timeout → test FAILS
+What happens in escln157 (radar namespace):
+Setup applies CRs in radar ✓
+Operator (in kube-management) reconciles, creates DB and Secrets in radar ✓
+Radar pod deployed in radar namespace
+Either: no sidecar (injection disabled) OR ServiceEntry exists for Atlas
+Test connects to Atlas directly → SUCCESS
+Tests PASS
+Root cause: The obaas-1 namespace in clouddev was never configured with MongoDB Atlas egress rules because the applications running there don't need direct Atlas access (they use the operator-created secrets and connect through the operator's infrastructure). The radar test, however, needs direct Atlas access to VERIFY the connection works.
+Q13: What do you mean by "dedicated namespace" vs "shared namespace" for mongo operator?
+Dedicated namespace (e.g., radar):
+Created specifically and solely for radar testing
+No real applications run here
+Network policies can be relaxed for testing purposes
+ServiceEntries can be added for Atlas access without affecting production
+Only radar workloads exist here
+Nobody else depends on this namespace's configuration
+Shared/real tenant namespace (e.g., obaas-1):
+Real business applications run here (OBaaS use cases, microservices)
+Network policies are strict for security (production-grade)
+ServiceEntries are only for what the applications need
+Adding Atlas egress rules here might create security concerns
+Radar is a "guest" in this namespace, sharing it with real workloads
+Changes here could affect production applications
+For the mongo-operator itself — it doesn't care. It watches ALL namespaces and will reconcile CRs wherever they appear. The distinction matters for the radar test pod that needs network access to Atlas.
+Q14: Are you saying that before tests can run, the CRs must be created first?
+Yes, exactly. Let me be very precise about why:
+The internal tests verify OUTCOMES of the operator's work. They check:
+"Does the Secret test-from-radar-mongodb exist?" (created by operator after MongoAtlasUser CR)
+"Can I connect to Atlas with the credentials in that Secret?" (credentials were generated by operator)
+"Does the read-only user have readAnyDatabase role?" (role assigned by operator)
+For these outcomes to exist, the CAUSE must happen first:
+The MongoAtlasUser CR must exist → triggers operator → operator creates user + Secret
+The MongoAtlas CR must exist → triggers operator → operator creates database
+The MongoAtlasReadOnlyUser CR must exist → triggers operator → operator creates RO user + Secret
+Without the CRs, there's nothing for the operator to do, and nothing for the tests to verify.
+The setup stage is the mechanism that creates these CRs. It runs BEFORE the internal test Job is deployed.
+Timeline:
+T+0:     Setup stage: kubectl apply CRs
+T+5-30s: Operator reconciles, creates databases, users, Secrets
+T+60s:   deploy-internal-test-job: helm install sbcp-radar (deploys test Job)
+T+90s:   Test pod starts, runs pytest, reads Secrets, connects to Atlas
+Q15: Does radar create real CRs and then run tests? How does it test the mongo operator?
+Yes, radar creates REAL CRs that trigger REAL operator behavior.
+This is integration testing (also called end-to-end testing), not mocking or simulation. The flow:
+Real CRs are applied:
+apiVersion: [db.sbcp.io/v1](http://db.sbcp.io/v1)
+kind: MongoAtlas
+metadata:
+name: test-from-radar
+namespace: obaas-1
+spec:
+database: obaas-1_test-from-radar   # ← a REAL database gets created in Atlas
+The real operator running in the cluster sees this CR and:
+Connects to the REAL MongoDB Atlas cluster
+Creates a REAL database called obaas-1_test-from-radar
+Creates REAL Atlas users with REAL credentials
+Stores those REAL credentials in Kubernetes Secrets
+The test verifies the real outcome:
+Reads the real Secret
+Uses the real credentials to connect to the real Atlas cluster
+Verifies the database exists and the user has correct permissions
+Cleanup removes everything after tests:
+The cleanup job deletes CRs labeled [app.sbs.io/part-of=radar-{branch}](http://app.sbs.io/part-of=radar-%7Bbranch%7D)
+When CRs are deleted, the operator's finalizers clean up Atlas resources (delete users, etc.)
+This is the strongest form of testing — it proves the entire chain works in a real environment with real infrastructure.
+Q16: Does the single file
+mongo_operator.yaml
+create all three resources?
+Yes. The file contains THREE separate YAML documents separated by ---:
+
+# Document 1: Creates a read-only user
+
+## apiVersion: [db.sbcp.io/v1](http://db.sbcp.io/v1)
+kind: MongoAtlasReadOnlyUser
+metadata:
+name: test-from-radar
+namespace: {TENANT_NAMESPACE}
+spec:
+name: test-from-radar
+
+# Document 2: Creates a database
+
+## apiVersion: [db.sbcp.io/v1](http://db.sbcp.io/v1)
+kind: MongoAtlas
+metadata:
+name: test-from-radar
+namespace: {TENANT_NAMESPACE}
+spec:
+database: {TENANT_NAMESPACE}_test-from-radar
+
+# Document 3: Creates a read-write user with a specific secret
+apiVersion: [db.sbcp.io/v1](http://db.sbcp.io/v1)
+kind: MongoAtlasUser
+metadata:
+name: test-from-
+
+Q1 (Link to Ques-4): How does a function with @internal marker know it should run inside the cluster? And why does the setup stage use pytest -m "internal or external and not infra"?
+Your Question: If I set the marker for any function, how does that function know that this test should run inside the cluster (in case of internal)? Does it only trigger functions with the same marker? How will it know this and process? And in the setup step, why do we mention pytest -m "internal or external and not infra" setups/?
+Answer:
+The marker itself does NOT make the function run inside the cluster. The marker is just a label/tag — it has no execution logic. What actually controls WHERE the test runs is which pipeline job collects it.
+Here's how it works:
+The marker is just a filter mechanism:
+internal = pytest.mark.internal  # This is just a label, nothing more
+When you write:
+@internal
+def test_mongo_connection(self):
+pass
+You're saying: "This test is INTENDED to run inside the cluster." But the test code itself doesn't know or care where it's running. It's just Python code that executes wherever pytest calls it.
+What actually controls execution location:
+The radar pipeline has DIFFERENT JOBS that each run pytest with different marker filters:
+Pipeline Job	Where it runs	Marker filter	What folder
+setup	CI runner (has kubectl)	"internal or external and not infra"	setups/
+infrastructure	CI runner	"infra"	tests/
+external	CI runner	"external"	tests/
+deploy-internal-test-job	Deploys a K8s Job	"internal"	tests/ (inside pod)
+So the @internal marker doesn't make code run inside the cluster. Instead:
+The CI pipeline job deploy-internal-test-job installs a Helm chart that creates a K8s Job
+That K8s Job's container runs pytest -m "internal" tests
+Because pytest is running INSIDE a pod, it's physically inside the cluster
+Only tests tagged @internal get collected and executed there
+Why the setup uses "internal or external and not infra":
+The setup stage runs ON THE CI RUNNER (not inside the cluster). It prepares resources needed by both internal and external tests:
+Setup functions tagged @internal prepare resources for internal tests (like applying mongo CRs)
+Setup functions tagged @external prepare resources for external tests (like creating Ingress)
+Setup functions tagged @infra don't exist because infra tests check existing resources
+The setup stage says: "Run all setup functions in the setups/ folder that are tagged internal OR external, but NOT infra."
+The key is the setups/ folder at the end — it only looks at setup files, not the actual test files in tests/.
+Q2 (Link to Ques-4): If setup is common for internal and external, what exactly does it set up? If I want to test the mongo operator, what does radar set up?
+Your Question: One setup step is required for internal and external, so it should be a common step. What exactly does it set up for external and internal? For example, if I am testing the mongo operator, everything is already deployed in the cluster. What does radar set up for this?
+Answer:
+The setup stage creates test-specific resources that don't exist yet in the cluster. It's NOT about deploying the operator itself — the operator is already running. It's about creating the INPUT that the operator needs to DO something.
+For mongo operator (internal tests):
+The mongo operator is already deployed and running. But it needs Custom Resources (CRs) to trigger its behavior. Without CRs, the operator just sits idle. The setup creates:
+MongoAtlas CR          → tells operator "create database X"
+MongoAtlasUser CR      → tells operator "create user Y with access to database X"
+MongoAtlasReadOnlyUser → tells operator "create read-only user Z"
+Without this setup, the internal tests would have nothing to verify:
+No database was created (nothing to check)
+No user exists (no credentials to test)
+No Secret was generated (nothing to read)
+For external tests (e.g., ingress/exposition):
+Similarly, external tests verify that an HTTP endpoint works correctly. But you need a test application behind that endpoint first:
+httpbin Deployment → a simple HTTP echo server
+httpbin Service    → exposes the deployment
+httpbin Ingress    → configures the ingress controller
+Without this setup, external tests would have no endpoint to call.
+What setup does NOT do:
+Does NOT deploy the mongo operator (already deployed by sbcp-env-setup)
+Does NOT create namespaces (already exist)
+Does NOT configure Istio (already configured)
+Does NOT set up infrastructure (already provisioned by Terraform)
+In summary: Setup creates TEST FIXTURES — temporary resources specifically for testing that simulate real user actions (applying CRs, deploying test apps).
+Q3: Tell me more about "network access (Istio egress rules)" and "environment-config ConfigMap"
+Your Question: I want to know more about: "Have the necessary network access (Istio egress rules if mesh is enabled)" and "Have the environment-config ConfigMap (contains MongoDB host, protocol, etc.)"
+Answer:
+Network access (Istio egress rules):
+In a namespace with Istio service mesh enabled, pods cannot freely access external services. Every outbound connection is intercepted by the Istio sidecar proxy. For a pod to reach an external service (like MongoDB Atlas at *.mongodb.net), there must be an Istio ServiceEntry resource that explicitly allows it.
+Think of it like a firewall rule:
+Default: DENY all outbound to external hosts
+ServiceEntry: ALLOW outbound to specific hosts
+If the namespace where radar runs doesn't have a ServiceEntry for *.mongodb.net, the radar pod's connection to Atlas will be blocked. The pod will either get "connection refused" or timeout.
+This is a per-namespace configuration. Namespace radar might have the ServiceEntry, while namespace obaas-1 might not.
+environment-config ConfigMap:
+This is a Kubernetes ConfigMap that exists in every tenant namespace. It's created during environment provisioning by sbcp-env-setup. It contains configuration specific to that environment:
+apiVersion: v1
+kind: ConfigMap
+metadata:
+name: environment-config
+namespace: obaas-1
+data:
+ENVIRONMENT: "clouddev"
+SBCP_DOMAIN: "dxp.delivery"
+MONGODB_HOST: "[dxp-cloud-db-mongodb.uy2uv.mongodb.net](http://dxp-cloud-db-mongodb.uy2uv.mongodb.net/)"
+MONGODB_PROTOCOL: "mongodb+srv"
+MONGODB_OPTIONS: "retryWrites=true&w=majority"
+
+# ... more environment-specific values
+The radar pod mounts this ConfigMap via envFrom:
+envFrom:
+- configMapRef:
+name: environment-config
+This is how the test code gets values like environ.get("MONGODB_HOST") — they come from this ConfigMap. Without it, the pod has no idea what the MongoDB Atlas host address is.
+Q4 (Link to Q5): What is the difference between "tenant" and "namespace"? Is tenant a cluster concept or something else?
+Your Question: I am not getting your point about tenant and namespace. I know about namespaces, but what is a tenant? Does it come under the cluster or what? What does it mean when you say: "obaas = OBaaS = a specific tenant application. obaas-1 and obaas-2 are tenant namespaces for different tenants of the same environment."
+Answer:
+Namespace is a Kubernetes concept — it's a logical partition within a cluster for isolating resources.
+Tenant is a BUSINESS/APPLICATION concept — it's a customer or isolated workload that runs within the SBCP platform.
+In SBCP, each tenant gets its own Kubernetes namespace. So:
+Tenant = a logical customer/application unit
+Namespace = the Kubernetes implementation of tenant isolation
+Example:
+Imagine a SaaS platform that serves multiple customers:
+Customer "Company A" → gets tenant obaas-1 → maps to namespace obaas-1
+Customer "Company B" → gets tenant obaas-2 → maps to namespace obaas-2
+Each tenant/namespace gets:
+Its own pods, services, secrets
+Its own Istio sidecar and egress rules
+Its own RBAC and NetworkPolicies
+Isolation from other tenants
+The relationship:
+SBCP Platform (one EKS cluster)
+├── Tenant "obaas-1" → Kubernetes namespace "obaas-1"
+│   ├── Business applications (microservices)
+│   ├── Tenant-specific config
+│   └── Istio mesh policies for this tenant
+├── Tenant "obaas-2" → Kubernetes namespace "obaas-2"
+│   ├── Different business applications
+│   └── Different config
+└── Admin namespaces (NOT tenants)
+├── kube-management (operators live here)
+├── istio-system (Istio control plane)
+└── monitoring (observability)
+Mono-tenant vs Multi-tenant:
+Mono-tenant: The cluster serves only one customer. There's one tenant namespace (e.g., obaas-1), and its name equals the environment name.
+Multi-tenant: The cluster serves multiple customers. There are multiple tenant namespaces (obaas-1, obaas-2, etc.).
+The radar namespace is NOT a tenant — it's a utility namespace created specifically for testing. It doesn't serve any real business application.
+Q5 (Link to Q5): How do I change the namespace if I want to run radar in another namespace? What do I need to update?
+Your Question: How to change the namespace if I want to run radar in another namespace? What exactly do I need to update for this testing configuration?
+Answer:
+You need to change ONE variable: TENANT_NAMESPACE.
+Where to change it depends on how the pipeline is triggered:
+Option 1: In the radar-testing GitLab project's CI/CD variables:
+This is configured via env-config. In the inventory file:
+inventory:
+localhost:
+vars:
+radar_testing:
+variables:
+TENANT_NAMESPACE: "radar"   # ← change this to "obaas-2" or any other namespace
+Then deploy with:
+ansible-playbook -i sbs_inventory.py playbooks/main.yml \
+--tags prepare_and_push_remote_files \
+-e '{"gitlab_projects": ["operations/radar-testing"]}'
+Option 2: Manually when triggering the pipeline:
+In GitLab, when you manually run the radar-testing pipeline, you can override TENANT_NAMESPACE as a pipeline variable.
+What this single variable controls:
+Where the setup stage applies CRs: kubectl apply -f ... -n $TENANT_NAMESPACE
+Where the Helm chart is installed: helm install sbcp-radar --namespace=$TENANT_NAMESPACE
+Where the radar Job pod runs: in $TENANT_NAMESPACE
+Where the pod reads Secrets from: k8s_client.get_secret("mongo-ro-cred-dev", tenant_namespace)
+Where cleanup removes resources: kubectl delete ... -n $TENANT_NAMESPACE
+BUT the namespace must already exist and be properly configured. You cannot just pass any random name. The namespace must have:
+environment-config ConfigMap (created by sbcp-env-setup)
+A ServiceAccount with appropriate RBAC
+Network access (Istio egress rules if needed)
+ECR pull credentials (to download the radar image)
+You cannot create a brand new namespace and expect radar to work there without first provisioning it through the standard environment pipeline.
+Q6 (Link to Q5): Where are the rules and restrictions defined for obaas-1? How do they apply to the radar pod?
+Your Question: Tell me where the rules and restrictions are defined for obaas-1. You mentioned that the same policy for the application applies to the radar pods. How is it connected with the radar pod?
+Answer:
+The restrictions come from multiple Kubernetes resources that are already deployed in the obaas-1 namespace:
+1. Istio Sidecar Injection (namespace label):
+apiVersion: v1
+kind: Namespace
+metadata:
+name: obaas-1
+labels:
+istio-injection: enabled    # ← THIS causes every pod in obaas-1 to get an Istio sidecar
+When the radar Job pod is created in obaas-1, Istio's admission webhook sees istio-injection: enabled on the namespace and automatically injects the sidecar container into the pod. This is NOT specific to the radar pod — it happens to EVERY pod in that namespace.
+1. Istio ServiceEntry (defines allowed egress):
+
+# These resources are in the namespace (or cluster-wide)
+
+# They define which external hosts pods in this namespace can reach
+apiVersion: [networking.istio.io/v1](http://networking.istio.io/v1)
+kind: ServiceEntry
+metadata:
+name: some-allowed-service
+namespace: obaas-1
+spec:
+hosts:
+- "[some-api.company.com](http://some-api.company.com/)"   # allowed
+# NOTE: *.mongodb.net is NOT listed here
+3. NetworkPolicy (Kubernetes-level network rules):
+apiVersion: [networking.k8s.io/v1](http://networking.k8s.io/v1)
+kind: NetworkPolicy
+metadata:
+name: default-deny-egress
+namespace: obaas-1
+spec:
+podSelector: {}    # applies to ALL pods in the namespace
+policyTypes:
+- Egress
+egress:
+- to:
+- # only allowed destinations
+How they affect the radar pod:
+The radar pod is just another pod in obaas-1. Kubernetes and Istio don't know or care that it's a "test pod." They apply the SAME rules as for any application pod:
+Pod is created → Istio injects sidecar (because namespace label)
+Pod tries to connect to *.mongodb.net → sidecar intercepts
+Sidecar checks ServiceEntry list → *.mongodb.net not found → BLOCKS connection
+Radar test times out → test fails
+Where these are defined/deployed:
+These resources are created by sbcp-env-setup during environment provisioning. The specific components that manage them:
+Istio configuration: sbcp-env-setup/components/istio/
+Namespace configuration: sbcp-env-setup/components/namespace/
+Network policies: defined in the tenant configuration
+To check them on your cluster:
+kubectl get namespace obaas-1 -o yaml | grep istio-injection
+kubectl get serviceentry -n obaas-1
+kubectl get networkpolicy -n obaas-1
+Q7 (Link to Q6): How does radar setup deploy CRs, and does radar destroy them after testing? Where is setup defined?
+Your Question: Tell me how the radar setup deploys CRs and other stuff to replicate user action, then tests, and after the test does radar destroy those CRs? Where exactly is the setup defined so I can see it?
+Answer:
+How setup deploys CRs:
+The setup is defined in these files:
+File	Path	Purpose
+Setup test function	
+test_mongo_operator.py
+The entry point
+Task implementation	
+k8s_task.py
+Executes kubectl apply
+Task decorator	
+**init**.py
+Wraps the test function
+Configuration	
+input.yml
+Maps task name → file path
+CR definitions	
+mongo_operator.yaml
+The actual YAML to apply
+The flow:
+pytest runs setups/mongo_operator/test_mongo_operator.py
+→ @task decorator creates K8sApplyTask(name='mongo_operator')
+→ K8sApplyTask.run_task():
+1. Looks up 'mongo_operator' in input.yml → gets "resources/mongo_operator.yaml"
+2. Reads the file
+3. Calls transformer() → replaces {TENANT_NAMESPACE} with actual value
+4. Writes transformed YAML to "resources/mongo_operator.yaml-gen"
+5. Runs: kubectl apply -f resources/mongo_operator.yaml-gen
+6. Runs: kubectl label -f resources/mongo_operator.yaml-gen [app.sbs.io/part-of=radar-{branch}](http://app.sbs.io/part-of=radar-%7Bbranch%7D)
+Does radar destroy CRs after testing? YES.
+The cleanup is defined in:
+Pipeline stage:
+main.yml
+→ cleanup job (in .post stage)
+Cleanup script:
+[cleanup.sh](http://cleanup.sh/)
+The cleanup script specifically deletes mongo CRs:
+
+# Cleanup mongo operator test resources
+kubectl delete [mongoatlas.db.sbcp.io](http://mongoatlas.db.sbcp.io/),[mongoatlastenantusers.db.sbcp.io](http://mongoatlastenantusers.db.sbcp.io/),[mongoatlasusers.db.sbcp.io](http://mongoatlasusers.db.sbcp.io/),[mongoatlasreadonlyusers.db.sbcp.io](http://mongoatlasreadonlyusers.db.sbcp.io/) \
+test-from-radar -n "$TENANT_NAMESPACE" --ignore-not-found
+It also does:
+helm uninstall --wait $branched_release_name -n $TENANT_NAMESPACE --ignore-not-found
+(This removes the radar Job pod itself)
+The cleanup behavior is controlled by AUTO_CLEANUP variable:
+AUTO_CLEANUP: "true" (default) → cleanup runs automatically after tests finish
+AUTO_CLEANUP: "false" → cleanup is a manual job (useful for debugging)
+Complete lifecycle:
+Setup:    kubectl apply CRs (creates test-from-radar resources)
+Test:     Internal tests verify operator's response to those CRs
+Cleanup:  kubectl delete CRs + helm uninstall (removes everything)
+Q8 (Link to Q7): I don't understand the namespace explanation for operator reconciliation. Does the operator watch namespaces or CRs?
+Your Question: I'm not getting this explanation. Why is the namespace relevant here? Does the mongo operator watch all namespaces? Does reconcile watch the namespace or the CR? Explain again in detail.
+Answer:
+Let me separate two different concepts that are being confused:
+WATCHING = detecting that a CR exists (discovery mechanism) RECONCILING = doing something with that CR (action mechanism)
+Step 1 — Watching (detection):
+The operator WATCHES for CRs. Specifically:
+c.Watch(source.Kind(mgr.GetCache(), &dbv1.MongoAtlas{}, ...))
+This says: "Monitor all MongoAtlas CRs across ALL namespaces in the cluster."
+When any MongoAtlas CR is created/updated/deleted ANYWHERE in the cluster, the operator gets notified. The namespace doesn't matter for detection — the operator sees CRs in obaas-1, obaas-2, radar, any namespace.
+Step 2 — Reconciling (action):
+When the operator is triggered, it receives a Request that contains:
+request.Namespace = "obaas-1"    // where the CR lives
+[request.Name](http://request.name/) = "test-from-radar"  // what the CR is called
+Now the operator USES that namespace to:
+Name the database: obaas-1_test-from-radar (includes namespace)
+Create the Secret IN that namespace (so apps there can read it)
+Lock the namespace mutex (prevent concurrent operations in same namespace)
+List databases matching ^obaas-1_.* (namespace prefix pattern)
+Why namespace matters for reconciliation (NOT for watching):
+The namespace of the CR tells the operator:
+"This database belongs to namespace X"
+"Create the credentials Secret in namespace X"
+"The user should have access to databases matching namespace X prefix"
+If someone creates a MongoAtlas CR in namespace radar, the operator creates database radar_test-from-radar and Secret in radar. If someone creates the same CR in obaas-1, it creates obaas-1_test-from-radar and Secret in obaas-1.
+Simple analogy:
+Watching = a mail carrier picks up ALL mail from ALL houses (no filter)
+Reconciling = each letter has a destination address, and the carrier delivers to that specific address
+Q9 (Link to Q7): If the operator watches all namespaces and picks up CRs from anywhere, what does reconcile do then?
+Your Question: The mongo operator watches all namespaces and picks CRs regardless of namespace. Users can create CRs in any namespace and the operator picks them up. Then what is the use of reconcile? What does it do? Isn't watching the same as reconciling?
+Answer:
+No, watching and reconciling are completely different things:
+Watching = NOTIFICATION system
+"Hey operator, a new MongoAtlas CR was just created in namespace obaas-1"
+This just tells the operator that something happened
+It adds a work item to a queue
+Reconciling = BUSINESS LOGIC
+"Ok, I see the CR. Let me now CREATE the actual database in Atlas, CREATE the user, CREATE the Secret..."
+This is where ALL the real work happens
+Think of it like this:
+Imagine a restaurant:
+Watching = the waiter takes the order from ANY table (all tables are watched)
+Reconciling = the kitchen cooks the food, plates it, and the waiter delivers it to the CORRECT table
+Without watching: the operator wouldn't know CRs exist. Without reconciling: the operator would know CRs exist but do nothing about them.
+What reconcile DOES for MongoAtlas:
+func (r *ReconcileMongoAtlas) Reconcile(ctx context.Context, request reconcile.Request) {
+// 1. Get the CR from Kubernetes API
+instance := &dbv1.MongoAtlas{}
+r.client.Get(ctx, request.NamespacedName, instance)
+```text
+// 2. Check if this CR is new (never processed before)
+if status is empty {
+    // 3. Connect to MongoDB Atlas cluster
+    // 4. Check if database already exists
+    // 5. If not, CREATE THE DATABASE in Atlas
+    // 6. If CREDENTIAL_SCOPE=namespace, update the tenant user's access list
+    // 7. Update the CR status to "created"
+}
+
+// 8. Re-check after 120 seconds (continuous reconciliation)
+return RequeueAfter: 120 seconds
+```
+}
+Without reconcile, the CR is just a YAML document sitting in Kubernetes doing nothing. The reconcile function is what makes the operator actually DO things.
+Q10 (Link to Q7): What is a "tenant user" in the database context?
+Your Question: What is the tenant user in the DB? What do you mean by this?
+Answer:
+A "tenant user" is a MongoDB Atlas database user that belongs to an entire namespace (tenant), not to a single application.
+Two user models in the operator:
+Model	Scope	Atlas User Name	Access	Secret
+Application user	One app	{env}-{namespace}-{appname}	Only databases listed in CR	{appname}-mongodb
+Tenant user	Entire namespace	{env}-{namespace}	ALL databases in that namespace (^{namespace}_.*)	mongo-cred
+Example with CREDENTIAL_SCOPE=namespace:
+Namespace obaas-1 has 3 applications:
+App A → database obaas-1_app-a
+App B → database obaas-1_app-b
+App C → database obaas-1_app-c
+The tenant user clouddev-obaas-1 has readWrite access to ALL THREE databases. All apps share the same credential (stored in Secret mongo-cred).
+Example with CREDENTIAL_SCOPE=application:
+Each app gets its OWN Atlas user:
+User clouddev-obaas-1-app-a → access only to obaas-1_app-a
+User clouddev-obaas-1-app-b → access only to obaas-1_app-b
+User clouddev-obaas-1-app-c → access only to obaas-1_app-c
+Each gets a separate Secret with different credentials.
+The tenant user is created by the MongoAtlasTenantUser CR:
+apiVersion: [db.sbcp.io/v1](http://db.sbcp.io/v1)
+kind: MongoAtlasTenantUser
+metadata:
+name: obaas-1
+namespace: obaas-1
+spec:
+secretName: mongo-cred
+When a new MongoAtlas CR creates a database, and CREDENTIAL_SCOPE=namespace, the operator automatically updates the tenant user's access list to include the new database.
+Q11 (Link to Q7): Why must the radar pod and CRs be in the same namespace?
+Your Question: Why do you say the radar pod and CRs should be in the same namespace always: "The internal test pod needs to read these Secrets. If the CR was in a different namespace, the pod couldn't read the Secret."
+Answer:
+This is a fundamental Kubernetes security rule: Secrets are namespace-scoped.
+A pod in namespace A can ONLY read Secrets that are also in namespace A. It CANNOT read Secrets in namespace B.
+Here's why this matters:
+Radar setup applies MongoAtlasUser CR in namespace obaas-1
+Operator sees the CR, creates Atlas user, generates credentials
+Operator creates Secret test-from-radar-mongodb in namespace obaas-1 (same namespace as the CR)
+Radar test pod runs in namespace obaas-1
+Test code: k8s_client.get_secret("test-from-radar-mongodb", "obaas-1") → ✓ works
+If they were in different namespaces:
+Radar setup applies CR in namespace obaas-1
+Operator creates Secret in obaas-1
+Radar pod runs in namespace radar
+Test code: k8s_client.get_secret("test-from-radar-mongodb", "obaas-1") → ✗ FORBIDDEN
+The pod's ServiceAccount only has permissions to read Secrets in its own namespace (due to RBAC Role, not ClusterRole). This is by design — you don't want pods in one namespace reading another namespace's secrets.
+That's why TENANT_NAMESPACE controls BOTH:
+Where CRs are applied (→ where Secrets get created)
+Where the radar pod runs (→ where it can read Secrets)
+They MUST be the same namespace.
+Q12 (Link to Q7): What is the namespace mutex? And explain the Q7 summary again.
+Your Question: What is the namespace mutex? And I'm not getting your summary of Q7.
+Answer:
+Namespace mutex:
+A mutex (mutual exclusion lock) is a programming concept that prevents two operations from happening at the same time.
+The namespace mutex in the mongo-operator prevents concurrent reconciliations from corrupting each other within the same namespace.
+Problem it solves:
+Imagine two MongoAtlasUser CRs are created simultaneously in namespace obaas-1:
+CR-1: "create user for app-a with databases [obaas-1_app-a]"
+CR-2: "create user for app-b with databases [obaas-1_app-b]"
+Both reconcile functions run at the same time. Both try to update the tenant user's database list. Without a mutex:
+Thread 1 reads: tenant user has databases [obaas-1_existing]
+Thread 2 reads: tenant user has databases [obaas-1_existing]
+Thread 1 updates to: [obaas-1_existing, obaas-1_app-a]
+Thread 2 updates to: [obaas-1_existing, obaas-1_app-b] ← OVERWRITES Thread 1's change!
+With namespace mutex:
+Thread 1 acquires lock for "obaas-1", proceeds
+Thread 2 tries to acquire lock for "obaas-1", WAITS
+Thread 1 finishes, releases lock
+Thread 2 acquires lock, reads UPDATED list, proceeds correctly
+The code:
+releaseNamespaceMutex := utils.AcquireNamespaceMutex(reqLogger, cr.Namespace)
+defer releaseNamespaceMutex()
+// ... all operations here are protected from concurrent access within same namespace
+Two CRs in DIFFERENT namespaces can reconcile in parallel (different mutex per namespace). Only operations within the SAME namespace are serialized.
+Q7 Summary (simplified):
+The namespace is relevant to reconciliation because:
+Database name = {namespace}_{app} → namespace is part of the name
+Secret is created IN the CR's namespace → apps in that namespace can read it
+Mutex = one lock per namespace → prevents concurrent corruption
+Tenant user = named after the namespace → controls which databases are accessible
+Q13 (Link to Q8): In which files are the environment variable sources defined? Share the file paths.
+Your Question: I want to know in which file these sources are defined so I can check manually. Share the path for each file. Where exactly are these sources defined?
+Answer:
+Source 1: environment-config ConfigMap
+Who creates it: sbcp-env-setup during environment provisioning
+Where the template is: sbcp-env-setup/sbcp_env_setup/components/namespace/ (the namespace component creates this ConfigMap in every tenant namespace)
+How to check it on the cluster:
+kubectl get configmap environment-config -n obaas-1 -o yaml
+Source 2: mongo-config ConfigMap
+Who creates it: Also created by sbcp-env-setup when the mongo_atlas_operator component is deployed
+How to check:
+kubectl get configmap mongo-config -n obaas-1 -o yaml
+Source 3: mongo-cred Secret
+Who creates it: The mongo-operator itself, when a MongoAtlasTenantUser CR is reconciled
+How to check:
+kubectl get secret mongo-cred -n obaas-1 -o yaml
+Source 4: cicd-vars-sbcp-radar ConfigMap
+Who creates it: The sbcp-radar Helm chart at install time
+Where defined: sbcp-radar/sbcp-radar/templates/ (there's a template that creates this ConfigMap from CI/CD variables passed to the pipeline)
+The values come from: The
+main.yml
+script that runs python retrieve_cicd_vars.py to fetch GitLab CI/CD variables and write them to values_cicd.yaml
+Source 5: TENANT_NAMESPACE env var
+Where defined: Directly in the Job template:
+sbcp-radar/sbcp-radar/templates/job.yaml
+Line: value: {{ $.Release.Namespace }}
+The Job template that ties them all together:
+File: \\wsl.localhost\Ubuntu-24.04\home\saifi\sbs\project\env_config_tool\sbcp-radar\sbcp-radar\templates\job.yaml
+Q14 (Link to Q9): Are all the SA, Secrets, ConfigMaps created at the time of cluster setup, or is there a specific job to deploy them? If yes, where is it defined?
+Your Question: All the SA, Secrets, ConfigMaps — are they created at the time of cluster setup, or is there a specific job to deploy this? If yes, then where is it defined?
+Answer:
+They are created at different times by different components, not all at once:
+1. ServiceAccount for radar:
+Created by the sbcp-radar Helm chart AT THE TIME the radar pipeline installs it:
+File: sbcp-radar/sbcp-radar/templates/job.yaml
+The chart has a ServiceAccount template. When helm install sbcp-radar runs, it creates the SA in TENANT_NAMESPACE.
+1. environment-config ConfigMap:
+Created during environment provisioning by sbcp-env-setup. Specifically, when the "namespace" component runs as part of the env-pipeline:
+sbcp-env-setup/sbcp_env_setup/components/namespace/
+This runs once when the environment is first created or when components are updated. It creates environment-config in every tenant namespace.
+1. mongo-config ConfigMap:
+Created by sbcp-env-setup when the mongo_atlas_operator component is deployed:
+sbcp-env-setup/sbcp_env_setup/components/mongo_atlas_operator/
+4. mongoatlas-operator Secret (Atlas credentials for the operator):
+Created by the mongoatlas-operator Helm chart when it's installed in kube-management:
+File: mongoatlas-operator/mongoatlas-operator/templates/mongoatlas-operator.yaml
+The chart has a Secret template that stores Atlas API keys (publicKey, privateKey, connectionString, etc.).
+1. mongo-cred Secret (shared tenant credentials):
+Created by the mongo-operator itself at runtime when a MongoAtlasTenantUser CR is reconciled. This is NOT created during setup — it's created dynamically by the operator when it creates a tenant-level database user in Atlas.
+1. cicd-vars-sbcp-radar ConfigMap:
+Created by the sbcp-radar Helm chart during helm install. The values come from the radar pipeline:
+
+# radar-pipeline/main.yml - initialize stage
+python radar-pipeline/radar_pipeline/retrieve_cicd_vars.py $ENV_GROUP $INCLUDE_CICD_VARS
+This script fetches CI/CD variables from GitLab (like MONGODB_ATLAS_PUBLIC_KEY) and writes them to a values file, which the Helm chart uses to create the ConfigMap.
+Summary table:
+Resource	Created By	When
+ServiceAccount (radar)	sbcp-radar Helm chart	When radar pipeline runs
+environment-config	sbcp-env-setup namespace component	During env provisioning
+mongo-config	sbcp-env-setup mongo_atlas_operator component	During env provisioning
+mongoatlas-operator Secret	mongoatlas-operator Helm chart	During env provisioning
+mongo-cred Secret	mongo-operator (runtime)	When MongoAtlasTenantUser CR is reconciled
+cicd-vars ConfigMap	sbcp-radar Helm chart	When radar pipeline runs
+Q15 (Link to Q11): If the sbcp-radar chart has both templates (with and without Istio), why does radar fail in obaas-1?
+Your Question: If the sbcp-radar chart has both templates (job.yaml with Istio sidecar and job-without-istio.yaml without sidecar), then why do radar test cases fail in obaas-1?
+Answer:
+Both templates are deployed, but they run DIFFERENT tests with DIFFERENT markers:
+job.yaml (WITH Istio sidecar):
+
+# Runs tests marked @internal
+testTarget="{{ if ne $.Release.Namespace $key }}internalns_{{ $key }}{{ else }}internal{{ end }}"
+pytest -m "$testTarget" tests
+This runs the MAIN internal tests including test_mongo_connection, test_ro_mongo_connection, etc. These tests need to connect to Atlas.
+job-without-istio.yaml (WITHOUT Istio sidecar):
+
+# Has annotation: [sidecar.istio.io/inject:](http://sidecar.istio.io/inject:) "false"
+
+# Runs ONLY tests marked @runWithoutIstio
+pytest -m "runWithoutIstio" tests
+This runs a SEPARATE, SMALL set of tests that specifically need to bypass Istio (e.g., tests that validate DNS resolution without mesh interference).
+The problem:
+The mongo tests (test_mongo_connection, test_ro_mongo_connection, test_rw_mongo_connection) are marked @internal, NOT @runWithoutIstio. So they run in the job.yaml pod which HAS the Istio sidecar.
+Look at the mongo test:
+@internal                        # ← runs in job.yaml (WITH sidecar)
+@name("Mongo Connection")
+def test_mongo_connection(self):
+conn = pymongo.MongoClient(connection_string)  # ← this outbound connection is intercepted by sidecar
+The job.yaml template does have [eks.amazonaws.com/skip-containers:](http://eks.amazonaws.com/skip-containers:) istio-proxy but that only affects AWS IAM role assumption, NOT network traffic. The sidecar still intercepts all TCP traffic.
+Why doesn't someone just move mongo tests to @runWithoutIstio?
+Because the purpose of the internal test is to verify that the connection works in the same conditions as a real application. Real applications in obaas-1 also have Istio sidecars. If the test bypasses Istio, it wouldn't catch Istio-related networking issues that real apps would face.
+The correct fix is to ensure the namespace has proper Istio egress rules for Atlas, not to bypass Istio.
+Q16 (Link to Q12): What is the difference between tenant namespace and normal namespace? How to check Istio sidecar injection and ServiceEntry?
+Your Question: What is the difference between tenant namespace and normal namespace? How to check if Istio sidecar is configured to inject in all pods in clouddev or escln157? How to check if ServiceEntry for Atlas is configured for obaas-1 or radar?
+Answer:
+Tenant namespace vs normal namespace:
+Aspect	Tenant Namespace (obaas-1)	Admin Namespace (kube-management)	Test Namespace (radar)
+Purpose	Run business applications	Run platform operators	Run tests
+Istio injection	Enabled (all pods get sidecar)	Usually disabled	May be disabled
+Network policies	Strict (production-grade)	Relaxed (admin access)	Relaxed (testing)
+Who uses it	Customer applications	Platform team	QA automation
+ServiceEntries	Only for what apps need	For operator needs	For testing needs
+How to check Istio sidecar injection:
+
+# Check if namespace has Istio injection enabled
+kubectl get namespace obaas-1 -o jsonpath='{.metadata.labels.istio-injection}'
+
+# Returns: "enabled" or nothing
+kubectl get namespace radar -o jsonpath='{.metadata.labels.istio-injection}'
+
+# Returns: "enabled" or nothing (if nothing, no auto-injection)
+
+# Check if a specific pod actually has the sidecar
+kubectl get pod -n obaas-1 -l name=mongoatlas-operator -o jsonpath='{.items[0].spec.containers[*].name}'
+
+# If you see "istio-proxy" in the list, sidecar is injected
+How to check ServiceEntry for Atlas:
+
+# List all ServiceEntries in a namespace
+kubectl get serviceentry -n obaas-1
+kubectl get serviceentry -n radar
+
+# Check if any ServiceEntry allows [mongodb.net](http://mongodb.net/)
+kubectl get serviceentry -n obaas-1 -o yaml | grep -i "mongodb\|mongo"
+
+# Check cluster-wide ServiceEntries (in istio-system)
+kubectl get serviceentry -n istio-system -o yaml | grep -i "mongodb"
+
+# Detailed view of a specific ServiceEntry
+kubectl get serviceentry <name> -n <namespace> -o yaml
+Am I sure about the root cause?
+Based on the architecture I've read, yes — the most likely root cause is missing ServiceEntry. However, there could be other causes:
+The radar namespace might have istio-injection: disabled entirely
+There might be a Sidecar resource that limits outbound traffic
+There might be a NetworkPolicy blocking egress
+To confirm, run:
+
+# On clouddev cluster
+kubectl get namespace obaas-1 -o yaml
+kubectl get serviceentry -n obaas-1
+kubectl get sidecar -n obaas-1
+kubectl get networkpolicy -n obaas-1
+
+# On escln157 cluster
+kubectl get namespace radar -o yaml
+kubectl get serviceentry -n radar
+kubectl get sidecar -n radar
+kubectl get networkpolicy -n radar
+Compare the outputs to find what's different.
+Q17: How to check if the radar pod is allowed to access Atlas in the radar namespace or obaas-1?
+Your Question: How to check if the radar pod is allowed to access Atlas in the radar namespace or obaas-1 namespace?
+Answer:
+Method 1: Check Istio configuration (preventive check):
+
+# Check if sidecar injection is enabled
+kubectl get ns obaas-1 --show-labels | grep istio
+
+# Check ServiceEntries that allow MongoDB Atlas
+kubectl get serviceentry -n obaas-1 -o yaml | grep -A5 "mongodb\|mongo"
+
+# Check Sidecar resource (limits which services pods can see)
+kubectl get sidecar -n obaas-1 -o yaml
+
+# Check if there's an EgressGateway rule for Atlas
+kubectl get gateway -n obaas-1 -o yaml | grep -i mongo
+kubectl get virtualservice -n obaas-1 -o yaml | grep -i mongo
+Method 2: Direct connectivity test (runtime check):
+Run a test pod in the namespace and try connecting:
+
+# Deploy a test pod in obaas-1
+kubectl run test-atlas-connectivity -n obaas-1 --rm -it \
+--image=busybox \
+--restart=Never \
+-- sh -c "wget -O- --timeout=5 [https://cloud.mongodb.com/api/atlas/v1.0](https://cloud.mongodb.com/api/atlas/v1.0) 2>&1; echo exit_code=$?"
+
+# If it returns data: connectivity works
+
+# If it times out: Istio is blocking
+Or with a pod that HAS the sidecar:
+
+# Check if a pod can resolve and reach [mongodb.net](http://mongodb.net/)
+kubectl run test-mongo -n obaas-1 --rm -it \
+--image=python:3.10-slim \
+--restart=Never \
+-- python -c "
+import socket
+try:
+result = socket.getaddrinfo('[dxp-cloud-db-mongodb.uy2uv.mongodb.net](http://dxp-cloud-db-mongodb.uy2uv.mongodb.net/)', 27017)
+print('DNS resolved:', result[0][4])
+s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+s.settimeout(5)
+s.connect(result[0][4])
+print('TCP connection: SUCCESS')
+s.close()
+except Exception as e:
+print('FAILED:', e)
+"
+Method 3: Check from a running radar pod:
+If a radar Job is currently running (or recently ran):
+
+# Get the radar pod name
+kubectl get pods -n obaas-1 | grep radar
+
+# Check the Istio proxy logs for denied connections
+kubectl logs <radar-pod-name> -n obaas-1 -c istio-proxy | grep -i "mongodb\|denied\|blackhole"
+If you see BlackHoleCluster or PassthroughCluster with connection failures to [mongodb.net](http://mongodb.net/), Istio is blocking it.
+Method 4: Compare both environments:
+
+# On clouddev (obaas-1)
+kubectl get serviceentry -n obaas-1 --no-headers | wc -l
+kubectl get serviceentry -n obaas-1 -o jsonpath='{.items[*].spec.hosts[*]}' | tr ' ' '\n' | sort
+
+# On escln157 (radar)
+kubectl get serviceentry -n radar --no-headers | wc -l
+kubectl get serviceentry -n radar -o jsonpath='{.items[*].spec.hosts[*]}' | tr ' ' '\n' | sort
+Compare the lists — if *.mongodb.net or similar is in radar but not in obaas-1, that's your answer.
+Q18: Where exactly is the setup job defined with details to deploy CRs and other resources?
+Your Question: Can you please tell me where the setup job is defined with the details to deploy CRs and other stuff?
+Answer:
+Here's the complete map of every file involved in the setup job:
+1. Pipeline definition (where the CI job is defined):
+Path: radar-pipeline/main.yml
+Section: "setup:" job (around line 203-225)
+setup:
+stage: setup
+script:
+- pytest -m "$setup_final_target" setups --suppress-no-test-exit-code
+2. Setup test entry point for mongo (the "test" that triggers the apply):
+Path: radar/setups/mongo_operator/test_mongo_operator.py
+@internal
+@skipInProduction
+@skipIfMongoDbAtlasDisabled
+@task(K8sApplyTask, name='mongo_operator', transformer=transformer)
+def test_mongo_operator():
+pass
+3. Task decorator (wraps the test function to run K8sApplyTask first):
+Path: radar/radar/lib/tasks/**init**.py
+4. K8sApplyTask (the actual kubectl apply logic):
+Path: radar/radar/lib/tasks/k8s_task.py
+class K8sApplyTask(AbstractTask):
+def run_task(self):
+k8s_config = RunContext.k8s_apply_config([self.name](http://self.name/))  # looks up file path
+file_path = utils.fix_path(k8s_config.get('filePath'))
+# reads file, transforms, writes -gen file
+sh.kubectl.apply("-f", f'{file_path}-gen')
+sh.kubectl.label("-f", f'{file_path}-gen', f"[app.sbs.io/part-of=radar-{branch_name}](http://app.sbs.io/part-of=radar-%7Bbranch_name%7D)")
+5. Configuration mapping (maps task name to file):
+Path: radar/configuration/input.yml
+Section: kubernetesApply
+kubernetesApply:
+- name: mongo_operator
+filePath: "resources/mongo_operator.yaml"
+1. The actual CRs that get applied:
+
+## Path: radar/resources/mongo_operator.yaml
+apiVersion: [db.sbcp.io/v1](http://db.sbcp.io/v1)
+kind: MongoAtlasReadOnlyUser
+metadata:
+name: test-from-radar
+namespace: {TENANT_NAMESPACE}
+spec:
+name: test-from-radar
+
+## apiVersion: [db.sbcp.io/v1](http://db.sbcp.io/v1)
+kind: MongoAtlas
+metadata:
+name: test-from-radar
+namespace: {TENANT_NAMESPACE}
+spec:
+database: {TENANT_NAMESPACE}_test-from-radar
+apiVersion: [db.sbcp.io/v1](http://db.sbcp.io/v1)
+kind: MongoAtlasUser
+metadata:
+name: test-from-radar
+namespace: {TENANT_NAMESPACE}
+spec:
+roles:
+- databaseName: {TENANT_NAMESPACE}_test-from-radar
+secretName: test-from-radar-mongodb
+7. RunContext (resolves config lookups):
+Path: radar/radar/config/run_context.py
+8. Cleanup (destroys CRs after testing):
+Path: radar/scripts/cleanup.sh
+Pipeline: radar-pipeline/main.yml → "cleanup:" job (.post stage)
+The complete execution flow visualized:
+radar-pipeline/main.yml (CI job "setup")
+│
+├── pytest -m "internal or external and not infra" setups/
+│
+└── collects: setups/mongo_operator/test_mongo_operator.py
+│
+├── @task(K8sApplyTask, name='mongo_operator', transformer=transformer)
+│       │
+│       ├── K8sApplyTask.**init**(name='mongo_operator')
+│       │
+│       └── K8sApplyTask.run_task()
+│               │
+│               ├── RunContext.k8s_apply_config('mongo_operator')
+│               │       │
+│               │       └── Reads configuration/input.yml
+│               │           → returns {filePath: "resources/mongo_operator.yaml"}
+│               │
+│               ├── Reads resources/mongo_operator.yaml
+│               │
+│               ├── transformer() → replaces {TENANT_NAMESPACE} with env value
+│               │
+│               ├── Writes resources/mongo_operator.yaml-gen
+│               │
+│               ├── kubectl apply -f resources/mongo_operator.yaml-gen
+│               │   (Creates 3 CRs in TENANT_NAMESPACE)
+│               │
+│               └── kubectl label -f ... [app.sbs.io/part-of=radar-{branch}](http://app.sbs.io/part-of=radar-%7Bbranch%7D)
+│                   (Labels for cleanup)
+│
+└── test_mongo_operator() → pass (nothing else to do)
+
