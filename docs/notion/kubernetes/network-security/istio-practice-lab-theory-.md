@@ -1,89 +1,61 @@
 # Istio { Practice Lab - theory }
 
-```markdown
-##Istio, Service Mesh, Sidecar & Ambient Mode (Q&A)
-
----
-
-## ❓ Q1: Just one thing — is Istio the open-source version of mesh?
-
+Istio, Service Mesh, Sidecar & Ambient Mode (Q&A)
+❓ Q1: Just one thing — is Istio the open-source version of mesh?
 Almost. The wording just needs a small correction.
-
-❌ **Incorrect:**
-
+❌ Incorrect:
 > Istio is the open-source version of mesh.
-
 This is not accurate because **"service mesh" is not a product**—it's an architectural concept.
-
 The correct way to say it is:
-
-> **Istio is an open-source implementation of a service mesh.**
-
+> Istio is an open-source implementation of a service mesh.
 Or:
-
-> **Istio is an open-source service mesh platform.**
+> Istio is an open-source service mesh platform.
 
 ---
 
 ## 💡 Think of it like this
-
-* **Service Mesh** = the idea or architecture
-* **Istio** = one open-source project that implements that idea
-
+- **Service Mesh** = the idea or architecture
+- **Istio** = one open-source project that implements that idea
 Just like:
-
-* **Database** → concept
-  * MySQL
-  * PostgreSQL
-  * MongoDB
-
+- **Database** → concept
+  - MySQL
+  - PostgreSQL
+  - MongoDB
 or
-
-* **Container Orchestration** → concept
-  * Kubernetes
-  * Docker Swarm
-
+- **Container Orchestration** → concept
+  - Kubernetes
+  - Docker Swarm
 Similarly:
-
-* **Service Mesh** → concept
-  * Istio
-  * Linkerd
-  * Consul
-  * Kuma
-
+- **Service Mesh** → concept
+  - Istio
+  - Linkerd
+  - Consul
+  - Kuma
 All of these are different implementations of the same architectural pattern.
 
 ---
 
 ## 🧠 One-line interview answer
-
 > **A service mesh is an architecture for managing communication between microservices. Istio is one of the most popular open-source implementations of a service mesh.**
-
 That's the precise and commonly accepted way to describe the relationship.
 
 ---
 
-# ----------------------------
+# ---------------------------
 
 ## ❓ Do you know the concept of sidecar and ambient mode in Istio?
-
 Yes. These are actually the **two deployment models** of Istio:
-
 1. **Sidecar Mode (traditional Istio)**
-2. **Ambient Mode (newer Istio architecture)**
-
+1. **Ambient Mode (newer Istio architecture)**
 Understanding the difference is very important for interviews because many companies are moving toward Ambient Mode.
 
 ---
 
 # 1. 🧩 Sidecar Mode (Traditional Istio)
-
 This is the model Istio originally used.
-
 Whenever you deploy an application Pod, Istio injects an **Envoy sidecar proxy** into the same Pod.
 
 ### Example:
-
 ```text
 +--------------------------------+
 | Pod                            |
@@ -549,3 +521,8 @@ Ambient solves this.
 
 # 🧾 Interview answer
 > **Sidecar Mode is the traditional Istio architecture where each Pod has its own Envoy proxy, providing full features and strong isolation but higher resource cost. Ambient Mode is a newer architecture that removes per-Pod sidecars and uses shared node-level ztunnels with optional waypoint proxies. Sidecar is still widely used due to maturity, stability, and stronger isolation, while Ambient is adopted for scalability and cost efficiency.**
+
+
+
+## How to setup the istio on minikube
+
