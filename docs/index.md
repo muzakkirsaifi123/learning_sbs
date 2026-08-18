@@ -52,6 +52,10 @@
 
     Quick access to Net notes.
 
+-   📄 **[keycloak](notion/keycloak.md)**
+
+    Quick access to keycloak notes.
+
 </div>
 
 ---
