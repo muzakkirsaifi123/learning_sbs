@@ -136,6 +136,7 @@ nav:
       - Radar:
           - Radar: notion/radar.md
           - Radar-mongoatlas-flow: notion/radar/radar-mongoatlas-flow.md
+      - Helm.: notion/helm.md
       - Net: notion/net.md
       - keycloak: notion/keycloak.md
 

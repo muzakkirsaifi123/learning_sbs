@@ -48,6 +48,10 @@
 
     Quick access to Radar-mongoatlas-flow notes.
 
+-   📄 **[Helm.](notion/helm.md)**
+
+    Quick access to Helm. notes.
+
 -   📄 **[Net](notion/net.md)**
 
     Quick access to Net notes.
