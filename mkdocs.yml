@@ -129,6 +129,7 @@ nav:
               - Network - Security: notion/kubernetes/network-security.md
               - Istio and Mesh (Basic Q&A and confusion before start): notion/kubernetes/network-security/istio-and-mesh-basic-qa-and-confusion-before-start.md
               - Istio { Practice Lab - theory }: notion/kubernetes/network-security/istio-practice-lab-theory-.md
+          - Kubernetes Operator: notion/kubernetes/kubernetes-operator.md
       - Kafka:
           - Kafka: notion/kafka.md
           - Kafka: notion/kafka/kafka.md

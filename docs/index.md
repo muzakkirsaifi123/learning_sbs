@@ -28,6 +28,10 @@
 
     Quick access to Istio { Practice Lab - theory } notes.
 
+-   ☸️ **[Kubernetes Operator](notion/kubernetes/kubernetes-operator.md)**
+
+    Quick access to Kubernetes Operator notes.
+
 -   🟠 **[Kafka](notion/kafka.md)**
 
     Quick access to Kafka notes.
