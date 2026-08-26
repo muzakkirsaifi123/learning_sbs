@@ -131,7 +131,7 @@ nav:
               - Istio { Practice Lab - theory }: notion/kubernetes/network-security/istio-practice-lab-theory-.md
           - Kubernetes Operator:
               - Kubernetes Operator: notion/kubernetes/kubernetes-operator.md
-              - "myapp-operator` — Phased Learning Lab (Kubebuilder)": notion/kubernetes/kubernetes-operator/myapp-operator-phased-learning-lab-kubebuilder.md
+              - `myapp-operator` — Phased Learning Lab (Kubebuilder): notion/kubernetes/kubernetes-operator/myapp-operator-phased-learning-lab-kubebuilder.md
       - Kafka:
           - Kafka: notion/kafka.md
           - Kafka: notion/kafka/kafka.md
