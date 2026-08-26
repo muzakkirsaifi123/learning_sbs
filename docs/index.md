@@ -52,6 +52,14 @@
 
     Quick access to Helm. notes.
 
+-   📄 **[Helm Upgrade](notion/helm/helm-upgrade.md)**
+
+    Quick access to Helm Upgrade notes.
+
+-   📄 **[How to use the helm plugin:](notion/helm/how-to-use-the-helm-plugin.md)**
+
+    Quick access to How to use the helm plugin: notes.
+
 -   📄 **[Net](notion/net.md)**
 
     Quick access to Net notes.
