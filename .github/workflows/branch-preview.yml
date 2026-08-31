@@ -5,18 +5,17 @@ name: Branch Preview
 # No PR needed. Deleting the branch removes its preview automatically.
 # Merging/pushing to main is untouched by this file — that's deploy.yml.
 #
-# Deliberately identical to deploy.yml/notion_sync.yml in every way except
-# where the result gets published:
-#   - same quality check, same tests, same --strict build (branch-preview.yml)
-#   - same Notion sync, same validate-before-commit (notion_sync.yml, which
-#     now also triggers on push to any non-main branch, not just the cron
-#     on main)
-#   - same two-trigger shape as main: a direct push builds+deploys
-#     immediately (e.g. a pure pipeline-code change with nothing new to
-#     sync), and the sync workflow completing also builds+deploys (fresh
-#     Notion content), exactly like notion_sync.yml -> deploy.yml on main.
-# A branch preview that passes here is a true preview of what merging to
-# main would do, not a looser approximation of it.
+# Deliberately identical to deploy.yml's validation in every way except
+# where the result gets published: same quality check, same tests, same
+# --strict build. A branch preview that passes here is a true preview of
+# what merging to main would do, not a looser approximation of it.
+#
+# The workflow_run trigger below rebuilds the preview if a Notion sync
+# completes for this branch -- that only happens via a manual
+# workflow_dispatch against the branch (see notion_sync.yml), not
+# automatically on push. An earlier version auto-triggered a sync on every
+# branch push, but that was reverted as unconfirmed-working; this listener
+# is left in place since it's harmless and still useful for the manual path.
 
 on:
   push:
