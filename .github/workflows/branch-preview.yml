@@ -22,12 +22,14 @@ on:
   push:
     branches-ignore:
       - main
+      - gh-pages
   workflow_run:
     workflows: ["Sync Notion to MkDocs"]
     types:
       - completed
     branches-ignore:
       - main
+      - gh-pages
   delete:
 
 permissions:
