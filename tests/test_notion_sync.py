@@ -229,6 +229,26 @@ class SyncTestCase(unittest.TestCase):
         manifest = self.mod.load_manifest()
         self.assertNotIn("page-a-child", manifest["pages"])
 
+    def test_description_front_matter_derived_from_first_real_paragraph(self):
+        pages = {
+            "root": make_page("root", "Notes"),
+            "page-c": make_page("page-c", "Istio"),
+        }
+        children = {
+            "root": [child_page_block("page-c", "Istio")],
+            "page-c": [
+                para("tags: Networking"),
+                para("A service mesh routes traffic between pods using sidecar proxies."),
+                para("more detail here"),
+            ],
+        }
+        self.run_sync(pages, children)
+        istio = self.read("notion/istio.md")
+        self.assertIn(
+            'description: "A service mesh routes traffic between pods using sidecar proxies."',
+            istio,
+        )
+
     def test_unused_images_are_pruned_after_removal(self):
         pages, children = self.base_tree()
         self.run_sync(pages, children)

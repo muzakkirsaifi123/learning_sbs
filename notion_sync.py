@@ -318,6 +318,28 @@ def extract_tags(body_lines: list) -> tuple:
     return tags, filtered
 
 
+_DESC_LINK_RE = re.compile(r"\[([^\]]*)\]\([^)]*\)")
+_DESC_STRIP_RE = re.compile(r"[`*_>#\[\]!]")
+
+
+def derive_description(body: str, max_len: int = 155) -> str:
+    """First substantive plain-text line of the body, for the meta
+    description tag and social-card subtitle — Material already reads
+    page.meta.description, it just had nothing to read before this."""
+    for line in body.splitlines():
+        line = line.strip()
+        if not line or line.startswith(("!!!", "???", "```", "|", "-", "1.", ">", "$$")):
+            continue
+        text = _DESC_LINK_RE.sub(r"\1", line)
+        text = _DESC_STRIP_RE.sub("", text).strip()
+        if len(text) < 20:
+            continue
+        if len(text) > max_len:
+            text = text[: max_len - 1].rsplit(" ", 1)[0] + "…"
+        return text
+    return ""
+
+
 def walk_page(
     client: Client,
     page_id: str,
@@ -357,6 +379,7 @@ def walk_page(
             "rel_path": rel_path,
             "body": body,
             "tags": tags,
+            "description": derive_description(body),
             "last_edited_time": page.get("last_edited_time", ""),
             "created_time": page.get("created_time", ""),
             "notion_url": page.get("url", ""),
@@ -397,6 +420,8 @@ def write_page(rec: dict, related: list) -> None:
     if rec["tags"]:
         fm.append("tags:")
         fm.extend(f"  - {t}" for t in rec["tags"])
+    if rec.get("description"):
+        fm.append(f"description: {json.dumps(rec['description'])}")
     if rec["notion_url"]:
         fm.append(f"notion_url: {json.dumps(rec['notion_url'])}")
     if rec["created_time"]:
