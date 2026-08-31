@@ -32,9 +32,9 @@
 
     Quick access to Kubernetes Operator notes.
 
--   📄 **[`myapp-operator` — Phased Learning Lab (Kubebuilder)](notion/kubernetes/kubernetes-operator/myapp-operator-phased-learning-lab-kubebuilder.md)**
+-   📄 **[**Operator lab**](notion/kubernetes/kubernetes-operator/operator-lab.md)**
 
-    Quick access to `myapp-operator` — Phased Learning Lab (Kubebuilder) notes.
+    Quick access to **Operator lab** notes.
 
 -   🟠 **[Kafka](notion/kafka.md)**
 

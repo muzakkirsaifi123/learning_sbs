@@ -1,5 +1,6 @@
-# `myapp-operator` — Phased Learning Lab (Kubebuilder)
+# **Operator lab**
 
+`myapp-operator`—Phased Learning Lab (Kubebuilder)
 A tiny Kubernetes Operator that watches `MyApp` custom resources and
 creates/manages an nginx `Deployment` + `Service` for each one.
 Each phase below explains **what every command does**, **what file
