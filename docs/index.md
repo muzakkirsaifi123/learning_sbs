@@ -36,6 +36,22 @@
 
     Quick access to Operator lab notes.
 
+-   📄 **[Helm.](notion/kubernetes/helm.md)**
+
+    Quick access to Helm. notes.
+
+-   📄 **[Helm Upgrade](notion/kubernetes/helm/helm-upgrade.md)**
+
+    Quick access to Helm Upgrade notes.
+
+-   📄 **[How to use the helm plugin:](notion/kubernetes/helm/how-to-use-the-helm-plugin.md)**
+
+    Quick access to How to use the helm plugin: notes.
+
+-   📄 **[Mongo-atlas-operator](notion/kubernetes/mongo-atlas-operator.md)**
+
+    Quick access to Mongo-atlas-operator notes.
+
 -   🟠 **[Kafka](notion/kafka.md)**
 
     Quick access to Kafka notes.
@@ -44,10 +60,6 @@
 
     Quick access to Kafka notes.
 
--   📄 **[Mongo-atlas-operator](notion/mongo-atlas-operator.md)**
-
-    Quick access to Mongo-atlas-operator notes.
-
 -   📄 **[Radar](notion/radar.md)**
 
     Quick access to Radar notes.
@@ -55,18 +67,6 @@
 -   📄 **[Radar-mongoatlas-flow](notion/radar/radar-mongoatlas-flow.md)**
 
     Quick access to Radar-mongoatlas-flow notes.
-
--   📄 **[Helm.](notion/helm.md)**
-
-    Quick access to Helm. notes.
-
--   📄 **[Helm Upgrade](notion/helm/helm-upgrade.md)**
-
-    Quick access to Helm Upgrade notes.
-
--   📄 **[How to use the helm plugin:](notion/helm/how-to-use-the-helm-plugin.md)**
-
-    Quick access to How to use the helm plugin: notes.
 
 -   📄 **[Net](notion/net.md)**
 

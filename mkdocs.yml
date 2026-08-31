@@ -132,17 +132,17 @@ nav:
           - Kubernetes Operator:
               - Kubernetes Operator: notion/kubernetes/kubernetes-operator.md
               - Operator lab: notion/kubernetes/kubernetes-operator/operator-lab.md
+          - Helm.:
+              - Helm.: notion/kubernetes/helm.md
+              - Helm Upgrade: notion/kubernetes/helm/helm-upgrade.md
+              - How to use the helm plugin:: notion/kubernetes/helm/how-to-use-the-helm-plugin.md
+          - Mongo-atlas-operator: notion/kubernetes/mongo-atlas-operator.md
       - Kafka:
           - Kafka: notion/kafka.md
           - Kafka: notion/kafka/kafka.md
-      - Mongo-atlas-operator: notion/mongo-atlas-operator.md
       - Radar:
           - Radar: notion/radar.md
           - Radar-mongoatlas-flow: notion/radar/radar-mongoatlas-flow.md
-      - Helm.:
-          - Helm.: notion/helm.md
-          - Helm Upgrade: notion/helm/helm-upgrade.md
-          - How to use the helm plugin:: notion/helm/how-to-use-the-helm-plugin.md
       - Net: notion/net.md
       - keycloak: notion/keycloak.md
 
