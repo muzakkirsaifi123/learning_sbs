@@ -58,7 +58,10 @@ jobs:
       - name: Sanitize branch name for a URL-safe path
         id: branch
         run: |
-          safe=$(echo "${{ github.ref_name }}" | tr -c 'a-zA-Z0-9._-' '-')
+          # printf, not echo -- echo's own trailing newline isn't in the
+          # allowed charset either, so `tr` was converting it into a stray
+          # trailing dash on every preview folder name.
+          safe=$(printf '%s' "${{ github.ref_name }}" | tr -c 'a-zA-Z0-9._-' '-')
           echo "path=$safe" >> "$GITHUB_OUTPUT"
 
       - name: Deploy branch preview
@@ -104,7 +107,7 @@ jobs:
 
       - name: Remove preview for deleted branch
         run: |
-          safe=$(echo "${{ github.event.ref }}" | tr -c 'a-zA-Z0-9._-' '-')
+          safe=$(printf '%s' "${{ github.event.ref }}" | tr -c 'a-zA-Z0-9._-' '-')
           if [ -d "preview/$safe" ]; then
             git config user.name "github-actions[bot]"
             git config user.email "github-actions[bot]@users.noreply.github.com"
