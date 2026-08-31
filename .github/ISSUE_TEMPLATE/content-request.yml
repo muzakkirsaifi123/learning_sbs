@@ -1,0 +1,14 @@
+name: Content suggestion
+description: A topic, correction, or improvement for the notes themselves
+labels: ["content"]
+body:
+  - type: textarea
+    id: suggestion
+    attributes:
+      label: What should change or be added
+      description: >
+        Note: page content here is synced from Notion, not edited directly
+        in this repo — a content suggestion becomes a note the maintainer
+        adds to Notion, not a PR against docs/notion/.
+    validations:
+      required: true
