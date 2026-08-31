@@ -35,7 +35,7 @@ Minikube
 :   A single-node Kubernetes cluster that runs locally, used throughout these notes for hands-on exercises instead of a real cluster.
 
 Namespace scope (credential isolation)
-:   One shared set of Atlas/database credentials for every app in a Kubernetes namespace. Simple, but a leak or rotation affects every app at once. See [Mongo Atlas Operator](notion/mongo-atlas-operator.md).
+:   One shared set of Atlas/database credentials for every app in a Kubernetes namespace. Simple, but a leak or rotation affects every app at once. See [Mongo Atlas Operator](notion/kubernetes/mongo-atlas-operator.md).
 
 Application scope (credential isolation)
 :   One dedicated set of credentials per app, even within the same namespace. Each app can only reach its own database — more setup, less blast radius.
@@ -47,7 +47,7 @@ ISR
 :   **In-Sync Replicas** — the set of Kafka broker replicas for a partition that are fully caught up with the leader. A partition can only stay available if enough of its ISR set is alive.
 
 Helm chart
-:   A packaged, templated set of Kubernetes manifests. `helm create <name>` scaffolds one; `helm install <release> <chart>` deploys it. See [Helm](notion/helm.md).
+:   A packaged, templated set of Kubernetes manifests. `helm create <name>` scaffolds one; `helm install <release> <chart>` deploys it. See [Helm](notion/kubernetes/helm.md).
 
 Helm release
 :   A named, installed instance of a chart in a cluster — the thing `helm upgrade`/`helm get values` operate on.

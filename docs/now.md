@@ -6,7 +6,7 @@ What's actively being worked on, as of the last time this page was touched. Hand
 
 ## Currently learning
 
-- Helm — recently added notes on upgrades and the Helm plugin workflow (see [Helm Upgrade](notion/helm/helm-upgrade.md), [How to use the helm plugin](notion/helm/how-to-use-the-helm-plugin.md))
+- Helm — recently added notes on upgrades and the Helm plugin workflow (see [Helm Upgrade](notion/kubernetes/helm/helm-upgrade.md), [How to use the helm plugin](notion/kubernetes/helm/how-to-use-the-helm-plugin.md))
 - Kubernetes Operators — the Greeter walkthrough and its mongo-operator comparison ([Kubernetes Operator](kubernetes_operators/kubernetes_operator.md))
 
 ## Up next

@@ -20,7 +20,7 @@ Recurring "if you hit this error" moments, pulled out of the notes so they're se
 ## Helm
 
 ??? question "Where do I start with a brand-new chart?"
-    `helm create <name>` scaffolds a full chart with sane defaults (Deployment, Service, values.yaml, etc.) — don't hand-write one from scratch. See [Helm](notion/helm.md).
+    `helm create <name>` scaffolds a full chart with sane defaults (Deployment, Service, values.yaml, etc.) — don't hand-write one from scratch. See [Helm](notion/kubernetes/helm.md).
 
 ## Keycloak
 
@@ -36,7 +36,7 @@ Recurring "if you hit this error" moments, pulled out of the notes so they're se
 ??? question "Namespace scope vs. application scope — which one am I looking at?"
     **Namespace scope**: one shared Atlas user/password for every app in the namespace — simple, but a rotation or leak affects everyone at once.
     **Application scope**: one dedicated Atlas user per app — more credentials to manage, but a compromised app can only reach its own database.
-    Neither is a Kubernetes or Atlas primitive — it's a distinction the mongo-operator's own code defines. See [Mongo Atlas Operator](notion/mongo-atlas-operator.md).
+    Neither is a Kubernetes or Atlas primitive — it's a distinction the mongo-operator's own code defines. See [Mongo Atlas Operator](notion/kubernetes/mongo-atlas-operator.md).
 
 ---
 

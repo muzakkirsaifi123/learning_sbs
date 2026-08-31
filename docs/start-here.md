@@ -18,7 +18,7 @@ Start with the operator pattern itself, hands-on, before anything Atlas- or Kafk
 
 ## 3. Package management
 
-- [Helm](notion/helm.md), [Helm upgrade](notion/helm/helm-upgrade.md), [using the Helm plugin](notion/helm/how-to-use-the-helm-plugin.md)
+- [Helm](notion/kubernetes/helm.md), [Helm upgrade](notion/kubernetes/helm/helm-upgrade.md), [using the Helm plugin](notion/kubernetes/helm/how-to-use-the-helm-plugin.md)
 
 ## 4. Kafka
 
@@ -32,7 +32,7 @@ Start with the operator pattern itself, hands-on, before anything Atlas- or Kafk
 
 Once the operator pattern and the surrounding tooling both make sense, this is where they meet a real external API instead of a toy ConfigMap:
 
-- [Mongo Atlas Operator](notion/mongo-atlas-operator.md) — credential isolation models (namespace vs. application scope)
+- [Mongo Atlas Operator](notion/kubernetes/mongo-atlas-operator.md) — credential isolation models (namespace vs. application scope)
 - [Radar → Mongo Atlas flow](notion/radar/radar-mongoatlas-flow.md) — the deepest, most complete integration write-up on the site
 
 ---
