@@ -45,16 +45,19 @@ theme:
     - navigation.top
     - navigation.footer
     - navigation.tracking
+    - navigation.instant
     - search.suggest
     - search.highlight
     - search.share
     - content.code.copy
     - content.code.annotate
+    - content.code.select
     - content.tabs.link
     - content.tooltips
     - content.footnote.tooltips
     - toc.follow
     - announce.dismiss
+    - header.autohide
 
   icon:
     repo: octicons/mark-github-24
@@ -98,6 +101,17 @@ markdown_extensions:
   - pymdownx.caret
   - pymdownx.mark
   - pymdownx.tilde
+  - pymdownx.arithmatex:
+      generic: true
+  - pymdownx.snippets:
+      base_path:
+        - snippets
+      check_paths: true
+  - pymdownx.magiclink:
+      repo_url_shorthand: true
+      user: muzakkirsaifi123
+      repo: learning_sbs
+  - pymdownx.smartsymbols
 
 extra:
   generator: false
@@ -114,6 +128,8 @@ extra_css:
 
 extra_javascript:
   - assets/recent.js
+  - assets/mathjax.js
+  - https://unpkg.com/mathjax@3/es5/tex-mml-chtml.js
 
 nav:
   - Home: index.md
@@ -147,8 +163,7 @@ nav:
       - keycloak: notion/keycloak.md
 
 plugins:
-  - tags:
-      tags_file: tags.md
+  - tags
   - social
   - search:
       lang: en
