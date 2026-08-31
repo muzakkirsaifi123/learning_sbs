@@ -1,0 +1,59 @@
+name: Sync, Build & Deploy
+
+# One workflow, one sequential flow: check Notion for changes, commit any
+# updates, build the site, deploy it. Replaces the previous two-workflow
+# setup (Sync Notion to MkDocs -> Deploy MkDocs, connected only by a
+# workflow_run trigger), which showed up as two separate, easy-to-confuse
+# entries in the Actions list even though they were already chained.
+
+on:
+  schedule:
+    - cron: "0 */3 * * *"
+  workflow_dispatch:
+  push:
+    branches:
+      - main
+
+permissions:
+  contents: write
+
+concurrency:
+  group: pipeline
+  cancel-in-progress: false
+
+jobs:
+  pipeline:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: "pip"
+
+      - name: Install dependencies
+        run: pip install notion-client "mkdocs-material[imaging]" mkdocs-awesome-pages-plugin mkdocs-glightbox mkdocs-minify-plugin mkdocs-git-revision-date-localized-plugin mkdocs-git-committers-plugin-2
+
+      - name: Sync Notion → Markdown
+        env:
+          NOTION_TOKEN: ${{ secrets.NOTION_TOKEN }}
+          NOTION_PAGE_ID: ${{ secrets.NOTION_PAGE_ID }}
+        run: python notion_sync.py
+
+      - name: Commit & push Notion changes
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add -A docs/notion/ docs/index.md mkdocs.yml
+          git diff --cached --quiet \
+            || git commit -m "chore: sync Notion pages"
+          git push
+
+      - name: Build & deploy
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: mkdocs gh-deploy --force
