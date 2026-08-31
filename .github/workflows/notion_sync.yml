@@ -17,9 +17,10 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: "3.11"
+          cache: "pip"
 
       - name: Install dependencies
-        run: pip install notion-client
+        run: pip install -r requirements.txt
 
       - name: Sync Notion → Markdown
         env:
@@ -27,11 +28,22 @@ jobs:
           NOTION_PAGE_ID: ${{ secrets.NOTION_PAGE_ID }}
         run: python notion_sync.py
 
+      - name: Documentation quality check
+        run: python scripts/check_docs.py
+
+      # Validate before committing: if the sync produced something that
+      # can't build, nothing gets pushed and main stays healthy.
+      - name: Validate build (mkdocs --strict)
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: mkdocs build --strict --site-dir /tmp/notion-sync-build-check
+
       - name: Commit & push changes
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
-          git add -A docs/notion/ docs/index.md mkdocs.yml
+          git add -A docs/notion/ docs/assets/notion-images/ docs/index.md \
+                     docs/recently-updated.md mkdocs.yml .notion-sync/
           git diff --cached --quiet \
             || git commit -m "chore: sync Notion pages"
           git push

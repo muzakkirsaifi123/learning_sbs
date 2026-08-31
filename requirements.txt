@@ -1,0 +1,34 @@
+# Pinned dependencies for both CI workflows (notion_sync.yml and deploy.yml)
+# and for local development. Install with: pip install -r requirements.txt
+#
+# Unpinned installs previously meant every CI run silently picked up
+# whatever the latest release happened to be — see the note below on
+# mkdocs-redirects / mkdocs-rss-plugin for exactly why that's dangerous.
+
+# -- Notion sync -------------------------------------------------------
+notion-client==3.1.0
+requests==2.34.2
+PyYAML==6.0.1
+
+# -- MkDocs build --------------------------------------------------------
+mkdocs==1.6.1
+mkdocs-material[imaging]==9.7.6
+mkdocs-awesome-pages-plugin==2.10.1
+mkdocs-glightbox==0.5.2
+mkdocs-minify-plugin==0.8.0
+mkdocs-git-revision-date-localized-plugin==1.5.3
+mkdocs-git-committers-plugin-2==2.5.0
+mkdocs-macros-plugin==1.5.0
+mkdocs-panzoom-plugin==0.5.2
+mkdocs-print-site-plugin==2.8
+
+# SECURITY: mkdocs-redirects >=1.2.2 and mkdocs-rss-plugin >=1.18.0 were
+# altered upstream to hard-depend on an unrelated "properdocs" package and
+# print a false "MkDocs has been abandoned" warning pushing a tool switch.
+# Pinned to the last clean releases below — do not bump past these without
+# re-checking `pip show <pkg>` for a "properdocs" requirement first.
+mkdocs-redirects==1.2.1
+mkdocs-rss-plugin==1.17.9
+
+# -- Testing ---------------------------------------------------------------
+pytest==7.4.4
