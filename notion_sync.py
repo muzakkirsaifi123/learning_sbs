@@ -446,6 +446,30 @@ def write_page(rec: dict, related: list) -> None:
     filepath.write_text("".join(parts), encoding="utf-8")
 
 
+def compute_has_children(records: list) -> set:
+    """rel_paths of pages that are themselves containers (have sub-pages).
+
+    A container page's own file and its children's directory share a slug
+    (see walk_page), which is also exactly when a page can end up sharing
+    its title with one of its own children (e.g. a "Kafka" page containing
+    a single "Kafka" sub-page) -- checking body content to tell them apart
+    is fragile (a container can pick up real content of its own later), so
+    anything that consumes records for a flat/deduplicated view should key
+    off this structural fact instead.
+    """
+    by_parent = {}
+    for rec in records:
+        parent = str(PurePosixPath(rec["rel_path"]).parent)
+        by_parent.setdefault(parent, []).append(rec["rel_path"])
+
+    has_children = set()
+    for rec in records:
+        page_dir = str(PurePosixPath(rec["rel_path"]).with_suffix(""))
+        if page_dir in by_parent:
+            has_children.add(rec["rel_path"])
+    return has_children
+
+
 def build_nav_tree(records: list) -> list:
     """Build nav tree mirroring Notion hierarchy.
 
@@ -457,11 +481,7 @@ def build_nav_tree(records: list) -> list:
         parent = str(PurePosixPath(rec["rel_path"]).parent)
         by_parent.setdefault(parent, []).append((rec["title"], rec["rel_path"]))
 
-    has_children = set()
-    for rec in records:
-        page_dir = str(PurePosixPath(rec["rel_path"]).with_suffix(""))
-        if page_dir in by_parent:
-            has_children.add(rec["rel_path"])
+    has_children = compute_has_children(records)
 
     def make_items(parent_dir: str) -> list:
         items = []
@@ -546,14 +566,18 @@ def generate_home_page(records: list) -> None:
                 return icon
         return "📄"
 
+    has_children = compute_has_children(records)
+
     cards = []
     for rec in records:
-        # Parent pages with sub-pages get their own file (see walk_page) --
-        # when that file is empty ("Kafka" the container vs. "Kafka" the
-        # real child page underneath it, both literally titled "Kafka"),
-        # it produces a visibly duplicate, contentless card here. Skip
-        # anything with no real body to link to; the nav still reaches it.
-        if not rec["body"].strip():
+        # A container page (has its own sub-pages) can share its exact
+        # title with one of its children -- e.g. a "Kafka" page containing
+        # a "Kafka" sub-page -- which would otherwise produce two visibly
+        # identical cards here. Whether the container also happens to have
+        # some body text of its own isn't a reliable signal (it might
+        # today and not tomorrow); its rel_path showing up in has_children
+        # is the structural fact that actually distinguishes it.
+        if rec["rel_path"] in has_children:
             continue
         icon = pick_icon(rec["title"])
         blurb = rec["description"] or f"Quick access to {rec['title']} notes."
