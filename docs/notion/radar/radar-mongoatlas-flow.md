@@ -1,10 +1,3 @@
----
-description: "Explain the complete radar testing flow for the mongo operator \u2014 how internal tests work, what namespace they deploy to, how Istio interacts, and why\u2026"
-notion_url: "https://app.notion.com/p/Radar-mongoatlas-flow-38f9f2a93248800095f7d29b8edcdcf0"
-created_time: "2026-06-30T05:22:00.000Z"
-last_edited_time: "2026-06-30T06:26:00.000Z"
----
-
 # Radar-mongoatlas-flow
 
 Explain the complete radar testing flow for the mongo operator — how internal tests work, what namespace they deploy to, how Istio interacts, and why clouddev (obaas-1) fails while escln157 (radar) works.
@@ -1508,5 +1501,3 @@ radar-pipeline/main.yml (CI job "setup")
 │
 └── test_mongo_operator() → pass (nothing else to do)
 
-
---8<-- "abbreviations.md"

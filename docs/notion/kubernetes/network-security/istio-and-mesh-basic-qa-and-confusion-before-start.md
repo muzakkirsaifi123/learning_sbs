@@ -1,10 +1,3 @@
----
-description: "Ques: What is the diff in the Istio and Mesh or both are same ?"
-notion_url: "https://app.notion.com/p/Istio-and-Mesh-Basic-Q-A-and-confusion-before-start-38f9f2a9324880d08c53f6d92d771eb9"
-created_time: "2026-06-30T06:27:00.000Z"
-last_edited_time: "2026-07-06T06:02:00.000Z"
----
-
 # Istio and Mesh (Basic Q&A and confusion before start)
 
 
@@ -624,5 +617,3 @@ If an interviewer asks:
 A strong answer is:
 > **Yes. Kubernetes supports a basic form of canary deployment by running multiple versions of a Deployment behind the same Service and controlling the number of replicas. However, the traffic distribution is based on Pod count and is only approximate. Istio provides advanced traffic management, allowing precise traffic percentages, header-based routing, user-specific routing, retries, and other sophisticated deployment strategies without changing the application or relying on replica counts.**
 This distinction—**Kubernetes uses replica-based load balancing, while Istio uses policy-based traffic routing**—is one of the key reasons service meshes are popular in large microservice environments.
-
---8<-- "abbreviations.md"

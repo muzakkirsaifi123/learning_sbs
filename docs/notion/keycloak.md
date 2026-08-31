@@ -1,10 +1,3 @@
----
-description: "How to check the email is working or not in the keycloak\u2019"
-notion_url: "https://app.notion.com/p/keycloak-3c09f2a93248808184c0f65c17f966f2"
-created_time: "2026-08-18T07:55:00.000Z"
-last_edited_time: "2026-08-18T08:16:00.000Z"
----
-
 # keycloak
 
 
@@ -32,5 +25,3 @@ helm get values keycloak -n test -a | grep -B2 -A20 -i smtp
 ```
 
 
-
---8<-- "abbreviations.md"

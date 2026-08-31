@@ -2,49 +2,71 @@
 
 > Personal learning notes on Kubernetes, DevOps, Kafka, and Cloud Engineering.
 
-New here? Start with [Start Here](start-here.md) for a suggested reading order.
-
 ---
 
 ## Quick Links
 
 <div class="grid cards" markdown>
 
+-   ☸️ **[Kubernetes](notion/kubernetes.md)**
+
+    Quick access to Kubernetes notes.
+
 -   ☸️ **[K8sgpt](notion/kubernetes/k8sgpt.md)**
 
     Quick access to K8sgpt notes.
 
+-   📄 **[Network - Security](notion/kubernetes/network-security.md)**
+
+    Quick access to Network - Security notes.
+
 -   📄 **[Istio and Mesh (Basic Q&A and confusion before start)](notion/kubernetes/network-security/istio-and-mesh-basic-qa-and-confusion-before-start.md)**
 
-    Ques: What is the diff in the Istio and Mesh or both are same ?
+    Quick access to Istio and Mesh (Basic Q&A and confusion before start) notes.
 
 -   📄 **[Istio { Practice Lab - theory }](notion/kubernetes/network-security/istio-practice-lab-theory-.md)**
 
-    Istio, Service Mesh, Sidecar & Ambient Mode (Q&A)
+    Quick access to Istio { Practice Lab - theory } notes.
+
+-   ☸️ **[Kubernetes Operator](notion/kubernetes/kubernetes-operator.md)**
+
+    Quick access to Kubernetes Operator notes.
 
 -   📄 **[Operator lab](notion/kubernetes/kubernetes-operator/operator-lab.md)**
 
-    myapp-operator—Phased Learning Lab (Kubebuilder)
+    Quick access to Operator lab notes.
 
--   📄 **[Helm Upgrade](notion/kubernetes/helm/helm-upgrade.md)**
+-   🟠 **[Kafka](notion/kafka.md)**
 
-    Quick access to Helm Upgrade notes.
-
--   📄 **[How to use the helm plugin:](notion/kubernetes/helm/how-to-use-the-helm-plugin.md)**
-
-    In this lesson, we will see plugins and how to use those plugins, like helm diff
-
--   📄 **[Mongo-atlas-operator](notion/kubernetes/mongo-atlas-operator.md)**
-
-    In the code, there are two concept of making the cred isolation.
+    Quick access to Kafka notes.
 
 -   🟠 **[Kafka](notion/kafka/kafka.md)**
 
-    cp-schema (in Confluent Docker images) is not a separate product or concept.
+    Quick access to Kafka notes.
+
+-   📄 **[Mongo-atlas-operator](notion/mongo-atlas-operator.md)**
+
+    Quick access to Mongo-atlas-operator notes.
+
+-   📄 **[Radar](notion/radar.md)**
+
+    Quick access to Radar notes.
 
 -   📄 **[Radar-mongoatlas-flow](notion/radar/radar-mongoatlas-flow.md)**
 
-    Explain the complete radar testing flow for the mongo operator — how internal tests work, what namespace they deploy to, how Istio interacts, and why…
+    Quick access to Radar-mongoatlas-flow notes.
+
+-   📄 **[Helm.](notion/helm.md)**
+
+    Quick access to Helm. notes.
+
+-   📄 **[Helm Upgrade](notion/helm/helm-upgrade.md)**
+
+    Quick access to Helm Upgrade notes.
+
+-   📄 **[How to use the helm plugin:](notion/helm/how-to-use-the-helm-plugin.md)**
+
+    Quick access to How to use the helm plugin: notes.
 
 -   📄 **[Net](notion/net.md)**
 
@@ -52,7 +74,7 @@ New here? Start with [Start Here](start-here.md) for a suggested reading order.
 
 -   📄 **[keycloak](notion/keycloak.md)**
 
-    How to check the email is working or not in the keycloak’
+    Quick access to keycloak notes.
 
 </div>
 

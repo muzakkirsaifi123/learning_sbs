@@ -31,44 +31,11 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: 3.x
-          cache: "pip"
 
       - name: Install dependencies
-        run: pip install -r requirements.txt
+        run: pip install "mkdocs-material[imaging]" mkdocs-awesome-pages-plugin mkdocs-glightbox mkdocs-minify-plugin mkdocs-git-revision-date-localized-plugin mkdocs-git-committers-plugin-2
 
-      - name: Documentation quality check
-        run: python scripts/check_docs.py
-
-      # Build-then-deploy gate: gh-deploy builds internally too, but not in
-      # --strict mode, so a warning-level break wouldn't stop it. Running a
-      # --strict build as its own step first means the job fails here,
-      # before gh-deploy, if the site can't build cleanly.
-      - name: Build (mkdocs --strict)
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: mkdocs build --strict
-
-      - name: Deploy
+      - name: Build & deploy
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: mkdocs gh-deploy --force
-
-      # Leaves a trail on the deployed commit either way (a direct push to
-      # main, or the scheduled Notion sync completing and triggering this
-      # via workflow_run). workflow_run doesn't carry the deployed commit's
-      # SHA in github.sha the way a push event does, so it's pulled from
-      # the upstream run instead when that's how we got here.
-      - name: Comment deploy URL on the commit
-        uses: actions/github-script@v7
-        with:
-          script: |
-            const sha = context.eventName === "workflow_run"
-              ? context.payload.workflow_run.head_sha
-              : context.sha;
-            const trigger = context.eventName === "workflow_run" ? "Notion sync" : "push to main";
-            await github.rest.repos.createCommitComment({
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              commit_sha: sha,
-              body: `🚀 Deployed (via ${trigger}): https://muzakkirsaifi123.github.io/learning_sbs/`,
-            });

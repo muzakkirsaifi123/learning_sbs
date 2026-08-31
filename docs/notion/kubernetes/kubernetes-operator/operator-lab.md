@@ -1,10 +1,3 @@
----
-description: "myapp-operator\u2014Phased Learning Lab (Kubebuilder)"
-notion_url: "https://app.notion.com/p/Operator-lab-3c89f2a9324880afbe48d49fa13b6f89"
-created_time: "2026-08-26T10:31:00.000Z"
-last_edited_time: "2026-08-31T06:35:00.000Z"
----
-
 # Operator lab
 
 `myapp-operator`—Phased Learning Lab (Kubebuilder)
@@ -504,5 +497,3 @@ If you want, next step could be adding a **finalizer** (for cleanup
 logic that must run *before* deletion, unlike the automatic
 owner-reference GC used here) or wiring up `envtest` for proper Go
 unit tests on the reconciler instead of manual `kubectl` testing.
-
---8<-- "abbreviations.md"

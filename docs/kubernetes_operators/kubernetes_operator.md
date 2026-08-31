@@ -1289,5 +1289,3 @@ But for **real-world** operators (like the mongo-operator), you'll typically wri
 - Plus any helper/utility code your logic needs
 
 So "2 files" is the **minimum per CRD**. It scales with complexity, but the recipe doesn't change.
-
---8<-- "abbreviations.md"

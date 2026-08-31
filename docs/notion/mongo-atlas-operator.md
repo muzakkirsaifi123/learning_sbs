@@ -1,10 +1,3 @@
----
-description: "In the code, there are two concept of making the cred isolation."
-notion_url: "https://app.notion.com/p/Mongo-atlas-operator-38f9f2a93248804cb1e4ed19e1f534f8"
-created_time: "2026-06-30T05:05:00.000Z"
-last_edited_time: "2026-08-31T06:38:00.000Z"
----
-
 # Mongo-atlas-operator
 
 In the code, there are two concept of making the cred isolation.
@@ -62,5 +55,3 @@ Each app can only access its own database
 - **Namespace scope **→ all apps in that namespace use the same Atlas credentials
 - **Application scope **→ each app in that namespace uses its own Atlas credentials
 
-
---8<-- "abbreviations.md"
