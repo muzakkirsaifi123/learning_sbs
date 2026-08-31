@@ -10,17 +10,33 @@ New here? Start with [Start Here](start-here.md) for a suggested reading order.
 
 <div class="grid cards" markdown>
 
--   ☸️ **[Kubernetes](notion/kubernetes.md)**
+-   🟠 **[Kafka](notion/kafka/kafka.md)**
 
-    Quick access to Kubernetes notes.
+    Quick access to Kafka notes.
 
--   ☸️ **[K8sgpt](notion/kubernetes/k8sgpt.md)**
+-   📄 **[keycloak](notion/keycloak.md)**
 
-    Quick access to K8sgpt notes.
+    Quick access to keycloak notes.
 
--   📄 **[Network - Security](notion/kubernetes/network-security.md)**
+-   📄 **[How to use the helm plugin:](notion/kubernetes/helm/how-to-use-the-helm-plugin.md)**
 
-    Quick access to Network - Security notes.
+    Quick access to How to use the helm plugin: notes.
+
+-   📄 **[Helm.](notion/kubernetes/helm.md)**
+
+    Quick access to Helm. notes.
+
+-   📄 **[Operator lab](notion/kubernetes/kubernetes-operator/operator-lab.md)**
+
+    Quick access to Operator lab notes.
+
+-   ☸️ **[Kubernetes Operator](notion/kubernetes/kubernetes-operator.md)**
+
+    Quick access to Kubernetes Operator notes.
+
+-   📄 **[Mongo-atlas-operator](notion/kubernetes/mongo-atlas-operator.md)**
+
+    Quick access to Mongo-atlas-operator notes.
 
 -   📄 **[Istio and Mesh (Basic Q&A and confusion before start)](notion/kubernetes/network-security/istio-and-mesh-basic-qa-and-confusion-before-start.md)**
 
@@ -30,53 +46,9 @@ New here? Start with [Start Here](start-here.md) for a suggested reading order.
 
     Quick access to Istio { Practice Lab - theory } notes.
 
--   ☸️ **[Kubernetes Operator](notion/kubernetes/kubernetes-operator.md)**
-
-    Quick access to Kubernetes Operator notes.
-
--   📄 **[Operator lab](notion/kubernetes/kubernetes-operator/operator-lab.md)**
-
-    Quick access to Operator lab notes.
-
--   📄 **[Helm.](notion/kubernetes/helm.md)**
-
-    Quick access to Helm. notes.
-
--   📄 **[Helm Upgrade](notion/kubernetes/helm/helm-upgrade.md)**
-
-    Quick access to Helm Upgrade notes.
-
--   📄 **[How to use the helm plugin:](notion/kubernetes/helm/how-to-use-the-helm-plugin.md)**
-
-    Quick access to How to use the helm plugin: notes.
-
--   📄 **[Mongo-atlas-operator](notion/kubernetes/mongo-atlas-operator.md)**
-
-    Quick access to Mongo-atlas-operator notes.
-
--   🟠 **[Kafka](notion/kafka.md)**
-
-    Quick access to Kafka notes.
-
--   🟠 **[Kafka](notion/kafka/kafka.md)**
-
-    Quick access to Kafka notes.
-
--   📄 **[Radar](notion/radar.md)**
-
-    Quick access to Radar notes.
-
 -   📄 **[Radar-mongoatlas-flow](notion/radar/radar-mongoatlas-flow.md)**
 
     Quick access to Radar-mongoatlas-flow notes.
-
--   📄 **[Net](notion/net.md)**
-
-    Quick access to Net notes.
-
--   📄 **[keycloak](notion/keycloak.md)**
-
-    Quick access to keycloak notes.
 
 </div>
 

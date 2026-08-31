@@ -548,10 +548,18 @@ def generate_home_page(records: list) -> None:
 
     cards = []
     for rec in records:
+        # Parent pages with sub-pages get their own file (see walk_page) --
+        # when that file is empty ("Kafka" the container vs. "Kafka" the
+        # real child page underneath it, both literally titled "Kafka"),
+        # it produces a visibly duplicate, contentless card here. Skip
+        # anything with no real body to link to; the nav still reaches it.
+        if not rec["body"].strip():
+            continue
         icon = pick_icon(rec["title"])
+        blurb = rec["description"] or f"Quick access to {rec['title']} notes."
         cards.append(
             f"-   {icon} **[{rec['title']}]({rec['rel_path']})**\n\n"
-            f"    Quick access to {rec['title']} notes."
+            f"    {blurb}"
         )
 
     cards_block = "\n\n".join(cards)
