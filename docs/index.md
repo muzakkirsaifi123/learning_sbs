@@ -32,9 +32,9 @@
 
     Quick access to Kubernetes Operator notes.
 
--   📄 **[**Operator lab**](notion/kubernetes/kubernetes-operator/operator-lab.md)**
+-   📄 **[Operator lab](notion/kubernetes/kubernetes-operator/operator-lab.md)**
 
-    Quick access to **Operator lab** notes.
+    Quick access to Operator lab notes.
 
 -   🟠 **[Kafka](notion/kafka.md)**
 

@@ -1,4 +1,4 @@
-# **Operator lab**
+# Operator lab
 
 `myapp-operator`—Phased Learning Lab (Kubebuilder)
 A tiny Kubernetes Operator that watches `MyApp` custom resources and
