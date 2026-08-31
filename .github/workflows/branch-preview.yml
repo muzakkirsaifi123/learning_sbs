@@ -24,9 +24,14 @@ jobs:
   deploy-preview:
     if: github.event_name == 'push'
     runs-on: ubuntu-latest
+    concurrency:
+      group: preview-${{ github.ref_name }}
+      cancel-in-progress: true
 
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
       - uses: actions/setup-python@v5
         with:
@@ -86,6 +91,11 @@ jobs:
   cleanup-preview:
     if: github.event_name == 'delete' && github.event.ref_type == 'branch' && github.event.ref != 'main'
     runs-on: ubuntu-latest
+    # Same group naming as deploy-preview so a delete can't race a
+    # still-running preview deploy for the same branch.
+    concurrency:
+      group: preview-${{ github.event.ref }}
+      cancel-in-progress: false
 
     steps:
       - uses: actions/checkout@v4
