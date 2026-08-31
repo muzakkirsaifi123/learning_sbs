@@ -1,3 +1,10 @@
+---
+description: "1. First: What is a Kubernetes Operator?"
+notion_url: "https://app.notion.com/p/Kubernetes-Operator-3c89f2a9324880f68f08f9e1aeda73e6"
+created_time: "2026-08-26T07:24:00.000Z"
+last_edited_time: "2026-08-26T10:31:00.000Z"
+---
+
 # Kubernetes Operator
 
 
@@ -978,3 +985,5 @@ And the Operator keeps watching and reconciling:
 **That is why we need an Operator.**
 If you want to go hands-on next, the best next lesson is to build a **tiny Kubernetes Operator example from scratch** (not MongoDB yet): first create a CRD, then create a Custom Resource, then write a controller that watches it. Once you understand that, the MongoDB Atlas Operator becomes much easier to understand.
 
+
+--8<-- "abbreviations.md"

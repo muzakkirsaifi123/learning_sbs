@@ -1,3 +1,10 @@
+---
+description: "Helm is just a package manager for Kubernetes. It is like the apt in Ubuntu. You can create the Helm chart and install and deploy and do many things with\u2026"
+notion_url: "https://app.notion.com/p/Helm-3c69f2a93248800ea713dab5c94ef871"
+created_time: "2026-08-24T05:27:00.000Z"
+last_edited_time: "2026-08-31T06:37:00.000Z"
+---
+
 # Helm.
 
 Helm is just a package manager for Kubernetes. It is like the apt in Ubuntu. You can create the Helm chart and install and deploy and do many things with that.
@@ -20,3 +27,5 @@ Helm is just a package manager for Kubernetes. It is like the apt in Ubuntu. You
   1. `helm install <release name> helloworld`
   
 
+
+--8<-- "abbreviations.md"

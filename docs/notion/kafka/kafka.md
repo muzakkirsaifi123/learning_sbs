@@ -2,6 +2,10 @@
 tags:
   - Kafka
   - cp-schema
+description: "cp-schema (in Confluent Docker images) is not a separate product or concept."
+notion_url: "https://app.notion.com/p/Kafka-3899f2a93248805fb714cb551c758bce"
+created_time: "2026-06-24T07:38:00.000Z"
+last_edited_time: "2026-06-24T17:28:00.000Z"
 ---
 
 # Kafka
@@ -183,3 +187,5 @@ Invalid change → blocked immediately
 
 ---
 
+
+--8<-- "abbreviations.md"

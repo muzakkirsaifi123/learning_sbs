@@ -2,6 +2,8 @@
 
 > Personal learning notes on Kubernetes, DevOps, Kafka, and Cloud Engineering.
 
+New here? Start with [Start Here](start-here.md) for a suggested reading order.
+
 ---
 
 ## Quick Links

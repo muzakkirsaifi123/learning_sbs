@@ -11,21 +11,6 @@
       "title": "Kubernetes Operator Learning Notes"
     },
     {
-      "id": "notion/helm.md",
-      "tags": [],
-      "title": "Helm."
-    },
-    {
-      "id": "notion/helm/helm-upgrade.md",
-      "tags": [],
-      "title": "Helm Upgrade"
-    },
-    {
-      "id": "notion/helm/how-to-use-the-helm-plugin.md",
-      "tags": [],
-      "title": "How to use the helm plugin:"
-    },
-    {
       "id": "notion/kafka.md",
       "tags": [],
       "title": "Kafka"
@@ -49,6 +34,21 @@
       "title": "Kubernetes"
     },
     {
+      "id": "notion/kubernetes/helm.md",
+      "tags": [],
+      "title": "Helm."
+    },
+    {
+      "id": "notion/kubernetes/helm/helm-upgrade.md",
+      "tags": [],
+      "title": "Helm Upgrade"
+    },
+    {
+      "id": "notion/kubernetes/helm/how-to-use-the-helm-plugin.md",
+      "tags": [],
+      "title": "How to use the helm plugin:"
+    },
+    {
       "id": "notion/kubernetes/k8sgpt.md",
       "tags": [],
       "title": "K8sgpt"
@@ -64,6 +64,11 @@
       "title": "Operator lab"
     },
     {
+      "id": "notion/kubernetes/mongo-atlas-operator.md",
+      "tags": [],
+      "title": "Mongo-atlas-operator"
+    },
+    {
       "id": "notion/kubernetes/network-security.md",
       "tags": [],
       "title": "Network - Security"
@@ -77,11 +82,6 @@
       "id": "notion/kubernetes/network-security/istio-practice-lab-theory-.md",
       "tags": [],
       "title": "Istio { Practice Lab - theory }"
-    },
-    {
-      "id": "notion/mongo-atlas-operator.md",
-      "tags": [],
-      "title": "Mongo-atlas-operator"
     },
     {
       "id": "notion/net.md",

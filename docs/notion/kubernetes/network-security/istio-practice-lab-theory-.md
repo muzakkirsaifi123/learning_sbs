@@ -1,3 +1,10 @@
+---
+description: "Istio, Service Mesh, Sidecar & Ambient Mode (Q&A)"
+notion_url: "https://app.notion.com/p/Istio-Practice-Lab-theory-38f9f2a93248803db229e02bcb82082b"
+created_time: "2026-06-30T07:24:00.000Z"
+last_edited_time: "2026-07-01T09:44:00.000Z"
+---
+
 # Istio { Practice Lab - theory }
 
 Istio, Service Mesh, Sidecar & Ambient Mode (Q&A)
@@ -1133,3 +1140,5 @@ You moved from:
 ✔ observability
 ✔ production install design
 
+
+--8<-- "abbreviations.md"
