@@ -20,6 +20,10 @@ concurrency:
 
 jobs:
   deploy:
+    # Skip redeploying after a failed sync -- nothing new was committed, so
+    # there's nothing to deploy that isn't already live. Added to
+    # branch-preview.yml too, for the same reason, at the same time.
+    if: github.event_name != 'workflow_run' || github.event.workflow_run.conclusion == 'success'
     runs-on: ubuntu-latest
 
     steps:

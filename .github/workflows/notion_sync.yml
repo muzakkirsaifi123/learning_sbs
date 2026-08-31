@@ -4,12 +4,23 @@ on:
   schedule:
     - cron: "0 */3 * * *"
   workflow_dispatch:
+  # Same sync on feature branches as on main, triggered by a real push
+  # instead of the cron (a scheduled trigger only ever runs against the
+  # default branch). The bot commit this job pushes below uses the default
+  # GITHUB_TOKEN, which GitHub Actions deliberately does not treat as a new
+  # push for triggering purposes -- so this doesn't loop back into itself.
+  push:
+    branches-ignore:
+      - main
 
 jobs:
   sync:
     runs-on: ubuntu-latest
     permissions:
       contents: write
+    concurrency:
+      group: notion-sync-${{ github.ref_name }}
+      cancel-in-progress: false
 
     steps:
       - uses: actions/checkout@v4
