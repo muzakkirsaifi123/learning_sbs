@@ -4,6 +4,12 @@ name: Branch Preview
 #   https://muzakkirsaifi123.github.io/learning_sbs/preview/<branch>/
 # No PR needed. Deleting the branch removes its preview automatically.
 # Merging/pushing to main is untouched by this file — that's deploy.yml.
+#
+# Deliberately identical pipeline to deploy.yml (same quality check, same
+# tests, same --strict build) — the only difference between this workflow
+# and deploy.yml is where the result gets published. A branch preview that
+# passes here is a true preview of what merging to main would do, not a
+# looser approximation of it.
 
 on:
   push:
@@ -30,22 +36,19 @@ jobs:
       - name: Install dependencies
         run: pip install -r requirements.txt
 
-      # Informational only for a branch preview — don't block seeing a WIP
-      # branch's preview over a broken link or a failing test. Contrast
-      # with deploy.yml, which treats these as hard gates before main.
-      - name: Documentation quality check (non-blocking)
-        run: python scripts/check_docs.py || true
+      # Same hard gates as deploy.yml (main) — identical pipeline, only the
+      # destination differs. A branch preview that passed these is a
+      # trustworthy preview of what merging to main would actually do.
+      - name: Documentation quality check
+        run: python scripts/check_docs.py
 
-      - name: Run tests (non-blocking)
-        run: python3 -m pytest tests/ -v || true
+      - name: Run tests
+        run: python3 -m pytest tests/ -v
 
-      # Not --strict on purpose: a build-breaking warning here would mean
-      # no site/ directory at all, and nothing to preview. main's deploy
-      # (deploy.yml) is the one that stays --strict.
-      - name: Build
+      - name: Build (mkdocs --strict)
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: mkdocs build
+        run: mkdocs build --strict
 
       - name: Sanitize branch name for a URL-safe path
         id: branch
