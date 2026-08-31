@@ -136,6 +136,7 @@ extra_css:
 
 extra_javascript:
   - assets/recent.js
+  - assets/knowledge-graph.js
   - assets/mathjax.js
   - https://unpkg.com/mathjax@3/es5/tex-mml-chtml.js
 
@@ -143,6 +144,7 @@ nav:
   - Home: index.md
   - Start Here: start-here.md
   - Recently Updated: recently-updated.md
+  - Knowledge Graph: graph.md
   - Tags: tags.md
   - Glossary: glossary.md
   - FAQ: faq.md

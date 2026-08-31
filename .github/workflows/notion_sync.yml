@@ -28,6 +28,9 @@ jobs:
           NOTION_PAGE_ID: ${{ secrets.NOTION_PAGE_ID }}
         run: python notion_sync.py
 
+      - name: Regenerate knowledge graph
+        run: python scripts/generate_graph.py
+
       - name: Documentation quality check
         run: python scripts/check_docs.py
 
@@ -42,8 +45,8 @@ jobs:
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
-          git add -A docs/notion/ docs/assets/notion-images/ docs/index.md \
-                     docs/recently-updated.md mkdocs.yml .notion-sync/
+          git add -A docs/notion/ docs/assets/notion-images/ docs/assets/graph.json \
+                     docs/index.md docs/recently-updated.md mkdocs.yml .notion-sync/
           git diff --cached --quiet \
             || git commit -m "chore: sync Notion pages"
           git push
