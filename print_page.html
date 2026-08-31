@@ -2348,6 +2348,7 @@
 <blockquote>
 <p>Personal learning notes on Kubernetes, DevOps, Kafka, and Cloud Engineering.</p>
 </blockquote>
+<p>New here? Start with <a href="#start-here">Start Here</a> for a suggested reading order.</p>
 <hr>
 <h2 id="index-quick-links">Quick Links<a class="headerlink" href="#index-quick-links" title="Permanent link">¶</a></h2>
 <div class="grid cards">
@@ -2478,20 +2479,24 @@
         })
         </script>
         </head><body><h1 id="recently-updated">Recently Updated<a class="headerlink" href="#recently-updated-recently-updated" title="Permanent link">¶</a></h1>
-<p>Ranked by last edit. Regenerated automatically by <code>notion_sync.py</code> on every sync going forward — this initial version is seeded from git history for the first build on this branch.</p>
+<p>Ranked by last edit in Notion. Regenerated on every sync.</p>
 <ol>
+<li><a href="#notion-kafka">Kafka</a> — 2026-08-31</li>
+<li><a href="#notion-kubernetes">Kubernetes</a> — 2026-08-31</li>
+<li><a href="#notion-kubernetes-mongo-atlas-operator">Mongo-atlas-operator</a> — 2026-08-31</li>
+<li><a href="#notion-kubernetes-helm">Helm.</a> — 2026-08-31</li>
+<li><a href="#notion-kubernetes-kubernetes-operator-operator-lab">Operator lab</a> — 2026-08-31</li>
 <li><a href="#notion-kubernetes-kubernetes-operator">Kubernetes Operator</a> — 2026-08-26</li>
-<li><a href="#notion-kubernetes-helm-how-to-use-the-helm-plugin">How to use the helm plugin</a> — 2026-08-26</li>
+<li><a href="#notion-kubernetes-helm-how-to-use-the-helm-plugin">How to use the helm plugin:</a> — 2026-08-26</li>
 <li><a href="#notion-kubernetes-helm-helm-upgrade">Helm Upgrade</a> — 2026-08-26</li>
-<li><a href="#notion-kubernetes-helm">Helm</a> — 2026-08-24</li>
-<li><a href="#notion-keycloak">Keycloak</a> — 2026-08-18</li>
-<li><a href="#notion-radar-radar-mongoatlas-flow">Radar → Mongo Atlas flow</a> — 2026-06-30</li>
-<li><a href="#notion-radar">Radar</a> — 2026-06-30</li>
+<li><a href="#notion-kubernetes-network-security">Network - Security</a> — 2026-08-24</li>
+<li><a href="#notion-keycloak">keycloak</a> — 2026-08-18</li>
+<li><a href="#notion-kubernetes-network-security-istio-and-mesh-basic-qa-and-confusion-before-start">Istio and Mesh (Basic Q&amp;A and confusion before start)</a> — 2026-07-06</li>
+<li><a href="#notion-kubernetes-network-security-istio-practice-lab-theory-">Istio { Practice Lab - theory }</a> — 2026-07-01</li>
+<li><a href="#notion-radar-radar-mongoatlas-flow">Radar-mongoatlas-flow</a> — 2026-06-30</li>
 <li><a href="#notion-net">Net</a> — 2026-06-30</li>
-<li><a href="#notion-kubernetes-mongo-atlas-operator">Mongo Atlas Operator</a> — 2026-06-30</li>
-<li><a href="#notion-kubernetes-network-security">Network - Security</a> — 2026-06-30</li>
+<li><a href="#notion-radar">Radar</a> — 2026-06-30</li>
 <li><a href="#notion-kubernetes-k8sgpt">K8sgpt</a> — 2026-06-24</li>
-<li><a href="#notion-kubernetes">Kubernetes</a> — 2026-06-24</li>
 <li><a href="#notion-kafka-kafka">Kafka</a> — 2026-06-24</li>
 </ol>
 <!--
@@ -3914,13 +3919,23 @@ Every Go file starts with <code>package &lt;name&gt;</code>. This file is in the
             remove_material_navigation();remove_mkdocs_theme_navigation();generate_toc();
         })
         </script>
-        </head><body><h1 id="kubernetes">Kubernetes<a class="headerlink" href="#notion-kubernetes-kubernetes" title="Permanent link">¶</a></h1></body></html></section><section class="print-page" id="notion-kubernetes-k8sgpt" heading-number="10.1.2"><html><head>
+        </head><body><h1 id="kubernetes">Kubernetes<a class="headerlink" href="#notion-kubernetes-kubernetes" title="Permanent link">¶</a></h1>
+<!--
+  Included via `--8<-- "abbreviations.md"` (pymdownx.snippets) at the bottom
+  of every generated page. Defines pymdownx.abbr tooltips site-wide instead
+  of per-page. Keep in sync with docs/glossary.md.
+--></body></html></section><section class="print-page" id="notion-kubernetes-k8sgpt" heading-number="10.1.2"><html><head>
         <script type="text/javascript">
         document.addEventListener('DOMContentLoaded', function () {
             remove_material_navigation();remove_mkdocs_theme_navigation();generate_toc();
         })
         </script>
-        </head><body><h1 id="k8sgpt">K8sgpt<a class="headerlink" href="#notion-kubernetes-k8sgpt-k8sgpt" title="Permanent link">¶</a></h1></body></html></section>
+        </head><body><h1 id="k8sgpt">K8sgpt<a class="headerlink" href="#notion-kubernetes-k8sgpt-k8sgpt" title="Permanent link">¶</a></h1>
+<!--
+  Included via `--8<-- "abbreviations.md"` (pymdownx.snippets) at the bottom
+  of every generated page. Defines pymdownx.abbr tooltips site-wide instead
+  of per-page. Keep in sync with docs/glossary.md.
+--></body></html></section>
                     <section class='print-page md-section' id='section-10-1-3' heading-number='10.1.3'>
                         <h1>Network - Security<a class='headerlink' href='#section-10-1-3' title='Permanent link'></a>
                         </h1>
@@ -3930,7 +3945,12 @@ Every Go file starts with <code>package &lt;name&gt;</code>. This file is in the
             remove_material_navigation();remove_mkdocs_theme_navigation();generate_toc();
         })
         </script>
-        </head><body><h1 id="network-security">Network - Security<a class="headerlink" href="#notion-kubernetes-network-security-network-security" title="Permanent link">¶</a></h1></body></html></section><section class="print-page" id="notion-kubernetes-network-security-istio-and-mesh-basic-qa-and-confusion-before-start" heading-number="10.1.3.2"><html><head>
+        </head><body><h1 id="network-security">Network - Security<a class="headerlink" href="#notion-kubernetes-network-security-network-security" title="Permanent link">¶</a></h1>
+<!--
+  Included via `--8<-- "abbreviations.md"` (pymdownx.snippets) at the bottom
+  of every generated page. Defines pymdownx.abbr tooltips site-wide instead
+  of per-page. Keep in sync with docs/glossary.md.
+--></body></html></section><section class="print-page" id="notion-kubernetes-network-security-istio-and-mesh-basic-qa-and-confusion-before-start" heading-number="10.1.3.2"><html><head>
         <script type="text/javascript">
         document.addEventListener('DOMContentLoaded', function () {
             remove_material_navigation();remove_mkdocs_theme_navigation();generate_toc();
@@ -3974,7 +3994,7 @@ Instead of every service implementing networking features itself, the mesh provi
 - Service-to-service communication
 - Traffic routing
 - Load balancing
-- Mutual TLS (mTLS)
+- Mutual TLS (<abbr title="mutual TLS — both sides of a connection present certificates">mTLS</abbr>)
 - Authentication and authorization
 - Observability (metrics, logs, tracing)
 - Retry and timeout policies
@@ -3992,7 +4012,7 @@ The proxies handle most networking concerns.<p></p>
 <p><strong>Istio</strong> is an <strong>open-source service mesh platform</strong> for Kubernetes and other environments.
 It provides:
 - Traffic management
-- Security (mTLS, authorization)
+- Security (<abbr title="mutual TLS — both sides of a connection present certificates">mTLS</abbr>, authorization)
 - Observability
 - Policy enforcement
 Istio uses <strong>Envoy proxies</strong> as sidecars to intercept and manage network traffic.
@@ -4089,7 +4109,7 @@ This works fine for many applications.<p></p>
 </span></code></pre></div>
 Now, every request flows through the proxies, allowing Istio to:
 - Route traffic intelligently
-- Encrypt traffic with mTLS
+- Encrypt traffic with <abbr title="mutual TLS — both sides of a connection present certificates">mTLS</abbr>
 - Retry failed requests
 - Enforce authorization policies
 - Collect metrics and traces
@@ -4120,7 +4140,7 @@ These are the kinds of features Istio provides.</p>
 <hr>
 <h3 id="notion-kubernetes-network-security-istio-and-mesh-basic-qa-and-confusion-before-start-a-good-interview-answer">A good interview answer<a class="headerlink" href="#notion-kubernetes-network-security-istio-and-mesh-basic-qa-and-confusion-before-start-a-good-interview-answer" title="Permanent link">¶</a></h3>
 <blockquote>
-<p><strong>Istio does not replace Kubernetes networking. Kubernetes is still responsible for basic networking, service discovery, and routing traffic between Pods. Istio adds a service mesh layer on top by using Envoy sidecar proxies, giving advanced capabilities like traffic management, mTLS, retries, circuit breaking, observability, and fine-grained security policies.</strong>
+<p><strong>Istio does not replace Kubernetes networking. Kubernetes is still responsible for basic networking, service discovery, and routing traffic between Pods. Istio adds a service mesh layer on top by using Envoy sidecar proxies, giving advanced capabilities like traffic management, <abbr title="mutual TLS — both sides of a connection present certificates">mTLS</abbr>, retries, circuit breaking, observability, and fine-grained security policies.</strong>
 So the relationship is:
 </p><div class="language-text highlight"><pre><span></span><code><span id="__span-6-1"><a id="__codelineno-6-1" name="__codelineno-6-1" href="#notion-kubernetes-network-security-istio-and-mesh-basic-qa-and-confusion-before-start-__codelineno-6-1"></a>Application
 </span><span id="__span-6-2"><a id="__codelineno-6-2" name="__codelineno-6-2" href="#notion-kubernetes-network-security-istio-and-mesh-basic-qa-and-confusion-before-start-__codelineno-6-2"></a>      ↑
@@ -4158,7 +4178,7 @@ It can answer questions like:
 - Block <code>DELETE /users</code>
 - Route 20% of traffic to v2
 - Retry failed requests
-- Require mTLS
+- Require <abbr title="mutual TLS — both sides of a connection present certificates">mTLS</abbr>
 - Collect request metrics and traces
 - Apply rate limiting
 Example:
@@ -4203,7 +4223,7 @@ Both provide security, but at different layers.</li>
 <blockquote>
 <p><strong>Why use Istio if Kubernetes already has NetworkPolicy?</strong>
 You can say:
-"Kubernetes NetworkPolicy provides network-level security by controlling which Pods can communicate over specific ports. Istio complements this by providing application-level security and traffic management, such as mTLS, request authorization, retries, circuit breaking, canary deployments, and observability. In production, they are often used together because they operate at different layers of the network stack."</p>
+"Kubernetes NetworkPolicy provides network-level security by controlling which Pods can communicate over specific ports. Istio complements this by providing application-level security and traffic management, such as <abbr title="mutual TLS — both sides of a connection present certificates">mTLS</abbr>, request authorization, retries, circuit breaking, canary deployments, and observability. In production, they are often used together because they operate at different layers of the network stack."</p>
 </blockquote>
 <p>Let's use a real example.</p>
 <h2 id="notion-kubernetes-network-security-istio-and-mesh-basic-qa-and-confusion-before-start-imagine-an-e-commerce-application">Imagine an e-commerce application<a class="headerlink" href="#notion-kubernetes-network-security-istio-and-mesh-basic-qa-and-confusion-before-start-imagine-an-e-commerce-application" title="Permanent link">¶</a></h2>
@@ -4289,7 +4309,7 @@ This enables canary and blue-green deployments without changing your application
 </span><span id="__span-15-5"><a id="__codelineno-15-5" name="__codelineno-15-5" href="#notion-kubernetes-network-security-istio-and-mesh-basic-qa-and-confusion-before-start-__codelineno-15-5"></a>Application
 </span></code></pre></div>
 The application doesn't need to know about:
-- Encryption (mTLS)
+- Encryption (<abbr title="mutual TLS — both sides of a connection present certificates">mTLS</abbr>)
 - Retries
 - Timeouts
 - Traffic splitting
@@ -4571,7 +4591,12 @@ These kinds of routing decisions aren't possible with a standard Kubernetes <cod
 A strong answer is:
 <strong>Yes. Kubernetes supports a basic form of canary deployment by running multiple versions of a Deployment behind the same Service and controlling the number of replicas. However, the traffic distribution is based on Pod count and is only approximate. Istio provides advanced traffic management, allowing precise traffic percentages, header-based routing, user-specific routing, retries, and other sophisticated deployment strategies without changing the application or relying on replica counts.</strong>
 This distinction—<strong>Kubernetes uses replica-based load balancing, while Istio uses policy-based traffic routing</strong>—is one of the key reasons service meshes are popular in large microservice environments.</p>
-</blockquote></body></html></section><section class="print-page" id="notion-kubernetes-network-security-istio-practice-lab-theory-" heading-number="10.1.3.3"><html><head>
+</blockquote>
+<!--
+  Included via `--8<-- "abbreviations.md"` (pymdownx.snippets) at the bottom
+  of every generated page. Defines pymdownx.abbr tooltips site-wide instead
+  of per-page. Keep in sync with docs/glossary.md.
+--></body></html></section><section class="print-page" id="notion-kubernetes-network-security-istio-practice-lab-theory-" heading-number="10.1.3.3"><html><head>
         <script type="text/javascript">
         document.addEventListener('DOMContentLoaded', function () {
             remove_material_navigation();remove_mkdocs_theme_navigation();generate_toc();
@@ -4719,7 +4744,7 @@ You get:
 </span><span id="__span-9-2"><a id="__codelineno-9-2" name="__codelineno-9-2" href="#notion-kubernetes-network-security-istio-practice-lab-theory--__codelineno-9-2"></a>1 ztunnel (on the node)
 </span></code></pre></div>
 Provides:
-- mTLS
+- <abbr title="mutual TLS — both sides of a connection present certificates">mTLS</abbr>
 - Identity
 - Basic security<p></p>
 <hr>
@@ -4767,7 +4792,7 @@ Ambient Mode reduces proxy overhead.</p>
 <hr>
 <h1 id="notion-kubernetes-network-security-istio-practice-lab-theory--which-features-are-available">🧠 Which features are available?<a class="headerlink" href="#notion-kubernetes-network-security-istio-practice-lab-theory--which-features-are-available" title="Permanent link">¶</a></h1>
 <h2 id="notion-kubernetes-network-security-istio-practice-lab-theory--sidecar-mode_1">Sidecar Mode<a class="headerlink" href="#notion-kubernetes-network-security-istio-practice-lab-theory--sidecar-mode_1" title="Permanent link">¶</a></h2>
-<p>✅ mTLS
+<p>✅ <abbr title="mutual TLS — both sides of a connection present certificates">mTLS</abbr>
 ✅ Authorization
 ✅ Traffic routing
 ✅ Canary deployment
@@ -4777,7 +4802,7 @@ Ambient Mode reduces proxy overhead.</p>
 <hr>
 <h2 id="notion-kubernetes-network-security-istio-practice-lab-theory--ambient-mode_1">Ambient Mode<a class="headerlink" href="#notion-kubernetes-network-security-istio-practice-lab-theory--ambient-mode_1" title="Permanent link">¶</a></h2>
 <p>Without waypoint:
-✅ mTLS
+✅ <abbr title="mutual TLS — both sides of a connection present certificates">mTLS</abbr>
 ✅ Identity
 ✅ Encryption
 ✅ Basic authorization
@@ -4836,7 +4861,7 @@ Think of it as a <strong>smart traffic manager</strong>.</p>
 <hr>
 <h2 id="notion-kubernetes-network-security-istio-practice-lab-theory--envoy-capabilities">🔧 Envoy capabilities:<a class="headerlink" href="#notion-kubernetes-network-security-istio-practice-lab-theory--envoy-capabilities" title="Permanent link">¶</a></h2>
 <ul>
-<li>mTLS encryption</li>
+<li><abbr title="mutual TLS — both sides of a connection present certificates">mTLS</abbr> encryption</li>
 <li>Retry failed requests</li>
 <li>Load balancing</li>
 <li>Traffic routing</li>
@@ -4872,7 +4897,7 @@ Traffic:
 Traffic:
 <div class="language-text highlight"><pre><span></span><code><span id="__span-22-1"><a id="__codelineno-22-1" name="__codelineno-22-1" href="#notion-kubernetes-network-security-istio-practice-lab-theory--__codelineno-22-1"></a>App → ztunnel → Network → ztunnel → App
 </span></code></pre></div>
-Still encrypted using <strong>mTLS</strong>.<p></p>
+Still encrypted using <strong><abbr title="mutual TLS — both sides of a connection present certificates">mTLS</abbr></strong>.<p></p>
 <hr>
 <h1 id="notion-kubernetes-network-security-istio-practice-lab-theory--difference-is-not-security">⚖️ Difference is NOT security<a class="headerlink" href="#notion-kubernetes-network-security-istio-practice-lab-theory--difference-is-not-security" title="Permanent link">¶</a></h1>
 <p>It is:
@@ -4885,7 +4910,7 @@ Still encrypted using <strong>mTLS</strong>.<p></p>
 <hr>
 <h2 id="notion-kubernetes-network-security-istio-practice-lab-theory--ambient-mode-ztunnel-only">Ambient Mode (ztunnel only)<a class="headerlink" href="#notion-kubernetes-network-security-istio-practice-lab-theory--ambient-mode-ztunnel-only" title="Permanent link">¶</a></h2>
 <p>✔ Identity-based security
-✔ mTLS
+✔ <abbr title="mutual TLS — both sides of a connection present certificates">mTLS</abbr>
 ❌ No deep HTTP inspection</p>
 <hr>
 <h2 id="notion-kubernetes-network-security-istio-practice-lab-theory--waypoint-proxy-adds-l7">Waypoint Proxy adds L7<a class="headerlink" href="#notion-kubernetes-network-security-istio-practice-lab-theory--waypoint-proxy-adds-l7" title="Permanent link">¶</a></h2>
@@ -4908,7 +4933,7 @@ Ambient:
 <hr>
 <h1 id="notion-kubernetes-network-security-istio-practice-lab-theory--interview-answer">🧾 Interview answer<a class="headerlink" href="#notion-kubernetes-network-security-istio-practice-lab-theory--interview-answer" title="Permanent link">¶</a></h1>
 <blockquote>
-<p><strong>Envoy is a high-performance proxy used by Istio to manage service-to-service communication. In Sidecar Mode, each Pod gets its own Envoy proxy. In Ambient Mode, Istio replaces per-Pod Envoys with node-level ztunnels for secure communication and optional waypoint proxies for Layer 7 features. Ambient Mode is not less secure because it still enforces mTLS and identity-based security.</strong></p>
+<p><strong>Envoy is a high-performance proxy used by Istio to manage service-to-service communication. In Sidecar Mode, each Pod gets its own Envoy proxy. In Ambient Mode, Istio replaces per-Pod Envoys with node-level ztunnels for secure communication and optional waypoint proxies for Layer 7 features. Ambient Mode is not less secure because it still enforces <abbr title="mutual TLS — both sides of a connection present certificates">mTLS</abbr> and identity-based security.</strong></p>
 </blockquote>
 <hr>
 <h1 id="notion-kubernetes-network-security-istio-practice-lab-theory---_2">---------------------------<a class="headerlink" href="#notion-kubernetes-network-security-istio-practice-lab-theory---_2" title="Permanent link">¶</a></h1>
@@ -5483,7 +5508,12 @@ You can see full trace in Jaeger.<p></p>
 <p>✔ traffic splitting
 ✔ fault injection
 ✔ observability
-✔ production install design</p></body></html></section></section>
+✔ production install design</p>
+<!--
+  Included via `--8<-- "abbreviations.md"` (pymdownx.snippets) at the bottom
+  of every generated page. Defines pymdownx.abbr tooltips site-wide instead
+  of per-page. Keep in sync with docs/glossary.md.
+--></body></html></section></section>
                     <section class='print-page md-section' id='section-10-1-4' heading-number='10.1.4'>
                         <h1>Kubernetes Operator<a class='headerlink' href='#section-10-1-4' title='Permanent link'></a>
                         </h1>
@@ -5598,8 +5628,8 @@ For an operator-based system, you typically have
 </span></code></pre></div>
 Let's understand each one.<p></p>
 <hr>
-<h1 id="notion-kubernetes-kubernetes-operator-5-what-is-a-crd"><strong>5. What is a CRD?</strong><a class="headerlink" href="#notion-kubernetes-kubernetes-operator-5-what-is-a-crd" title="Permanent link">¶</a></h1>
-<p>CRD means:</p>
+<h1 id="notion-kubernetes-kubernetes-operator-5-what-is-a-crd"><strong>5. What is a <abbr title="CustomResourceDefinition — teaches Kubernetes a new resource type">CRD</abbr>?</strong><a class="headerlink" href="#notion-kubernetes-kubernetes-operator-5-what-is-a-crd" title="Permanent link">¶</a></h1>
+<p><abbr title="CustomResourceDefinition — teaches Kubernetes a new resource type">CRD</abbr> means:</p>
 <blockquote>
 <p><strong>CustomResourceDefinition</strong>
 This is extremely important.
@@ -5614,7 +5644,7 @@ But suppose we want Kubernetes to understand:
 <div class="language-text highlight"><pre><span></span><code><span id="__span-9-1"><a id="__codelineno-9-1" name="__codelineno-9-1" href="#notion-kubernetes-kubernetes-operator-__codelineno-9-1"></a>MongoDBAtlasUser
 </span></code></pre></div>
 Kubernetes doesn't know what that is by default.
-So we install a CRD that essentially tells Kubernetes:
+So we install a <abbr title="CustomResourceDefinition — teaches Kubernetes a new resource type">CRD</abbr> that essentially tells Kubernetes:
 "There is a new type of Kubernetes object called&nbsp;<strong><code>MongoDBAtlasUser</code></strong>."
 Conceptually:
 <div class="language-text highlight"><pre><span></span><code><span id="__span-10-1"><a id="__codelineno-10-1" name="__codelineno-10-1" href="#notion-kubernetes-kubernetes-operator-__codelineno-10-1"></a>Kubernetes
@@ -5626,11 +5656,11 @@ Conceptually:
 </span><span id="__span-10-7"><a id="__codelineno-10-7" name="__codelineno-10-7" href="#notion-kubernetes-kubernetes-operator-__codelineno-10-7"></a>│
 </span><span id="__span-10-8"><a id="__codelineno-10-8" name="__codelineno-10-8" href="#notion-kubernetes-kubernetes-operator-__codelineno-10-8"></a>└── MongoDBAtlasUser   ← added through CRD
 </span></code></pre></div>
-The CRD defines the&nbsp;<strong>kind of object</strong>.<p></p>
+The <abbr title="CustomResourceDefinition — teaches Kubernetes a new resource type">CRD</abbr> defines the&nbsp;<strong>kind of object</strong>.<p></p>
 </blockquote>
 <hr>
 <h1 id="notion-kubernetes-kubernetes-operator-6-then-what-is-a-custom-resource"><strong>6. Then what is a Custom Resource?</strong><a class="headerlink" href="#notion-kubernetes-kubernetes-operator-6-then-what-is-a-custom-resource" title="Permanent link">¶</a></h1>
-<p>Once the CRD exists, you can create an actual object of that type.
+<p>Once the <abbr title="CustomResourceDefinition — teaches Kubernetes a new resource type">CRD</abbr> exists, you can create an actual object of that type.
 For example, conceptually:
 </p><div class="language-yaml highlight"><pre><span></span><code><span id="__span-11-1"><a id="__codelineno-11-1" name="__codelineno-11-1" href="#notion-kubernetes-kubernetes-operator-__codelineno-11-1"></a><span class="nt">apiVersion</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">mongodb.example.com/v1</span>
 </span><span id="__span-11-2"><a id="__codelineno-11-2" name="__codelineno-11-2" href="#notion-kubernetes-kubernetes-operator-__codelineno-11-2"></a><span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">MongoDBAtlasUser</span>
@@ -5644,7 +5674,7 @@ For example, conceptually:
 </span><span id="__span-11-10"><a id="__codelineno-11-10" name="__codelineno-11-10" href="#notion-kubernetes-kubernetes-operator-__codelineno-11-10"></a><span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">readWrite</span>
 </span></code></pre></div>
 The important distinction is:<p></p>
-<h3 id="notion-kubernetes-kubernetes-operator-crd"><strong>CRD</strong><a class="headerlink" href="#notion-kubernetes-kubernetes-operator-crd" title="Permanent link">¶</a></h3>
+<h3 id="notion-kubernetes-kubernetes-operator-crd"><strong><abbr title="CustomResourceDefinition — teaches Kubernetes a new resource type">CRD</abbr></strong><a class="headerlink" href="#notion-kubernetes-kubernetes-operator-crd" title="Permanent link">¶</a></h3>
 <p>Defines the&nbsp;<strong>type</strong>.
 </p><div class="language-text highlight"><pre><span></span><code><span id="__span-12-1"><a id="__codelineno-12-1" name="__codelineno-12-1" href="#notion-kubernetes-kubernetes-operator-__codelineno-12-1"></a>MongoDBAtlasUser
 </span></code></pre></div><p></p>
@@ -5668,7 +5698,7 @@ For example:
 </span></code></pre></div><p></p>
 <hr>
 <h1 id="notion-kubernetes-kubernetes-operator-7-where-does-the-operator-come-into-this"><strong>7. Where does the Operator come into this?</strong><a class="headerlink" href="#notion-kubernetes-kubernetes-operator-7-where-does-the-operator-come-into-this" title="Permanent link">¶</a></h1>
-<p>The CRD alone doesn't magically create anything in MongoDB Atlas.
+<p>The <abbr title="CustomResourceDefinition — teaches Kubernetes a new resource type">CRD</abbr> alone doesn't magically create anything in MongoDB Atlas.
 You need a program watching those resources.
 That's the Operator/controller.
 Imagine you apply:
@@ -5890,7 +5920,7 @@ Conceptually:
 </span><span id="__span-35-9"><a id="__codelineno-35-9" name="__codelineno-35-9" href="#notion-kubernetes-kubernetes-operator-__codelineno-35-9"></a><span class="w">  </span><span class="nt">roles</span><span class="p">:</span>
 </span><span id="__span-35-10"><a id="__codelineno-35-10" name="__codelineno-35-10" href="#notion-kubernetes-kubernetes-operator-__codelineno-35-10"></a><span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">readWrite</span>
 </span></code></pre></div>
-Again, this is&nbsp;<strong>conceptual YAML</strong>, not something I'd recommend applying directly. The exact MongoDB Atlas Operator CRD schema varies by operator version and configuration.
+Again, this is&nbsp;<strong>conceptual YAML</strong>, not something I'd recommend applying directly. The exact MongoDB Atlas Operator <abbr title="CustomResourceDefinition — teaches Kubernetes a new resource type">CRD</abbr> schema varies by operator version and configuration.
 The important thing is understanding what it represents.<p></p>
 <hr>
 <h1 id="notion-kubernetes-kubernetes-operator-12-what-happens-after-you-run-kubectl-apply"><strong>12. What happens after you run kubectl apply?</strong><a class="headerlink" href="#notion-kubernetes-kubernetes-operator-12-what-happens-after-you-run-kubectl-apply" title="Permanent link">¶</a></h1>
@@ -5912,7 +5942,7 @@ Here's what happens.<p></p>
 <p>The API server checks:</p>
 <blockquote>
 <p>"Do I understand this kind?"
-Because the Operator installed the CRD, Kubernetes understands:
+Because the Operator installed the <abbr title="CustomResourceDefinition — teaches Kubernetes a new resource type">CRD</abbr>, Kubernetes understands:
 </p><div class="language-text highlight"><pre><span></span><code><span id="__span-39-1"><a id="__codelineno-39-1" name="__codelineno-39-1" href="#notion-kubernetes-kubernetes-operator-__codelineno-39-1"></a>MongoDBAtlasUser
 </span></code></pre></div><p></p>
 </blockquote>
@@ -6041,9 +6071,9 @@ The Operator tries to keep:
 <div class="language-text highlight"><pre><span></span><code><span id="__span-55-1"><a id="__codelineno-55-1" name="__codelineno-55-1" href="#notion-kubernetes-kubernetes-operator-__codelineno-55-1"></a>Desired ≈ Actual
 </span></code></pre></div><p></p>
 <hr>
-<h1 id="notion-kubernetes-kubernetes-operator-16-operator-vs-crd-dont-mix-these-up"><strong>16. Operator vs CRD — don't mix these up</strong><a class="headerlink" href="#notion-kubernetes-kubernetes-operator-16-operator-vs-crd-dont-mix-these-up" title="Permanent link">¶</a></h1>
+<h1 id="notion-kubernetes-kubernetes-operator-16-operator-vs-crd-dont-mix-these-up"><strong>16. Operator vs <abbr title="CustomResourceDefinition — teaches Kubernetes a new resource type">CRD</abbr> — don't mix these up</strong><a class="headerlink" href="#notion-kubernetes-kubernetes-operator-16-operator-vs-crd-dont-mix-these-up" title="Permanent link">¶</a></h1>
 <p>This is one of the biggest beginner mistakes.</p>
-<h3 id="notion-kubernetes-kubernetes-operator-crd_1"><strong>CRD</strong><a class="headerlink" href="#notion-kubernetes-kubernetes-operator-crd_1" title="Permanent link">¶</a></h3>
+<h3 id="notion-kubernetes-kubernetes-operator-crd_1"><strong><abbr title="CustomResourceDefinition — teaches Kubernetes a new resource type">CRD</abbr></strong><a class="headerlink" href="#notion-kubernetes-kubernetes-operator-crd_1" title="Permanent link">¶</a></h3>
 <p><strong>Teaches Kubernetes a new resource type.</strong>
 </p><div class="language-text highlight"><pre><span></span><code><span id="__span-56-1"><a id="__codelineno-56-1" name="__codelineno-56-1" href="#notion-kubernetes-kubernetes-operator-__codelineno-56-1"></a>"MongoDBAtlasUser exists as a resource type."
 </span></code></pre></div><p></p>
@@ -6188,7 +6218,7 @@ The manager:
 1. If something changes&nbsp;→ fixes it.
 The manager is&nbsp;similar to the&nbsp;<strong>Operator</strong>.
 The instruction is&nbsp;similar to the&nbsp;<strong>Custom Resource</strong>.
-The definition of&nbsp;what an instruction&nbsp;like "room cleaning" looks like is&nbsp;similar to the&nbsp;<strong>CRD</strong>.<p></p>
+The definition of&nbsp;what an instruction&nbsp;like "room cleaning" looks like is&nbsp;similar to the&nbsp;<strong><abbr title="CustomResourceDefinition — teaches Kubernetes a new resource type">CRD</abbr></strong>.<p></p>
 </blockquote>
 <hr>
 <h1 id="notion-kubernetes-kubernetes-operator-21-the-terminology-you-should-memorize"><strong>21. The terminology&nbsp;you should memorize</strong><a class="headerlink" href="#notion-kubernetes-kubernetes-operator-21-the-terminology-you-should-memorize" title="Permanent link">¶</a></h1>
@@ -6198,7 +6228,7 @@ The definition of&nbsp;what an instruction&nbsp;like "room cleaning" looks like 
 | Kubernetes | Platform/orchestrator |
 | API Server | Entry point for&nbsp;Kubernetes API |
 | Resource | Object managed by&nbsp;Kubernetes |
-| CRD | Defines a new&nbsp;resource type |
+| <abbr title="CustomResourceDefinition — teaches Kubernetes a new resource type">CRD</abbr> | Defines a new&nbsp;resource type |
 | Custom Resource | An instance of&nbsp;that new type |
 | Controller | Watches resources and&nbsp;reconciles state |
 | Operator | Usually a controller/application that manages&nbsp;a specific domain |
@@ -6335,7 +6365,12 @@ And the Operator&nbsp;keeps watching and&nbsp;reconciling:
 </span><span id="__span-77-20"><a id="__codelineno-77-20" name="__codelineno-77-20" href="#notion-kubernetes-kubernetes-operator-__codelineno-77-20"></a>                            └──────────→
 </span></code></pre></div>
 <strong>That is why&nbsp;we need an&nbsp;Operator.</strong>
-If you want&nbsp;to go hands-on next, the&nbsp;best next lesson&nbsp;is to build&nbsp;a&nbsp;<strong>tiny Kubernetes Operator&nbsp;example from scratch</strong>&nbsp;(not MongoDB yet): first create a&nbsp;CRD, then create&nbsp;a Custom Resource, then write a&nbsp;controller that watches&nbsp;it. Once you&nbsp;understand that, the&nbsp;MongoDB Atlas Operator&nbsp;becomes much easier&nbsp;to understand.<p></p></body></html></section><section class="print-page" id="notion-kubernetes-kubernetes-operator-operator-lab" heading-number="10.1.4.2"><html><head>
+If you want&nbsp;to go hands-on next, the&nbsp;best next lesson&nbsp;is to build&nbsp;a&nbsp;<strong>tiny Kubernetes Operator&nbsp;example from scratch</strong>&nbsp;(not MongoDB yet): first create a&nbsp;<abbr title="CustomResourceDefinition — teaches Kubernetes a new resource type">CRD</abbr>, then create&nbsp;a Custom Resource, then write a&nbsp;controller that watches&nbsp;it. Once you&nbsp;understand that, the&nbsp;MongoDB Atlas Operator&nbsp;becomes much easier&nbsp;to understand.<p></p>
+<!--
+  Included via `--8<-- "abbreviations.md"` (pymdownx.snippets) at the bottom
+  of every generated page. Defines pymdownx.abbr tooltips site-wide instead
+  of per-page. Keep in sync with docs/glossary.md.
+--></body></html></section><section class="print-page" id="notion-kubernetes-kubernetes-operator-operator-lab" heading-number="10.1.4.2"><html><head>
         <script type="text/javascript">
         document.addEventListener('DOMContentLoaded', function () {
             remove_material_navigation();remove_mkdocs_theme_navigation();generate_toc();
@@ -6400,7 +6435,7 @@ step. It generates:
 | <code>go.mod</code> / <code>go.sum</code> | Dependency tracking |<p></p>
 <ul>
 <li><strong><code>-domain example.com</code></strong> matters because it becomes part of your
-CRD's API group: <code>apps.example.com</code>. This is just a namespacing
+<abbr title="CustomResourceDefinition — teaches Kubernetes a new resource type">CRD</abbr>'s API group: <code>apps.example.com</code>. This is just a namespacing
 convention (like a Java package name) — it doesn't need to be a real
 domain you own for a local lab.</li>
 </ul>
@@ -6416,7 +6451,7 @@ the scaffolding logic that later commands depend on.</p>
 </span><span id="__span-5-4"><a id="__codelineno-5-4" name="__codelineno-5-4" href="#notion-kubernetes-kubernetes-operator-operator-lab-__codelineno-5-4"></a><span class="c1"># should show a Ready node</span>
 </span></code></pre></div>
 <hr>
-<h2 id="notion-kubernetes-kubernetes-operator-operator-lab-phase-2-define-the-myapp-api-crd-types">PHASE 2 — Define the <code>MyApp</code> API (CRD types)<a class="headerlink" href="#notion-kubernetes-kubernetes-operator-operator-lab-phase-2-define-the-myapp-api-crd-types" title="Permanent link">¶</a></h2>
+<h2 id="notion-kubernetes-kubernetes-operator-operator-lab-phase-2-define-the-myapp-api-crd-types">PHASE 2 — Define the <code>MyApp</code> API (<abbr title="CustomResourceDefinition — teaches Kubernetes a new resource type">CRD</abbr> types)<a class="headerlink" href="#notion-kubernetes-kubernetes-operator-operator-lab-phase-2-define-the-myapp-api-crd-types" title="Permanent link">¶</a></h2>
 <h3 id="notion-kubernetes-kubernetes-operator-operator-lab-goal_1">Goal<a class="headerlink" href="#notion-kubernetes-kubernetes-operator-operator-lab-goal_1" title="Permanent link">¶</a></h3>
 <p>Tell Kubernetes "there is a new resource type called <code>MyApp</code>, and
 here's its schema." This phase is entirely about <strong>data shape</strong>, not
@@ -6428,7 +6463,7 @@ behavior — no reconcile logic yet.</p>
 once, because you passed both <code>--resource</code> and <code>--controller</code>:
 1. <strong>The Resource (**</strong><code>-resource</code>****)** → creates
 <code>api/v1alpha1/myapp_types.go</code> — a Go struct that defines what
-fields a <code>MyApp</code> YAML can have (this becomes your CRD schema) and
+fields a <code>MyApp</code> YAML can have (this becomes your <abbr title="CustomResourceDefinition — teaches Kubernetes a new resource type">CRD</abbr> schema) and
 registers the type with Kubernetes' type system.
 1. <strong>The Controller (**</strong><code>-controller</code>****)** → creates
 <code>internal/controller/myapp_controller.go</code> — a skeleton reconciler
@@ -6469,7 +6504,7 @@ never by the user directly. Kubernetes enforces this split via the
 struct) — it makes <code>/status</code> a separate API endpoint so a <code>kubectl apply</code> to spec can't accidentally clobber status, and vice versa.
 <strong>The **</strong><code>// +kubebuilder:...</code>**** comments are not decoration** — they're
 machine-read markers. <code>controller-gen</code> (invoked by <code>make manifests</code>)
-parses these comments to generate the actual CRD YAML schema and
+parses these comments to generate the actual <abbr title="CustomResourceDefinition — teaches Kubernetes a new resource type">CRD</abbr> YAML schema and
 <code>kubectl</code> print columns. <code>+kubebuilder:default="nginx:latest"</code> means:
 if a user creates a <code>MyApp</code> without specifying <code>image</code>, Kubernetes
 itself fills in <code>nginx:latest</code> at the API server level — your Go code
@@ -6496,7 +6531,7 @@ the client-go machinery can safely clone objects internally. You
 never write this by hand — the tool derives it from your struct
 fields.
 <strong><code>make manifests</code></strong> — regenerates <code>config/crd/bases/apps.example.com_myapps.yaml</code>,
-the actual CRD YAML that gets installed into the cluster, translating
+the actual <abbr title="CustomResourceDefinition — teaches Kubernetes a new resource type">CRD</abbr> YAML that gets installed into the cluster, translating
 your Go struct + markers into an OpenAPI schema Kubernetes
 understands.<p></p>
 <h3 id="notion-kubernetes-kubernetes-operator-operator-lab-phase-2-check">✅ Phase 2 check<a class="headerlink" href="#notion-kubernetes-kubernetes-operator-operator-lab-phase-2-check" title="Permanent link">¶</a></h3>
@@ -6627,7 +6662,7 @@ that just registers your reconciler with the manager.</li>
 Should compile with no errors. This phase is code-only — nothing
 touches the cluster yet.<p></p>
 <hr>
-<h2 id="notion-kubernetes-kubernetes-operator-operator-lab-phase-4-install-crd-run-the-operator-locally">PHASE 4 — Install CRD &amp; Run the Operator Locally<a class="headerlink" href="#notion-kubernetes-kubernetes-operator-operator-lab-phase-4-install-crd-run-the-operator-locally" title="Permanent link">¶</a></h2>
+<h2 id="notion-kubernetes-kubernetes-operator-operator-lab-phase-4-install-crd-run-the-operator-locally">PHASE 4 — Install <abbr title="CustomResourceDefinition — teaches Kubernetes a new resource type">CRD</abbr> &amp; Run the Operator Locally<a class="headerlink" href="#notion-kubernetes-kubernetes-operator-operator-lab-phase-4-install-crd-run-the-operator-locally" title="Permanent link">¶</a></h2>
 <h3 id="notion-kubernetes-kubernetes-operator-operator-lab-goal_2">Goal<a class="headerlink" href="#notion-kubernetes-kubernetes-operator-operator-lab-goal_2" title="Permanent link">¶</a></h3>
 <p>Get your reconcile loop actually running against the real (mini)
 cluster, watching for <code>MyApp</code> objects.</p>
@@ -6645,12 +6680,12 @@ to flow into <code>config/rbac/role.yaml</code>.
 <div class="language-bash highlight"><pre><span></span><code><span id="__span-19-1"><a id="__codelineno-19-1" name="__codelineno-19-1" href="#notion-kubernetes-kubernetes-operator-operator-lab-__codelineno-19-1"></a>make<span class="w"> </span>install
 </span></code></pre></div>
 <strong>What this does:</strong> runs <code>kubectl apply -f config/crd/bases/...</code>
-under the hood — this registers the <code>MyApp</code> CRD with your Minikube
+under the hood — this registers the <code>MyApp</code> <abbr title="CustomResourceDefinition — teaches Kubernetes a new resource type">CRD</abbr> with your Minikube
 cluster's API server. After this, the API server <em>understands</em><code>apiVersion: apps.example.com/v1alpha1, kind: MyApp</code> as a valid
 resource type — but nothing is watching it yet.
 <div class="language-bash highlight"><pre><span></span><code><span id="__span-20-1"><a id="__codelineno-20-1" name="__codelineno-20-1" href="#notion-kubernetes-kubernetes-operator-operator-lab-__codelineno-20-1"></a>kubectl<span class="w"> </span>get<span class="w"> </span>crds<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>myapps
 </span></code></pre></div>
-Confirms the CRD is registered.
+Confirms the <abbr title="CustomResourceDefinition — teaches Kubernetes a new resource type">CRD</abbr> is registered.
 <div class="language-bash highlight"><pre><span></span><code><span id="__span-21-1"><a id="__codelineno-21-1" name="__codelineno-21-1" href="#notion-kubernetes-kubernetes-operator-operator-lab-__codelineno-21-1"></a>make<span class="w"> </span>run
 </span></code></pre></div>
 <strong>What this does:</strong> compiles and runs your operator's <code>main.go</code><strong>directly on your machine</strong> (not as a container in the cluster). It
@@ -6671,7 +6706,7 @@ running for Phase 5.</p>
 <hr>
 <h2 id="notion-kubernetes-kubernetes-operator-operator-lab-phase-5-apply-a-sample-myapp-and-watch-it-get-reconciled">PHASE 5 — Apply a Sample <code>MyApp</code> and Watch It Get Reconciled<a class="headerlink" href="#notion-kubernetes-kubernetes-operator-operator-lab-phase-5-apply-a-sample-myapp-and-watch-it-get-reconciled" title="Permanent link">¶</a></h2>
 <h3 id="notion-kubernetes-kubernetes-operator-operator-lab-goal_3">Goal<a class="headerlink" href="#notion-kubernetes-kubernetes-operator-operator-lab-goal_3" title="Permanent link">¶</a></h3>
-<p>Prove the whole loop end-to-end: CR created → Deployment+Service
+<p>Prove the whole loop end-to-end: <abbr title="Custom Resource — an instance of a CRD">CR</abbr> created → Deployment+Service
 created → pods running.</p>
 <h3 id="notion-kubernetes-kubernetes-operator-operator-lab-file-configsamplesapps_v1alpha1_myappyaml">File: <code>config/samples/apps_v1alpha1_myapp.yaml</code><a class="headerlink" href="#notion-kubernetes-kubernetes-operator-operator-lab-file-configsamplesapps_v1alpha1_myappyaml" title="Permanent link">¶</a></h3>
 <p>This was scaffolded empty-ish in Phase 2; fill in real values:
@@ -6685,7 +6720,7 @@ created → pods running.</p>
 </span><span id="__span-22-8"><a id="__codelineno-22-8" name="__codelineno-22-8" href="#notion-kubernetes-kubernetes-operator-operator-lab-__codelineno-22-8"></a><span class="w">  </span><span class="nt">port</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">80</span>
 </span></code></pre></div>
 This is the only file you touch in this phase — it's a sample
-instance of your CRD, not scaffolding.<p></p>
+instance of your <abbr title="CustomResourceDefinition — teaches Kubernetes a new resource type">CRD</abbr>, not scaffolding.<p></p>
 <h3 id="notion-kubernetes-kubernetes-operator-operator-lab-commands-run-in-a-second-terminal-keep-make-run-alive-in-the-first">Commands (run in a <strong>second</strong> terminal — keep <code>make run</code> alive in the first)<a class="headerlink" href="#notion-kubernetes-kubernetes-operator-operator-lab-commands-run-in-a-second-terminal-keep-make-run-alive-in-the-first" title="Permanent link">¶</a></h3>
 <p></p><div class="language-bash highlight"><pre><span></span><code><span id="__span-23-1"><a id="__codelineno-23-1" name="__codelineno-23-1" href="#notion-kubernetes-kubernetes-operator-operator-lab-__codelineno-23-1"></a>kubectl<span class="w"> </span>apply<span class="w"> </span>-f<span class="w"> </span>config/samples/apps_v1alpha1_myapp.yaml
 </span></code></pre></div>
@@ -6777,12 +6812,12 @@ Kubernetes' built-in garbage collector doing the work.<p></p>
 <tr>
 <td><code>api/v1alpha1/myapp_types.go</code></td>
 <td>2</td>
-<td>Defines the CRD schema (Spec/Status)</td>
+<td>Defines the <abbr title="CustomResourceDefinition — teaches Kubernetes a new resource type">CRD</abbr> schema (Spec/Status)</td>
 </tr>
 <tr>
 <td><code>config/crd/bases/*.yaml</code></td>
 <td>2 (generated)</td>
-<td>The actual CRD installed into the cluster</td>
+<td>The actual <abbr title="CustomResourceDefinition — teaches Kubernetes a new resource type">CRD</abbr> installed into the cluster</td>
 </tr>
 <tr>
 <td><code>internal/controller/myapp_controller.go</code></td>
@@ -6797,14 +6832,19 @@ Kubernetes' built-in garbage collector doing the work.<p></p>
 <tr>
 <td><code>config/samples/*.yaml</code></td>
 <td>5</td>
-<td>A sample CR instance you apply to test</td>
+<td>A sample <abbr title="Custom Resource — an instance of a CRD">CR</abbr> instance you apply to test</td>
 </tr>
 </tbody>
 </table>
 <p>If you want, next step could be adding a <strong>finalizer</strong> (for cleanup
 logic that must run <em>before</em> deletion, unlike the automatic
 owner-reference GC used here) or wiring up <code>envtest</code> for proper Go
-unit tests on the reconciler instead of manual <code>kubectl</code> testing.</p></body></html></section></section>
+unit tests on the reconciler instead of manual <code>kubectl</code> testing.</p>
+<!--
+  Included via `--8<-- "abbreviations.md"` (pymdownx.snippets) at the bottom
+  of every generated page. Defines pymdownx.abbr tooltips site-wide instead
+  of per-page. Keep in sync with docs/glossary.md.
+--></body></html></section></section>
                     <section class='print-page md-section' id='section-10-1-5' heading-number='10.1.5'>
                         <h1>Helm.<a class='headerlink' href='#section-10-1-5' title='Permanent link'></a>
                         </h1>
@@ -6839,20 +6879,35 @@ unit tests on the reconciler instead of manual <code>kubectl</code> testing.</p>
 <li>Install first helloworld chat </li>
 <li><code>helm create helloworld</code> —&gt;&gt; it create the helm chart with the all basic details</li>
 <li><code>helm install &lt;release name&gt; helloworld</code></li>
-</ol></body></html></section><section class="print-page" id="notion-kubernetes-helm-helm-upgrade" heading-number="10.1.5.2"><html><head>
+</ol>
+<!--
+  Included via `--8<-- "abbreviations.md"` (pymdownx.snippets) at the bottom
+  of every generated page. Defines pymdownx.abbr tooltips site-wide instead
+  of per-page. Keep in sync with docs/glossary.md.
+--></body></html></section><section class="print-page" id="notion-kubernetes-helm-helm-upgrade" heading-number="10.1.5.2"><html><head>
         <script type="text/javascript">
         document.addEventListener('DOMContentLoaded', function () {
             remove_material_navigation();remove_mkdocs_theme_navigation();generate_toc();
         })
         </script>
-        </head><body><h1 id="helm-upgrade">Helm Upgrade<a class="headerlink" href="#notion-kubernetes-helm-helm-upgrade-helm-upgrade" title="Permanent link">¶</a></h1></body></html></section><section class="print-page" id="notion-kubernetes-helm-how-to-use-the-helm-plugin" heading-number="10.1.5.3"><html><head>
+        </head><body><h1 id="helm-upgrade">Helm Upgrade<a class="headerlink" href="#notion-kubernetes-helm-helm-upgrade-helm-upgrade" title="Permanent link">¶</a></h1>
+<!--
+  Included via `--8<-- "abbreviations.md"` (pymdownx.snippets) at the bottom
+  of every generated page. Defines pymdownx.abbr tooltips site-wide instead
+  of per-page. Keep in sync with docs/glossary.md.
+--></body></html></section><section class="print-page" id="notion-kubernetes-helm-how-to-use-the-helm-plugin" heading-number="10.1.5.3"><html><head>
         <script type="text/javascript">
         document.addEventListener('DOMContentLoaded', function () {
             remove_material_navigation();remove_mkdocs_theme_navigation();generate_toc();
         })
         </script>
         </head><body><h1 id="how-to-use-the-helm-plugin">How to use the helm plugin:<a class="headerlink" href="#notion-kubernetes-helm-how-to-use-the-helm-plugin-how-to-use-the-helm-plugin" title="Permanent link">¶</a></h1>
-<p>In this lesson, we will see plugins and how to use those plugins, like <strong><code>helm diff</code></strong></p></body></html></section></section><section class="print-page" id="notion-kubernetes-mongo-atlas-operator" heading-number="10.1.6"><html><head>
+<p>In this lesson, we will see plugins and how to use those plugins, like <strong><code>helm diff</code></strong></p>
+<!--
+  Included via `--8<-- "abbreviations.md"` (pymdownx.snippets) at the bottom
+  of every generated page. Defines pymdownx.abbr tooltips site-wide instead
+  of per-page. Keep in sync with docs/glossary.md.
+--></body></html></section></section><section class="print-page" id="notion-kubernetes-mongo-atlas-operator" heading-number="10.1.6"><html><head>
         <script type="text/javascript">
         document.addEventListener('DOMContentLoaded', function () {
             remove_material_navigation();remove_mkdocs_theme_navigation();generate_toc();
@@ -6906,7 +6961,12 @@ Each app can only access its own database
 <ul>
 <li>**Namespace scope **→ all apps in that namespace use the same Atlas credentials</li>
 <li>**Application scope **→ each app in that namespace uses its own Atlas credentials</li>
-</ul></body></html></section></section>
+</ul>
+<!--
+  Included via `--8<-- "abbreviations.md"` (pymdownx.snippets) at the bottom
+  of every generated page. Defines pymdownx.abbr tooltips site-wide instead
+  of per-page. Keep in sync with docs/glossary.md.
+--></body></html></section></section>
                     <section class='print-page md-section' id='section-10-2' heading-number='10.2'>
                         <h1>Kafka<a class='headerlink' href='#section-10-2' title='Permanent link'></a>
                         </h1>
@@ -6916,25 +6976,31 @@ Each app can only access its own database
             remove_material_navigation();remove_mkdocs_theme_navigation();generate_toc();
         })
         </script>
-        </head><body><h1 id="kafka">Kafka<a class="headerlink" href="#notion-kafka-kafka" title="Permanent link">¶</a></h1></body></html></section><section class="print-page" id="notion-kafka-kafka" heading-number="10.2.2"><nav class='md-tags'><span class='md-tag'>Kafka</span><span class='md-tag'>cp-schema</span></nav><html><head>
+        </head><body><h1 id="kafka">Kafka<a class="headerlink" href="#notion-kafka-kafka" title="Permanent link">¶</a></h1>
+<p>This is the kafka (<abbr title="Confluent Platform's schema-registry component">cp-schema</abbr>)</p>
+<!--
+  Included via `--8<-- "abbreviations.md"` (pymdownx.snippets) at the bottom
+  of every generated page. Defines pymdownx.abbr tooltips site-wide instead
+  of per-page. Keep in sync with docs/glossary.md.
+--></body></html></section><section class="print-page" id="notion-kafka-kafka" heading-number="10.2.2"><nav class='md-tags'><span class='md-tag'>Kafka</span><span class='md-tag'>cp-schema</span></nav><html><head>
         <script type="text/javascript">
         document.addEventListener('DOMContentLoaded', function () {
             remove_material_navigation();remove_mkdocs_theme_navigation();generate_toc();
         })
         </script>
         </head><body><h1 id="kafka">Kafka<a class="headerlink" href="#notion-kafka-kafka-kafka" title="Permanent link">¶</a></h1>
-<h1 id="notion-kafka-kafka-what-is-cp-schema">What is cp-schema ?<a class="headerlink" href="#notion-kafka-kafka-what-is-cp-schema" title="Permanent link">¶</a></h1>
-<p><strong>cp-schema (in Confluent Docker images)</strong> is not a separate product or concept.
+<h1 id="notion-kafka-kafka-what-is-cp-schema">What is <abbr title="Confluent Platform's schema-registry component">cp-schema</abbr> ?<a class="headerlink" href="#notion-kafka-kafka-what-is-cp-schema" title="Permanent link">¶</a></h1>
+<p><strong><abbr title="Confluent Platform's schema-registry component">cp-schema</abbr> (in Confluent Docker images)</strong> is not a separate product or concept.
 👉 <strong><code>cp</code>**</strong> stands for *****Confluent Platform***
 👉 <strong><code>schema-registry</code>**</strong> is a component of it**</p>
 <h3 id="notion-kafka-kafka-brief-definition">✅ Brief definition:<a class="headerlink" href="#notion-kafka-kafka-brief-definition" title="Permanent link">¶</a></h3>
-<p><strong>cp-schema-registry is the Confluent Platform service that manages and enforces schemas for Kafka messages (Avro, JSON Schema, Protobuf) to ensure producers and consumers use a consistent data format.</strong></p>
+<p><strong><abbr title="Confluent Platform's schema-registry component">cp-schema</abbr>-registry is the Confluent Platform service that manages and enforces schemas for Kafka messages (Avro, JSON Schema, Protobuf) to ensure producers and consumers use a consistent data format.</strong></p>
 <hr>
 <h3 id="notion-kafka-kafka-in-simple-words">🧠 In simple words:<a class="headerlink" href="#notion-kafka-kafka-in-simple-words" title="Permanent link">¶</a></h3>
 <p>It is a <strong>central service that stores and validates message structure (schema) for Kafka data</strong> so that all applications agree on the same format.</p>
 <hr>
 <h3 id="notion-kafka-kafka-one-line-meaning">🔥 One-line meaning:<a class="headerlink" href="#notion-kafka-kafka-one-line-meaning" title="Permanent link">¶</a></h3>
-<p>👉 <strong>cp-schema-registry = Schema management service for Kafka inside Confluent Platform</strong></p>
+<p>👉 <strong><abbr title="Confluent Platform's schema-registry component">cp-schema</abbr>-registry = Schema management service for Kafka inside Confluent Platform</strong></p>
 <hr>
 <h1 id="notion-kafka-kafka-kafka-vs-schema-registry-beginner-notes">🧠 Kafka vs Schema Registry (Beginner Notes)<a class="headerlink" href="#notion-kafka-kafka-kafka-vs-schema-registry-beginner-notes" title="Permanent link">¶</a></h1>
 <h2 id="notion-kafka-kafka-what-is-kafka-simple-idea">📌 What is Kafka (simple idea)<a class="headerlink" href="#notion-kafka-kafka-what-is-kafka-simple-idea" title="Permanent link">¶</a></h2>
@@ -6976,7 +7042,7 @@ But receives:
 👉 This is a <strong>late failure (runtime issue)</strong></li>
 </ul>
 <hr>
-<h2 id="notion-kafka-kafka-kafka-with-schema-registry-cp-schema-registry">📦 Kafka WITH Schema Registry (cp-schema-registry)<a class="headerlink" href="#notion-kafka-kafka-kafka-with-schema-registry-cp-schema-registry" title="Permanent link">¶</a></h2>
+<h2 id="notion-kafka-kafka-kafka-with-schema-registry-cp-schema-registry">📦 Kafka WITH Schema Registry (<abbr title="Confluent Platform's schema-registry component">cp-schema</abbr>-registry)<a class="headerlink" href="#notion-kafka-kafka-kafka-with-schema-registry-cp-schema-registry" title="Permanent link">¶</a></h2>
 <p>Schema Registry adds a <strong>contract (rule) for data format</strong>.
 Example schema:
 </p><div class="language-json highlight"><pre><span></span><code><span id="__span-5-1"><a id="__codelineno-5-1" name="__codelineno-5-1" href="#notion-kafka-kafka-__codelineno-5-1"></a><span class="p">{</span>
@@ -7086,7 +7152,12 @@ With it:
 👉 It does NOT change Kafka behavior
 👉 It adds <strong>data contract enforcement</strong></li>
 </ul>
-<hr></body></html></section></section>
+<hr>
+<!--
+  Included via `--8<-- "abbreviations.md"` (pymdownx.snippets) at the bottom
+  of every generated page. Defines pymdownx.abbr tooltips site-wide instead
+  of per-page. Keep in sync with docs/glossary.md.
+--></body></html></section></section>
                     <section class='print-page md-section' id='section-10-3' heading-number='10.3'>
                         <h1>Radar<a class='headerlink' href='#section-10-3' title='Permanent link'></a>
                         </h1>
@@ -7096,7 +7167,12 @@ With it:
             remove_material_navigation();remove_mkdocs_theme_navigation();generate_toc();
         })
         </script>
-        </head><body><h1 id="radar">Radar<a class="headerlink" href="#notion-radar-radar" title="Permanent link">¶</a></h1></body></html></section><section class="print-page" id="notion-radar-radar-mongoatlas-flow" heading-number="10.3.2"><html><head>
+        </head><body><h1 id="radar">Radar<a class="headerlink" href="#notion-radar-radar" title="Permanent link">¶</a></h1>
+<!--
+  Included via `--8<-- "abbreviations.md"` (pymdownx.snippets) at the bottom
+  of every generated page. Defines pymdownx.abbr tooltips site-wide instead
+  of per-page. Keep in sync with docs/glossary.md.
+--></body></html></section><section class="print-page" id="notion-radar-radar-mongoatlas-flow" heading-number="10.3.2"><html><head>
         <script type="text/javascript">
         document.addEventListener('DOMContentLoaded', function () {
             remove_material_navigation();remove_mkdocs_theme_navigation();generate_toc();
@@ -7164,16 +7240,16 @@ Cluster
 │
 ├── {TENANT_NAMESPACE} (e.g., obaas-1 or radar)
 │   ├── sbcp-radar (Job) ← internal tests run HERE
-│   ├── MongoAtlas CR → triggers DB creation
-│   ├── MongoAtlasUser CR → triggers user creation
-│   ├── MongoAtlasReadOnlyUser CR → triggers RO user
+│   ├── MongoAtlas <abbr title="Custom Resource — an instance of a CRD">CR</abbr> → triggers DB creation
+│   ├── MongoAtlasUser <abbr title="Custom Resource — an instance of a CRD">CR</abbr> → triggers user creation
+│   ├── MongoAtlasReadOnlyUser <abbr title="Custom Resource — an instance of a CRD">CR</abbr> → triggers RO user
 │   ├── test-from-radar-mongodb (Secret) ← created by operator
 │   └── mongo-ro-cred-dev (Secret) ← created by operator
 │
 └── istio-system / per-tenant egress
 └── Istio service mesh controls egress traffic
 4. How Istio Interacts
-This is the critical piece. Istio's service mesh enforces strict mTLS and egress policies:
+This is the critical piece. Istio's service mesh enforces strict <abbr title="mutual TLS — both sides of a connection present certificates">mTLS</abbr> and egress policies:
 The mongo-operator needs to reach:
 MongoDB Atlas API (<a href="http://cloud.mongodb.com/">cloud.mongodb.com</a>) — REST API calls for user/role management
 MongoDB Atlas cluster (<em>.mongodb.net) — direct driver connection to create databases
@@ -7304,7 +7380,7 @@ MongoAtlas (name: test-from-radar, database: {TENANT_NAMESPACE}_test-from-radar)
 MongoAtlasUser (name: test-from-radar, secretName: test-from-radar-mongodb)
 The label <a href="http://app.sbs.io/part-of=radar-%7Bbranch_name%7D">app.sbs.io/part-of=radar-{branch_name}</a> is added so the cleanup job can delete these resources later.
 PART 3: What Happens After the CRs Are Applied (Operator Reconciliation)
-Now we enter the domain of the mongo-operator itself. This is NOT triggered by the radar pipeline — it's an autonomous Kubernetes process that reacts to CR creation.
+Now we enter the domain of the mongo-operator itself. This is NOT triggered by the radar pipeline — it's an autonomous Kubernetes process that reacts to <abbr title="Custom Resource — an instance of a CRD">CR</abbr> creation.
 Where the operator lives:
 Deployment name: mongoatlas-operator
 Namespace: kube-management
@@ -7314,10 +7390,10 @@ The reconciliation loop:
 The operator's controller-runtime framework has a Watch set up:
 // From mongoatlas_controller.go
 err = c.Watch(source.Kind(mgr.GetCache(), &amp;dbv1.MongoAtlas{}, &amp;handler.TypedEnqueueRequestForObject[<em>dbv1.MongoAtlas]{}))
-This means: "whenever a MongoAtlas CR is created/updated/deleted anywhere in the cluster, add a reconcile request to my queue."
-What reconciliation does for MongoAtlas CR specifically:
+This means: "whenever a MongoAtlas <abbr title="Custom Resource — an instance of a CRD">CR</abbr> is created/updated/deleted anywhere in the cluster, add a reconcile request to my queue."
+What reconciliation does for MongoAtlas <abbr title="Custom Resource — an instance of a CRD">CR</abbr> specifically:
 func (r *ReconcileMongoAtlas) Reconcile(ctx context.Context, request reconcile.Request) (reconcile.Result, error) {
-// 1. Fetch the CR from Kubernetes
+// 1. Fetch the <abbr title="Custom Resource — an instance of a CRD">CR</abbr> from Kubernetes
 instance := &amp;dbv1.MongoAtlas{}
 err := r.client.Get(ctx, request.NamespacedName, instance)
 </em></p><div class="language-text highlight"><pre><em><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#notion-radar-radar-mongoatlas-flow-__codelineno-0-1"></a>// 2. If CR is new (status is empty), create the database
@@ -7337,10 +7413,10 @@ Lists all databases that match the namespace prefix pattern (^{namespace}_.</em>
 If the database already exists → skips creation, but if CREDENTIAL_SCOPE=namespace, updates the tenant user's access list
 If the database doesn't exist → creates it by inserting a dummy document into a Operator_Init collection
 If CREDENTIAL_SCOPE=namespace → calls the Atlas REST API to update the tenant user with the new database in their access list
-Updates the CR status to created
+Updates the <abbr title="Custom Resource — an instance of a CRD">CR</abbr> status to created
 Meanwhile, other CRs trigger their own controllers:
-MongoAtlasUser CR → the mongoatlasuser controller creates an Atlas database user, generates credentials, creates a Kubernetes Secret (test-from-radar-mongodb) in the same namespace
-MongoAtlasReadOnlyUser CR → the mongoatlasreadonlyuser controller creates a read-only Atlas user, stores credentials in a secret
+MongoAtlasUser <abbr title="Custom Resource — an instance of a CRD">CR</abbr> → the mongoatlasuser controller creates an Atlas database user, generates credentials, creates a Kubernetes Secret (test-from-radar-mongodb) in the same namespace
+MongoAtlasReadOnlyUser <abbr title="Custom Resource — an instance of a CRD">CR</abbr> → the mongoatlasreadonlyuser controller creates a read-only Atlas user, stores credentials in a secret
 Timeline:
 T+0s:   kubectl apply creates CRs in TENANT_NAMESPACE
 T+0-2s: Kubernetes API notifies controller-runtime (via Watch)
@@ -7490,7 +7566,7 @@ pytest -m "$setup_final_target" setups
 This means: "run setup functions that are marked <a class="magiclink magiclink-github magiclink-mention" href="https://github.com/internal" title="GitHub User: internal">@internal</a> OR <a class="magiclink magiclink-github magiclink-mention" href="https://github.com/external" title="GitHub User: external">@external</a>, but NOT <a class="magiclink magiclink-github magiclink-mention" href="https://github.com/infra" title="GitHub User: infra">@infra</a>."
 Why infra doesn't need setup:
 Infra tests validate existing AWS/EKS resources (cluster version, instance types, backup policies, security configs). These resources already exist because the environment was already provisioned. Infra tests only READ and verify — they don't need anything created beforehand.
-Internal tests need setup because they test the operator's BEHAVIOR. To test "does the mongo operator create a database correctly?", you first need to give the operator a CR to work with. Without the CR, there's nothing for the operator to do, and nothing for the test to verify.
+Internal tests need setup because they test the operator's BEHAVIOR. To test "does the mongo operator create a database correctly?", you first need to give the operator a <abbr title="Custom Resource — an instance of a CRD">CR</abbr> to work with. Without the <abbr title="Custom Resource — an instance of a CRD">CR</abbr>, there's nothing for the operator to do, and nothing for the test to verify.
 External tests sometimes also need setup — for example, creating an Ingress resource (httpbin) so external tests can later hit that endpoint and verify routing works.
 In summary:
 Test Type   Needs Setup?    Why?
@@ -7595,39 +7671,39 @@ ServiceEntry resources allowing <em>.mongodb.net
 Or even <a href="http://sidecar.istio.io/inject:">sidecar.istio.io/inject:</a> "false" on pods
 So when you use TENANT_NAMESPACE=obaas-1, the radar pod gets the same restrictions as real application pods in that namespace, which may block Atlas connectivity. When you use TENANT_NAMESPACE=radar, the pod runs in a namespace specifically configured for testing with proper egress rules.
 Q6: CRs are normally deployed by users to create databases/users. Why does radar apply CRs without a user?
-Your understanding is correct: In normal production usage, a developer creates a MongoAtlas CR in their namespace, and the operator creates the database for them. The CR is the "request" and the operator is the "fulfillment."
+Your understanding is correct: In normal production usage, a developer creates a MongoAtlas <abbr title="Custom Resource — an instance of a CRD">CR</abbr> in their namespace, and the operator creates the database for them. The <abbr title="Custom Resource — an instance of a CRD">CR</abbr> is the "request" and the operator is the "fulfillment."
 Why radar applies CRs automatically:
 Radar is an automated testing framework. Its purpose is to validate that the operator works correctly WITHOUT human intervention. It simulates what a user would do:
-User would apply a MongoAtlas CR → Radar's setup stage applies it automatically
+User would apply a MongoAtlas <abbr title="Custom Resource — an instance of a CRD">CR</abbr> → Radar's setup stage applies it automatically
 User would wait for the database to be created → Radar waits for the operator to reconcile
 User would check the Secret was created → Radar's internal test verifies the Secret exists and contains valid credentials
 User would connect to the database → Radar's internal test connects and verifies the connection works
 The setup stage IS the "user" in automated testing. It plays the role of a developer applying CRs, so the tests can then verify that everything the operator is supposed to do actually happened correctly.
 Think of it as a simulation:
-Manual flow:     Developer → applies CR → operator reacts → developer verifies
-Automated flow:  Setup stage → applies CR → operator reacts → internal tests verify
+Manual flow:     Developer → applies <abbr title="Custom Resource — an instance of a CRD">CR</abbr> → operator reacts → developer verifies
+Automated flow:  Setup stage → applies <abbr title="Custom Resource — an instance of a CRD">CR</abbr> → operator reacts → internal tests verify
 The test resources have specific names (test-from-radar) so they don't conflict with real application resources. And they're labeled with <a href="http://app.sbs.io/part-of=radar-%7Bbranch%7D">app.sbs.io/part-of=radar-{branch}</a> so the cleanup job can remove them after testing.
 Q7: Why is namespace relevant in operator reconciliation? Reconcile watches CRs, so why does namespace matter?
-The operator watches ALL namespaces (because WATCH_NAMESPACE: ""). So yes, it will pick up a MongoAtlas CR regardless of which namespace it's in. The namespace DOES matter for several reasons:
+The operator watches ALL namespaces (because WATCH_NAMESPACE: ""). So yes, it will pick up a MongoAtlas <abbr title="Custom Resource — an instance of a CRD">CR</abbr> regardless of which namespace it's in. The namespace DOES matter for several reasons:
 1. Database naming:
-// The CR spec says:
+// The <abbr title="Custom Resource — an instance of a CRD">CR</abbr> spec says:
 spec:
 database: "{TENANT_NAMESPACE}<em>test-from-radar"
-The database name includes the namespace. So a CR in obaas-1 creates database obaas-1_test-from-radar, while a CR in radar creates radar_test-from-radar.
+The database name includes the namespace. So a <abbr title="Custom Resource — an instance of a CRD">CR</abbr> in obaas-1 creates database obaas-1_test-from-radar, while a <abbr title="Custom Resource — an instance of a CRD">CR</abbr> in radar creates radar_test-from-radar.
 1. Credential scope and user naming:
-prefix := cr.Namespace  // ← this is the namespace of the CR
+prefix := cr.Namespace  // ← this is the namespace of the <abbr title="Custom Resource — an instance of a CRD">CR</abbr>
 prefixpattern := fmt.Sprintf("^%s%s", prefix, delimiterPattern)
 // Lists databases matching "^obaas-1</em>.</em>"
 When CREDENTIAL_SCOPE=namespace, the operator creates a tenant user named {ENV_NAME}-{namespace}. So the namespace directly determines which databases the user can access.
-1. Secret creation: The operator creates Kubernetes Secrets in the same namespace as the CR:
-// If CR is in namespace "obaas-1", the Secret "test-from-radar-mongodb" is created in "obaas-1"
-// If CR is in namespace "radar", the Secret is created in "radar"
-The internal test pod (also in that namespace) needs to read these Secrets. If the CR was in a different namespace than the test pod, the pod couldn't read the Secret.
+1. Secret creation: The operator creates Kubernetes Secrets in the same namespace as the <abbr title="Custom Resource — an instance of a CRD">CR</abbr>:
+// If <abbr title="Custom Resource — an instance of a CRD">CR</abbr> is in namespace "obaas-1", the Secret "test-from-radar-mongodb" is created in "obaas-1"
+// If <abbr title="Custom Resource — an instance of a CRD">CR</abbr> is in namespace "radar", the Secret is created in "radar"
+The internal test pod (also in that namespace) needs to read these Secrets. If the <abbr title="Custom Resource — an instance of a CRD">CR</abbr> was in a different namespace than the test pod, the pod couldn't read the Secret.
 1. Namespace mutex:
 releaseNamespaceMutex := utils.AcquireNamespaceMutex(reqLogger, cr.Namespace)
 defer releaseNamespaceMutex()
 The operator uses a per-namespace mutex to prevent race conditions. Two CRs in the same namespace are reconciled sequentially (not concurrently).
-Summary: The operator watches all namespaces to DISCOVER CRs, but the namespace of each CR determines:
+Summary: The operator watches all namespaces to DISCOVER CRs, but the namespace of each <abbr title="Custom Resource — an instance of a CRD">CR</abbr> determines:
 What database name to use
 What user name to create in Atlas
 Where to put the Secret
@@ -7655,7 +7731,7 @@ value: {{ $.Release.Namespace }}
 value: "internal"
 Source 1: environment-config ConfigMap (already exists in the namespace, created by sbcp-env-setup): Contains: MONGODB_HOST, MONGODB_PROTOCOL, MONGODB_OPTIONS, ENVIRONMENT, SBCP_DOMAIN, etc.
 Source 2: mongo-config ConfigMap (already exists, optional): Contains: MongoDB-specific configuration for the namespace
-Source 3: mongo-cred Secret (created by the mongo-operator when mongoatlastenantuser CR exists): Contains: username, password, credentials (the shared namespace-level MongoDB credentials)
+Source 3: mongo-cred Secret (created by the mongo-operator when mongoatlastenantuser <abbr title="Custom Resource — an instance of a CRD">CR</abbr> exists): Contains: username, password, credentials (the shared namespace-level MongoDB credentials)
 Source 4: cicd-vars-<release> ConfigMap (created by the radar pipeline): Contains: CI/CD variables retrieved from GitLab (like MONGODB_ATLAS_PUBLIC_KEY, MONGODB_ATLAS_PRIVATE_KEY, MONGO_PROJECT_NAME)
 Source 5: Hardcoded env vars: TENANT_NAMESPACE is set to the Helm release namespace.
 Now for each test:
@@ -7666,7 +7742,7 @@ test_ro_mongo_connection:
 secret = k8s_client.get_secret("mongo-ro-cred-dev", tenant_namespace)
 username = k8s_client.get_secret_data(secret, "username")
 password = k8s_client.get_secret_data(secret, "password")
-This doesn't use env vars for credentials — it reads a Kubernetes Secret (mongo-ro-cred-dev) that was created by the mongo-operator when the MongoAtlasReadOnlyUser CR was reconciled. It uses the K8s API from inside the pod.
+This doesn't use env vars for credentials — it reads a Kubernetes Secret (mongo-ro-cred-dev) that was created by the mongo-operator when the MongoAtlasReadOnlyUser <abbr title="Custom Resource — an instance of a CRD">CR</abbr> was reconciled. It uses the K8s API from inside the pod.
 test_rw_mongo_connection:
 secret = k8s_client.get_secret("mongo-rw-cred-dev", tenant_namespace)
 Same pattern — reads a different Secret created by the operator for read-write access.
@@ -7803,13 +7879,13 @@ For the mongo-operator itself — it doesn't care. It watches ALL namespaces and
 Q14: Are you saying that before tests can run, the CRs must be created first?
 Yes, exactly. Let me be very precise about why:
 The internal tests verify OUTCOMES of the operator's work. They check:
-"Does the Secret test-from-radar-mongodb exist?" (created by operator after MongoAtlasUser CR)
+"Does the Secret test-from-radar-mongodb exist?" (created by operator after MongoAtlasUser <abbr title="Custom Resource — an instance of a CRD">CR</abbr>)
 "Can I connect to Atlas with the credentials in that Secret?" (credentials were generated by operator)
 "Does the read-only user have readAnyDatabase role?" (role assigned by operator)
 For these outcomes to exist, the CAUSE must happen first:
-The MongoAtlasUser CR must exist → triggers operator → operator creates user + Secret
-The MongoAtlas CR must exist → triggers operator → operator creates database
-The MongoAtlasReadOnlyUser CR must exist → triggers operator → operator creates RO user + Secret
+The MongoAtlasUser <abbr title="Custom Resource — an instance of a CRD">CR</abbr> must exist → triggers operator → operator creates user + Secret
+The MongoAtlas <abbr title="Custom Resource — an instance of a CRD">CR</abbr> must exist → triggers operator → operator creates database
+The MongoAtlasReadOnlyUser <abbr title="Custom Resource — an instance of a CRD">CR</abbr> must exist → triggers operator → operator creates RO user + Secret
 Without the CRs, there's nothing for the operator to do, and nothing for the tests to verify.
 The setup stage is the mechanism that creates these CRs. It runs BEFORE the internal test Job is deployed.
 Timeline:
@@ -7828,7 +7904,7 @@ name: test-from-radar
 namespace: obaas-1
 spec:
 database: obaas-1_test-from-radar   # ← a REAL database gets created in Atlas
-The real operator running in the cluster sees this CR and:
+The real operator running in the cluster sees this <abbr title="Custom Resource — an instance of a CRD">CR</abbr> and:
 Connects to the REAL MongoDB Atlas cluster
 Creates a REAL database called obaas-1_test-from-radar
 Creates REAL Atlas users with REAL credentials
@@ -7903,8 +7979,8 @@ Answer:
 The setup stage creates test-specific resources that don't exist yet in the cluster. It's NOT about deploying the operator itself — the operator is already running. It's about creating the INPUT that the operator needs to DO something.
 For mongo operator (internal tests):
 The mongo operator is already deployed and running. But it needs Custom Resources (CRs) to trigger its behavior. Without CRs, the operator just sits idle. The setup creates:
-MongoAtlas CR          → tells operator "create database X"
-MongoAtlasUser CR      → tells operator "create user Y with access to database X"
+MongoAtlas <abbr title="Custom Resource — an instance of a CRD">CR</abbr>          → tells operator "create database X"
+MongoAtlasUser <abbr title="Custom Resource — an instance of a CRD">CR</abbr>      → tells operator "create user Y with access to database X"
 MongoAtlasReadOnlyUser → tells operator "create read-only user Z"
 Without this setup, the internal tests would have nothing to verify:
 No database was created (nothing to check)
@@ -8088,7 +8164,7 @@ Wraps the test function
 Configuration <br>
 input.yml
 Maps task name → file path
-CR definitions<br>
+<abbr title="Custom Resource — an instance of a CRD">CR</abbr> definitions<br>
 mongo_operator.yaml
 The actual YAML to apply
 The flow:
@@ -8124,30 +8200,30 @@ Setup:    kubectl apply CRs (creates test-from-radar resources)
 Test:     Internal tests verify operator's response to those CRs
 Cleanup:  kubectl delete CRs + helm uninstall (removes everything)
 Q8 (Link to Q7): I don't understand the namespace explanation for operator reconciliation. Does the operator watch namespaces or CRs?
-Your Question: I'm not getting this explanation. Why is the namespace relevant here? Does the mongo operator watch all namespaces? Does reconcile watch the namespace or the CR? Explain again in detail.
+Your Question: I'm not getting this explanation. Why is the namespace relevant here? Does the mongo operator watch all namespaces? Does reconcile watch the namespace or the <abbr title="Custom Resource — an instance of a CRD">CR</abbr>? Explain again in detail.
 Answer:
 Let me separate two different concepts that are being confused:
-WATCHING = detecting that a CR exists (discovery mechanism) RECONCILING = doing something with that CR (action mechanism)
+WATCHING = detecting that a <abbr title="Custom Resource — an instance of a CRD">CR</abbr> exists (discovery mechanism) RECONCILING = doing something with that <abbr title="Custom Resource — an instance of a CRD">CR</abbr> (action mechanism)
 Step 1 — Watching (detection):
 The operator WATCHES for CRs. Specifically:
 c.Watch(source.Kind(mgr.GetCache(), &amp;dbv1.MongoAtlas{}, ...))
 This says: "Monitor all MongoAtlas CRs across ALL namespaces in the cluster."
-When any MongoAtlas CR is created/updated/deleted ANYWHERE in the cluster, the operator gets notified. The namespace doesn't matter for detection — the operator sees CRs in obaas-1, obaas-2, radar, any namespace.
+When any MongoAtlas <abbr title="Custom Resource — an instance of a CRD">CR</abbr> is created/updated/deleted ANYWHERE in the cluster, the operator gets notified. The namespace doesn't matter for detection — the operator sees CRs in obaas-1, obaas-2, radar, any namespace.
 Step 2 — Reconciling (action):
 When the operator is triggered, it receives a Request that contains:
-request.Namespace = "obaas-1"    // where the CR lives
-<a href="http://request.name/">request.Name</a> = "test-from-radar"  // what the CR is called
+request.Namespace = "obaas-1"    // where the <abbr title="Custom Resource — an instance of a CRD">CR</abbr> lives
+<a href="http://request.name/">request.Name</a> = "test-from-radar"  // what the <abbr title="Custom Resource — an instance of a CRD">CR</abbr> is called
 Now the operator USES that namespace to:
 Name the database: obaas-1_test-from-radar (includes namespace)
 Create the Secret IN that namespace (so apps there can read it)
 Lock the namespace mutex (prevent concurrent operations in same namespace)
 List databases matching ^obaas-1_.* (namespace prefix pattern)
 Why namespace matters for reconciliation (NOT for watching):
-The namespace of the CR tells the operator:
+The namespace of the <abbr title="Custom Resource — an instance of a CRD">CR</abbr> tells the operator:
 "This database belongs to namespace X"
 "Create the credentials Secret in namespace X"
 "The user should have access to databases matching namespace X prefix"
-If someone creates a MongoAtlas CR in namespace radar, the operator creates database radar_test-from-radar and Secret in radar. If someone creates the same CR in obaas-1, it creates obaas-1_test-from-radar and Secret in obaas-1.
+If someone creates a MongoAtlas <abbr title="Custom Resource — an instance of a CRD">CR</abbr> in namespace radar, the operator creates database radar_test-from-radar and Secret in radar. If someone creates the same <abbr title="Custom Resource — an instance of a CRD">CR</abbr> in obaas-1, it creates obaas-1_test-from-radar and Secret in obaas-1.
 Simple analogy:
 Watching = a mail carrier picks up ALL mail from ALL houses (no filter)
 Reconciling = each letter has a destination address, and the carrier delivers to that specific address
@@ -8156,11 +8232,11 @@ Your Question: The mongo operator watches all namespaces and picks CRs regardles
 Answer:
 No, watching and reconciling are completely different things:
 Watching = NOTIFICATION system
-"Hey operator, a new MongoAtlas CR was just created in namespace obaas-1"
+"Hey operator, a new MongoAtlas <abbr title="Custom Resource — an instance of a CRD">CR</abbr> was just created in namespace obaas-1"
 This just tells the operator that something happened
 It adds a work item to a queue
 Reconciling = BUSINESS LOGIC
-"Ok, I see the CR. Let me now CREATE the actual database in Atlas, CREATE the user, CREATE the Secret..."
+"Ok, I see the <abbr title="Custom Resource — an instance of a CRD">CR</abbr>. Let me now CREATE the actual database in Atlas, CREATE the user, CREATE the Secret..."
 This is where ALL the real work happens
 Think of it like this:
 Imagine a restaurant:
@@ -8169,7 +8245,7 @@ Reconciling = the kitchen cooks the food, plates it, and the waiter delivers it 
 Without watching: the operator wouldn't know CRs exist. Without reconciling: the operator would know CRs exist but do nothing about them.
 What reconcile DOES for MongoAtlas:
 func (r <em>ReconcileMongoAtlas) Reconcile(ctx context.Context, request reconcile.Request) {
-// 1. Get the CR from Kubernetes API
+// 1. Get the <abbr title="Custom Resource — an instance of a CRD">CR</abbr> from Kubernetes API
 instance := &amp;dbv1.MongoAtlas{}
 r.client.Get(ctx, request.NamespacedName, instance)
 </em></p><div class="language-text highlight"><pre><em><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#notion-radar-radar-mongoatlas-flow-__codelineno-2-1"></a>// 2. Check if this CR is new (never processed before)
@@ -8185,14 +8261,14 @@ r.client.Get(ctx, request.NamespacedName, instance)
 </span><span id="__span-2-11"><a id="__codelineno-2-11" name="__codelineno-2-11" href="#notion-radar-radar-mongoatlas-flow-__codelineno-2-11"></a>return RequeueAfter: 120 seconds
 </span></code></em></pre></div><em>
 }
-Without reconcile, the CR is just a YAML document sitting in Kubernetes doing nothing. The reconcile function is what makes the operator actually DO things.
+Without reconcile, the <abbr title="Custom Resource — an instance of a CRD">CR</abbr> is just a YAML document sitting in Kubernetes doing nothing. The reconcile function is what makes the operator actually DO things.
 Q10 (Link to Q7): What is a "tenant user" in the database context?
 Your Question: What is the tenant user in the DB? What do you mean by this?
 Answer:
 A "tenant user" is a MongoDB Atlas database user that belongs to an entire namespace (tenant), not to a single application.
 Two user models in the operator:
 Model   Scope   Atlas User Name Access  Secret
-Application user    One app {env}-{namespace}-{appname} Only databases listed in CR {appname}-mongodb
+Application user    One app {env}-{namespace}-{appname} Only databases listed in <abbr title="Custom Resource — an instance of a CRD">CR</abbr> {appname}-mongodb
 Tenant user Entire namespace    {env}-{namespace}   ALL databases in that namespace (^{namespace}_.</em>)   mongo-cred
 Example with CREDENTIAL_SCOPE=namespace:
 Namespace obaas-1 has 3 applications:
@@ -8206,7 +8282,7 @@ User clouddev-obaas-1-app-a → access only to obaas-1_app-a
 User clouddev-obaas-1-app-b → access only to obaas-1_app-b
 User clouddev-obaas-1-app-c → access only to obaas-1_app-c
 Each gets a separate Secret with different credentials.
-The tenant user is created by the MongoAtlasTenantUser CR:
+The tenant user is created by the MongoAtlasTenantUser <abbr title="Custom Resource — an instance of a CRD">CR</abbr>:
 apiVersion: <a href="http://db.sbcp.io/v1">db.sbcp.io/v1</a>
 kind: MongoAtlasTenantUser
 metadata:
@@ -8214,20 +8290,20 @@ name: obaas-1
 namespace: obaas-1
 spec:
 secretName: mongo-cred
-When a new MongoAtlas CR creates a database, and CREDENTIAL_SCOPE=namespace, the operator automatically updates the tenant user's access list to include the new database.
+When a new MongoAtlas <abbr title="Custom Resource — an instance of a CRD">CR</abbr> creates a database, and CREDENTIAL_SCOPE=namespace, the operator automatically updates the tenant user's access list to include the new database.
 Q11 (Link to Q7): Why must the radar pod and CRs be in the same namespace?
-Your Question: Why do you say the radar pod and CRs should be in the same namespace always: "The internal test pod needs to read these Secrets. If the CR was in a different namespace, the pod couldn't read the Secret."
+Your Question: Why do you say the radar pod and CRs should be in the same namespace always: "The internal test pod needs to read these Secrets. If the <abbr title="Custom Resource — an instance of a CRD">CR</abbr> was in a different namespace, the pod couldn't read the Secret."
 Answer:
 This is a fundamental Kubernetes security rule: Secrets are namespace-scoped.
 A pod in namespace A can ONLY read Secrets that are also in namespace A. It CANNOT read Secrets in namespace B.
 Here's why this matters:
-Radar setup applies MongoAtlasUser CR in namespace obaas-1
-Operator sees the CR, creates Atlas user, generates credentials
-Operator creates Secret test-from-radar-mongodb in namespace obaas-1 (same namespace as the CR)
+Radar setup applies MongoAtlasUser <abbr title="Custom Resource — an instance of a CRD">CR</abbr> in namespace obaas-1
+Operator sees the <abbr title="Custom Resource — an instance of a CRD">CR</abbr>, creates Atlas user, generates credentials
+Operator creates Secret test-from-radar-mongodb in namespace obaas-1 (same namespace as the <abbr title="Custom Resource — an instance of a CRD">CR</abbr>)
 Radar test pod runs in namespace obaas-1
 Test code: k8s_client.get_secret("test-from-radar-mongodb", "obaas-1") → ✓ works
 If they were in different namespaces:
-Radar setup applies CR in namespace obaas-1
+Radar setup applies <abbr title="Custom Resource — an instance of a CRD">CR</abbr> in namespace obaas-1
 Operator creates Secret in obaas-1
 Radar pod runs in namespace radar
 Test code: k8s_client.get_secret("test-from-radar-mongodb", "obaas-1") → ✗ FORBIDDEN
@@ -8244,8 +8320,8 @@ A mutex (mutual exclusion lock) is a programming concept that prevents two opera
 The namespace mutex in the mongo-operator prevents concurrent reconciliations from corrupting each other within the same namespace.
 Problem it solves:
 Imagine two MongoAtlasUser CRs are created simultaneously in namespace obaas-1:
-CR-1: "create user for app-a with databases [obaas-1_app-a]"
-CR-2: "create user for app-b with databases [obaas-1_app-b]"
+<abbr title="Custom Resource — an instance of a CRD">CR</abbr>-1: "create user for app-a with databases [obaas-1_app-a]"
+<abbr title="Custom Resource — an instance of a CRD">CR</abbr>-2: "create user for app-b with databases [obaas-1_app-b]"
 Both reconcile functions run at the same time. Both try to update the tenant user's database list. Without a mutex:
 Thread 1 reads: tenant user has databases [obaas-1_existing]
 Thread 2 reads: tenant user has databases [obaas-1_existing]
@@ -8264,7 +8340,7 @@ Two CRs in DIFFERENT namespaces can reconcile in parallel (different mutex per n
 Q7 Summary (simplified):
 The namespace is relevant to reconciliation because:
 Database name = {namespace}_{app} → namespace is part of the name
-Secret is created IN the CR's namespace → apps in that namespace can read it
+Secret is created IN the <abbr title="Custom Resource — an instance of a CRD">CR</abbr>'s namespace → apps in that namespace can read it
 Mutex = one lock per namespace → prevents concurrent corruption
 Tenant user = named after the namespace → controls which databases are accessible
 Q13 (Link to Q8): In which files are the environment variable sources defined? Share the file paths.
@@ -8280,7 +8356,7 @@ Who creates it: Also created by sbcp-env-setup when the mongo_atlas_operator com
 How to check:
 kubectl get configmap mongo-config -n obaas-1 -o yaml
 Source 3: mongo-cred Secret
-Who creates it: The mongo-operator itself, when a MongoAtlasTenantUser CR is reconciled
+Who creates it: The mongo-operator itself, when a MongoAtlasTenantUser <abbr title="Custom Resource — an instance of a CRD">CR</abbr> is reconciled
 How to check:
 kubectl get secret mongo-cred -n obaas-1 -o yaml
 Source 4: cicd-vars-sbcp-radar ConfigMap
@@ -8315,7 +8391,7 @@ Created by the mongoatlas-operator Helm chart when it's installed in kube-manage
 File: mongoatlas-operator/mongoatlas-operator/templates/mongoatlas-operator.yaml
 The chart has a Secret template that stores Atlas API keys (publicKey, privateKey, connectionString, etc.).
 1. mongo-cred Secret (shared tenant credentials):
-Created by the mongo-operator itself at runtime when a MongoAtlasTenantUser CR is reconciled. This is NOT created during setup — it's created dynamically by the operator when it creates a tenant-level database user in Atlas.
+Created by the mongo-operator itself at runtime when a MongoAtlasTenantUser <abbr title="Custom Resource — an instance of a CRD">CR</abbr> is reconciled. This is NOT created during setup — it's created dynamically by the operator when it creates a tenant-level database user in Atlas.
 1. cicd-vars-sbcp-radar ConfigMap:
 Created by the sbcp-radar Helm chart during helm install. The values come from the radar pipeline:<p></p>
 <h1 id="notion-radar-radar-mongoatlas-flow-radar-pipelinemainyml-initialize-stage">radar-pipeline/main.yml - initialize stage<a class="headerlink" href="#notion-radar-radar-mongoatlas-flow-radar-pipelinemainyml-initialize-stage" title="Permanent link">¶</a></h1>
@@ -8327,7 +8403,7 @@ ServiceAccount (radar)  sbcp-radar Helm chart   When radar pipeline runs
 environment-config  sbcp-env-setup namespace component  During env provisioning
 mongo-config    sbcp-env-setup mongo_atlas_operator component   During env provisioning
 mongoatlas-operator Secret  mongoatlas-operator Helm chart  During env provisioning
-mongo-cred Secret   mongo-operator (runtime)    When MongoAtlasTenantUser CR is reconciled
+mongo-cred Secret   mongo-operator (runtime)    When MongoAtlasTenantUser <abbr title="Custom Resource — an instance of a CRD">CR</abbr> is reconciled
 cicd-vars ConfigMap sbcp-radar Helm chart   When radar pipeline runs
 Q15 (Link to Q11): If the sbcp-radar chart has both templates (with and without Istio), why does radar fail in obaas-1?
 Your Question: If the sbcp-radar chart has both templates (job.yaml with Istio sidecar and job-without-istio.yaml without sidecar), then why do radar test cases fail in obaas-1?
@@ -8551,13 +8627,23 @@ radar-pipeline/main.yml (CI job "setup")
 │               └── kubectl label -f ... <a href="http://app.sbs.io/part-of=radar-%7Bbranch%7D">app.sbs.io/part-of=radar-{branch}</a>
 │                   (Labels for cleanup)
 │
-└── test_mongo_operator() → pass (nothing else to do)</p></release></body></html></section></section><section class="print-page" id="notion-net" heading-number="10.4"><html><head>
+└── test_mongo_operator() → pass (nothing else to do)</p>
+<!--
+  Included via `--8<-- "abbreviations.md"` (pymdownx.snippets) at the bottom
+  of every generated page. Defines pymdownx.abbr tooltips site-wide instead
+  of per-page. Keep in sync with docs/glossary.md.
+--></release></body></html></section></section><section class="print-page" id="notion-net" heading-number="10.4"><html><head>
         <script type="text/javascript">
         document.addEventListener('DOMContentLoaded', function () {
             remove_material_navigation();remove_mkdocs_theme_navigation();generate_toc();
         })
         </script>
-        </head><body><h1 id="net">Net<a class="headerlink" href="#notion-net-net" title="Permanent link">¶</a></h1></body></html></section><section class="print-page" id="notion-keycloak" heading-number="10.5"><html><head>
+        </head><body><h1 id="net">Net<a class="headerlink" href="#notion-net-net" title="Permanent link">¶</a></h1>
+<!--
+  Included via `--8<-- "abbreviations.md"` (pymdownx.snippets) at the bottom
+  of every generated page. Defines pymdownx.abbr tooltips site-wide instead
+  of per-page. Keep in sync with docs/glossary.md.
+--></body></html></section><section class="print-page" id="notion-keycloak" heading-number="10.5"><html><head>
         <script type="text/javascript">
         document.addEventListener('DOMContentLoaded', function () {
             remove_material_navigation();remove_mkdocs_theme_navigation();generate_toc();
@@ -8582,7 +8668,12 @@ radar-pipeline/main.yml (CI job "setup")
 </span><span id="__span-0-10"><a id="__codelineno-0-10" name="__codelineno-0-10" href="#notion-keycloak-__codelineno-0-10"></a>
 </span><span id="__span-0-11"><a id="__codelineno-0-11" name="__codelineno-0-11" href="#notion-keycloak-__codelineno-0-11"></a><span class="k">for</span><span class="w"> </span><span class="nx">the</span><span class="w"> </span><span class="nx">hsot</span><span class="w"> </span><span class="nx">you</span><span class="w"> </span><span class="nx">need</span><span class="w"> </span><span class="nx">to</span><span class="w"> </span><span class="nx">run</span><span class="w"> </span><span class="k">this</span><span class="o">:</span>
 </span><span id="__span-0-12"><a id="__codelineno-0-12" name="__codelineno-0-12" href="#notion-keycloak-__codelineno-0-12"></a><span class="nx">helm</span><span class="w"> </span><span class="nx">get</span><span class="w"> </span><span class="nx">values</span><span class="w"> </span><span class="nx">keycloak</span><span class="w"> </span><span class="o">-</span><span class="nx">n</span><span class="w"> </span><span class="nx">test</span><span class="w"> </span><span class="o">-</span><span class="nx">a</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="nx">grep</span><span class="w"> </span><span class="o">-</span><span class="nx">B2</span><span class="w"> </span><span class="o">-</span><span class="nx">A20</span><span class="w"> </span><span class="o">-</span><span class="nx">i</span><span class="w"> </span><span class="nx">smtp</span>
-</span></code></pre></div></body></html></section></section></div><style>.print-site-enumerate-headings #index > h1:before { content: '1 ' }
+</span></code></pre></div>
+<!--
+  Included via `--8<-- "abbreviations.md"` (pymdownx.snippets) at the bottom
+  of every generated page. Defines pymdownx.abbr tooltips site-wide instead
+  of per-page. Keep in sync with docs/glossary.md.
+--></body></html></section></section></div><style>.print-site-enumerate-headings #index > h1:before { content: '1 ' }
 
                 .print-site-enumerate-headings #index h2:before { content: '1.' counter(counter-index-2) ' ' }
                 .print-site-enumerate-headings #index h2 {  counter-reset: counter-index-3 ;  counter-increment: counter-index-2 }
