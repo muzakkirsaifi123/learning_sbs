@@ -468,7 +468,15 @@ def build_nav_tree(records: list) -> list:
         for title, rel_path in by_parent.get(parent_dir, []):
             page_dir = str(PurePosixPath(rel_path).with_suffix(""))
             if rel_path in has_children:
-                sub = [{title: rel_path}] + make_items(page_dir)
+                # The page itself becomes a section (its Notion sub-pages
+                # nest under it), so it needs its own nav entry too -- but
+                # labelling that "Overview" instead of repeating the
+                # section's own title avoids the section appearing to
+                # contain a duplicate of itself in the sidebar. (Material's
+                # navigation.indexes would normally collapse this, but that
+                # feature depends on use_directory_urls, which is off here
+                # for the offline plugin's file:// support.)
+                sub = [{"Overview": rel_path}] + make_items(page_dir)
                 items.append({title: sub})
             else:
                 items.append({title: rel_path})
