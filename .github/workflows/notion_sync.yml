@@ -4,15 +4,6 @@ on:
   schedule:
     - cron: "0 */3 * * *"
   workflow_dispatch:
-  # A push-triggered version of this ran on feature branches for a while
-  # (auto-sync on every branch push) but never produced a confirmed-working
-  # result -- no new commit landed after ~13 minutes across two separate
-  # branch pushes, and it couldn't be diagnosed further without Actions log
-  # access this environment doesn't have. Reverted rather than leave an
-  # unconfirmed mechanism in place. To sync a branch against live Notion,
-  # use workflow_dispatch and pick that branch -- that path is unaffected
-  # and still works. branch-preview.yml's build+deploy on push is a
-  # separate, confirmed-working mechanism and is untouched by this revert.
 
 jobs:
   sync:

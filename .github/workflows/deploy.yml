@@ -20,10 +20,6 @@ concurrency:
 
 jobs:
   deploy:
-    # Skip redeploying after a failed sync -- nothing new was committed, so
-    # there's nothing to deploy that isn't already live. Added to
-    # branch-preview.yml too, for the same reason, at the same time.
-    if: github.event_name != 'workflow_run' || github.event.workflow_run.conclusion == 'success'
     runs-on: ubuntu-latest
 
     steps:
@@ -57,12 +53,11 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: mkdocs gh-deploy --force
 
-      # Same commit-comment pattern as branch-preview.yml, so every path
-      # that ends in a real deploy (a direct push to main, or the scheduled
-      # Notion sync completing and triggering this via workflow_run) leaves
-      # the same kind of trail. workflow_run doesn't carry the deployed
-      # commit's SHA in github.sha the way a push event does, so it's
-      # pulled from the upstream run instead when that's how we got here.
+      # Leaves a trail on the deployed commit either way (a direct push to
+      # main, or the scheduled Notion sync completing and triggering this
+      # via workflow_run). workflow_run doesn't carry the deployed commit's
+      # SHA in github.sha the way a push event does, so it's pulled from
+      # the upstream run instead when that's how we got here.
       - name: Comment deploy URL on the commit
         uses: actions/github-script@v7
         with:

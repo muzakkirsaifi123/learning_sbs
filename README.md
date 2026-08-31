@@ -133,7 +133,6 @@ Or simply push any change to `main` — deploy triggers automatically.
 |----------|--------------------|
 | `notion_sync.yml` | Every 3 hours — syncs Notion → validates (`check_docs.py` + `mkdocs build --strict`) → commits to `main` only if that passes |
 | `deploy.yml` | On every push to `main` — quality check, `mkdocs build --strict`, then publishes to GitHub Pages |
-| `branch-preview.yml` | On every push to any branch **except** `main` — builds and deploys to `https://<username>.github.io/<repo>/preview/<branch-name>/`, no PR required. Deleting the branch removes its preview automatically. |
 
 Full automated flow:
 
@@ -143,10 +142,6 @@ Write notes in Notion
 docs/notion/*.md saved and committed to main
       ↓  on push to main  (deploy.yml — strict build gate, then deploy)
 MkDocs site built and published to GitHub Pages
-
-Push to any other branch
-      ↓  (branch-preview.yml)
-Live preview at /preview/<branch-name>/ — check it before merging to main
 ```
 
 ---
@@ -182,8 +177,7 @@ Live preview at /preview/<branch-name>/ — check it before merging to main
 ├── .github/
 │   ├── workflows/
 │   │   ├── deploy.yml                  # Strict build + deploy to GitHub Pages on push to main
-│   │   ├── notion_sync.yml             # Sync Notion → validate → commit (scheduled)
-│   │   └── branch-preview.yml          # Push to any branch → live preview, no PR needed
+│   │   └── notion_sync.yml             # Sync Notion → validate → commit (scheduled)
 │   └── ISSUE_TEMPLATE/
 │
 ├── notion_sync.py                      # Notion sync engine (run locally or via CI)
