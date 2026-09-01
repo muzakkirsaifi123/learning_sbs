@@ -1,5 +1,7 @@
 # Kubernetes Operator
 
+Operator is nothing. It is just the enhancement of the Kubernetes feature; for example, if something is not managed by Kubernetes, then you can add an operator to manage that form through Kubernetes. As you can see, Crossplane uses the controller for Kubernetes to create the infra over AWS because Kubernetes is famous for its controllers, meaning I fetch the drift and remove the drift fast. This means it reconciles any drift that happens as soon as possible, and the infra is always in sync. The same concept is used in the operator, like you can use the operator to manage the MongoDB and PostgreSQL creation and many others you can manage from this.
+**For example, i**f you want to create a PostgreSQL DB and its user, then you need to log in to the cluster, then create a DB in it, and then grant user rights. This is the flow {RDS cluster in AWS}, but if you want this form to be applied through YAML, like a Kubernetes manifest deployment, then you need to create the operator for that use simply, and you just apply the YAML, and the user DB or user will be created there in the RDS cluster.
 
 ## **1. First: What is a Kubernetes Operator?**
 A Kubernetes operator is basically
@@ -126,7 +128,7 @@ Service
 ConfigMap
 Secret
 ```
-But suppose we want Kubernetes to understand:
+But suppose we want Kubernetes to understand the following:
 ```text
 MongoDBAtlasUser
 ```
@@ -148,7 +150,7 @@ The CRD defines the **kind of object**.
 
 ---
 
-# **6. Then what is a Custom Resource?**
+# **6. Then what is a custom resource?**
 Once the CRD exists, you can create an actual object of that type.
 For example, conceptually:
 ```yaml
@@ -163,7 +165,7 @@ spec:
   roles:
     - readWrite
 ```
-The important distinction is:
+The important distinction is
 
 ### **CRD**
 Defines the **type**.
@@ -195,11 +197,11 @@ Resources:
 
 ---
 
-# **7. Where does the Operator come into this?**
+# **7. Where does the operator come into this?**
 The CRD alone doesn't magically create anything in MongoDB Atlas.
 You need a program watching those resources.
-That's the Operator/controller.
-Imagine you apply:
+That's the operator/controller.
+Imagine you apply.
 ```yaml
 kind: MongoDBAtlasUser
 
@@ -237,7 +239,7 @@ That's the entire fundamental idea.
 ---
 
 # **8. What is a Controller?**
-You'll hear **controller** and **Operator** used together, but there is a useful distinction.
+You'll hear "**controller" **and "o**perator”** used together, but there is a useful distinction.
 A controller is a program that watches resources and attempts to make actual state match desired state.
 For example:
 ```text
@@ -255,24 +257,24 @@ If:
 ```text
 NO
 ```
-it creates it.
+It creates it.
 If:
 ```text
 YES, but wrong role
 ```
-it may update it.
+It may update it.
 If:
 ```text
 YES and correct
 ```
-it does nothing.
+It does nothing.
 This process is often called a **reconciliation loop**.
 
 ---
 
 # **9. The reconciliation loop**
-This is probably the single most important Operator concept.
-Imagine the Operator constantly doing:
+This is probably the single most important operator concept.
+Imagine the operator constantly doing the following:
 ```text
         ┌─────────────────────┐
         │                     │
@@ -330,12 +332,12 @@ Operator notices the difference and reconciles it.
 
 ---
 
-# **10. Why do we need an Operator at all?**
+# **10. Why do we need an operator at all?**
 This is the natural question.
 You might ask:
 > "Why don't I just create the MongoDB Atlas user manually?"
 You absolutely can.
-An Operator becomes useful when you want **automation and Kubernetes-native management**.
+An operator becomes useful when you want **automation and Kubernetes-native management**.
 For example, imagine you have:
 ```text
 Development
@@ -351,7 +353,7 @@ Database access
 Roles
 Configuration
 ```
-Without an Operator, you might have scripts or manually manage everything.
+Without an operator, you might have scripts or manually manage everything.
 With an Operator, you can represent much of that configuration as Kubernetes resources.
 For example:
 ```text
@@ -380,7 +382,7 @@ This works very nicely with GitOps and Infrastructure-as-Code approaches.
 At a high level, you need several things.
 
 ### **Step 1 — Install the MongoDB Atlas Operator**
-The Operator itself needs to be running in your Kubernetes cluster.
+The operator itself needs to be running in your Kubernetes cluster.
 For example:
 ```text
 Kubernetes Cluster
@@ -398,7 +400,7 @@ Installing the Operator normally also installs its CRDs.
 
 ---
 
-### **Step 2 — Give the Operator access to MongoDB Atlas**
+### **Step 2—Give the Operator access to MongoDB Atlas**
 The Operator needs credentials to call the MongoDB Atlas API.
 Conceptually:
 ```text
@@ -416,7 +418,7 @@ It needs authentication.
 
 ---
 
-### **Step 3 — Tell the Operator which Atlas project it should manage**
+### **Step 3—Tell the Operator which Atlas project it should manage**
 You need to establish the relationship between Kubernetes and your Atlas project.
 Conceptually:
 ```text
@@ -477,7 +479,7 @@ API Server
 ### **Phase 2**
 The API server checks:
 > "Do I understand this kind?"
-Because the Operator installed the CRD, Kubernetes understands:
+Because the operator installed the CRD, Kubernetes understands the following:
 ```text
 MongoDBAtlasUser
 ```
@@ -499,7 +501,7 @@ New MongoDBAtlasUser appeared!
 ```
 
 ### **Phase 5**
-The Operator reads the specification.
+The operator reads the specification.
 For example:
 ```text
 username = application-user
@@ -507,7 +509,7 @@ role = readWrite
 ```
 
 ### **Phase 6**
-The Operator calls MongoDB Atlas.
+The operator calls MongoDB Atlas.
 ```text
 Operator
     |
@@ -572,17 +574,17 @@ This pattern appears all over Kubernetes.
 ---
 
 # **14. What if you delete the Kubernetes resource?**
-This is another important Operator behavior.
+This is another important operator behavior.
 Suppose you do:
 ```bash
 kubectl delete -f atlas-user.yaml
 ```
-The Custom Resource disappears.
-The Operator notices:
+The custom resource disappears.
+The operator notices the following:
 ```text
 Desired resource no longer exists.
 ```
-Depending on the resource and Operator behavior, it can then remove the corresponding object from Atlas.
+Depending on the resource and operator behavior, it can then remove the corresponding object from Atlas.
 This is one of the powerful aspects of the Operator model:
 ```text
 Kubernetes desired state
@@ -592,12 +594,12 @@ Operator
 External system
 ```
 Kubernetes becomes your declarative control point.
-**But:** whether deletion of a Kubernetes resource deletes the corresponding Atlas object is resource-specific, so you should verify the deletion/cleanup behavior for the exact MongoDB Atlas Operator resource you're using.
+**But **whether deletion of a Kubernetes resource deletes the corresponding Atlas object is resource-specific, so you should verify the deletion/cleanup behavior for the exact MongoDB Atlas Operator resource you're using.
 
 ---
 
 # **15. What if someone manually changes Atlas?**
-This is where Operators become really interesting.
+This is where operators become really interesting.
 Suppose your Kubernetes configuration says:
 ```text
 Desired:
@@ -612,8 +614,8 @@ Actual:
 user = app-user
 role = read
 ```
-The Operator can detect that actual state differs from desired state and reconcile it, depending on what that resource/controller manages.
-So you can think of it as:
+The operator can detect that the actual state differs from the desired state and reconcile it, depending on what that resource/controller manages.
+So you can think of it as the following:
 ```text
                  Desired
                     |
@@ -629,14 +631,14 @@ So you can think of it as:
                     ↓
                  Actual
 ```
-The Operator tries to keep:
+The operator tries to keep the following:
 ```text
 Desired ≈ Actual
 ```
 
 ---
 
-# **16. Operator vs CRD — don't mix these up**
+# **16. Operator vs. CRD—don't mix these up**
 This is one of the biggest beginner mistakes.
 
 ### **CRD**
@@ -686,14 +688,14 @@ A useful mental model:
 
 ---
 
-# **17. When should you create an Operator?**
-You don't create an Operator every time you deploy an application.
+# **17. When should you create an operator?**
+You don't create an operator every time you deploy an application.
 This is another important point.
 Suppose you have:
 ```text
 Nginx
 ```
-You probably don't need to write an Nginx Operator yourself.
+You probably don't need to write an Nginx operator yourself.
 Kubernetes already has:
 ```text
 Deployment
@@ -702,7 +704,7 @@ ConfigMap
 Secret
 ```
 that can handle the basic lifecycle.
-An Operator becomes particularly useful when an application/service has **complex domain-specific lifecycle operations**.
+An operator becomes particularly useful when an application/service has **complex domain-specific lifecycle operations**.
 For example:
 ```text
 MongoDB
@@ -712,7 +714,7 @@ Redis
 Cloud resources
 External SaaS resources
 ```
-An Operator can encode knowledge such as:
+An operator can encode knowledge such as
 ```text
 How do I create this thing?
 How do I configure it?
@@ -723,14 +725,14 @@ How do I perform maintenance?
 How do I delete it?
 How do I recover it?
 ```
-That's why Operators are often described as putting an application's operational knowledge into software.
+That's why operators are often described as putting an application's operational knowledge into software.
 
 ---
 
 # **18. Do YOU need to create the MongoDB Atlas Operator?**
 No.
 This is another important distinction.
-If you're using the **MongoDB Atlas Kubernetes Operator**, you normally **install the existing Operator** rather than writing your own from scratch.
+If you're using the **MongoDB Atlas Kubernetes Operator**, you normally **install the existing operator** rather than writing your own from scratch.
 Think:
 ```text
 MongoDB already provides an Operator
@@ -743,7 +745,7 @@ You create Custom Resources
               ↓
       Operator manages Atlas
 ```
-You would write your **own Operator** if you had some custom system or workflow that wasn't already supported adequately by an existing Operator.
+You would write your **own operator** if you had some custom system or workflow that wasn't already supported adequately by an existing operator.
 
 ---
 
@@ -792,7 +794,7 @@ That's the picture I want you to have in your head.
 
 # **20. A real-world analogy**
 Imagine you run a hotel.
-You tell a hotel manager:
+You tell a hotel manager the following:
 > "I need room 301 cleaned every day."
 You don't personally go into the room every day.
 You give the manager the desired state:
@@ -804,14 +806,14 @@ The manager:
 1. If dirty → sends someone to clean it.
 1. Checks again later.
 1. If something changes → fixes it.
-The manager is similar to the **Operator**.
+The manager is similar to the o**perator**.
 The instruction is similar to the **Custom Resource**.
 The definition of what an instruction like "room cleaning" looks like is similar to the **CRD**.
 
 ---
 
 # **21. The terminology you should memorize**
-If you're learning Kubernetes Operators, learn these terms first:
+If you're learning Kubernetes operators, learn these terms first:
 | **Term** | **Meaning** |
 | --- | --- |
 | Kubernetes | Platform/orchestrator |
@@ -825,7 +827,7 @@ If you're learning Kubernetes Operators, learn these terms first:
 | **`status`** | Observed/current state |
 | Reconciliation | Process of making actual state match desired state |
 
-The most important relationship is:
+The most important relationship is
 ```text
 CRD
  ↓
@@ -847,14 +849,14 @@ real system
 # **22. MongoDB Atlas example in one sentence**
 If someone asks you:
 > "What is the MongoDB Atlas Operator doing?"
-A good answer is:
+A good answer is
 > **The MongoDB Atlas Operator watches Kubernetes resources that describe the desired MongoDB Atlas configuration and uses the MongoDB Atlas API to reconcile Atlas so that its actual state matches that desired state.**
 That's the core idea.
 
 ---
 
 # **23. How I recommend you learn this**
-Don't jump immediately into complicated Operator code.
+Don't jump immediately into complicated operator code.
 Learn it in this order:
 
 ### **Level 1 — Kubernetes basics**
@@ -889,7 +891,7 @@ How does Kubernetes register a new kind?
 ```
 
 ### **Level 4 — Custom Resources**
-Create something like:
+Create something like this:
 ```text
 kind: MyDatabase
 ```
@@ -976,5 +978,5 @@ And the Operator keeps watching and reconciling:
                             └──────────→
 ```
 **That is why we need an Operator.**
-If you want to go hands-on next, the best next lesson is to build a **tiny Kubernetes Operator example from scratch** (not MongoDB yet): first create a CRD, then create a Custom Resource, then write a controller that watches it. Once you understand that, the MongoDB Atlas Operator becomes much easier to understand.
+If you want to go hands-on next, the best next lesson is to build a **tiny Kubernetes operator example from scratch** (not MongoDB yet): first create a CRD, then create a custom resource, then write a controller that watches it. Once you understand that, the MongoDB Atlas Operator becomes much easier to understand.
 
