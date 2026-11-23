@@ -60,6 +60,10 @@
 
     Quick access to Kafka notes.
 
+-   🟠 **[Complete flow of MSK-Kafka-CP schema](notion/kafka/complete-flow-of-msk-kafka-cp-schema.md)**
+
+    Quick access to Complete flow of MSK-Kafka-CP schema notes.
+
 -   📄 **[Radar](notion/radar.md)**
 
     Quick access to Radar notes.

@@ -156,6 +156,7 @@ nav:
       - Kafka:
           - Kafka: notion/kafka.md
           - Kafka: notion/kafka/kafka.md
+          - Complete flow of MSK-Kafka-CP schema: notion/kafka/complete-flow-of-msk-kafka-cp-schema.md
       - Radar:
           - Radar: notion/radar.md
           - Radar-mongoatlas-flow: notion/radar/radar-mongoatlas-flow.md
